@@ -1,0 +1,1 @@
+export const getSpinner = state => !!state.spinner;
