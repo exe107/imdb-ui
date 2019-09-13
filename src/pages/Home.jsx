@@ -1,5 +1,6 @@
 import "font-awesome/css/font-awesome.min.css";
 import * as React from "react";
+import { constructUrl } from "../util";
 import { history } from "../redux/history";
 import { MOVIE_ROUTE } from "../navigation/routes";
 
@@ -7,12 +8,7 @@ const Home = () => {
   const [movie, setMovie] = React.useState("");
 
   const onSearchClick = React.useCallback(() => {
-    history.push(
-      MOVIE_ROUTE.path
-        .split("/")
-        .map(urlSegment => (urlSegment.startsWith(":") ? movie : urlSegment))
-        .join("/")
-    );
+    history.push(constructUrl(MOVIE_ROUTE.path, [movie]));
   }, [movie]);
 
   return (

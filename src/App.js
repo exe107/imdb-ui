@@ -52,8 +52,8 @@ function App({ spinner }) {
       </nav>
       <div className="container-fluid">
         <div className="row full-screen">
-          <div className="col-md-3" />
-          <div className="col-md-6">
+          <div className="col-sm-2" />
+          <div className="col-sm-8">
             <Switch>
               {ROUTES.map(route => (
                 <Route key={route.path} {...route} />
@@ -61,7 +61,7 @@ function App({ spinner }) {
               <Route component={Home} />
             </Switch>
           </div>
-          <div className="col-md-3" />
+          <div className="col-sm-8" />
         </div>
       </div>
     </React.Fragment>

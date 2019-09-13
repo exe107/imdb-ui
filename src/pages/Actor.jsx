@@ -1,7 +1,11 @@
 import * as React from "react";
 
-const Actor = () => {
-  return <div>Actor</div>;
+const Actor = props => {
+  const {
+    match: { params }
+  } = props;
+
+  return <div>{params.name}</div>;
 };
 
 export default Actor;

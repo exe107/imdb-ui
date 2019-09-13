@@ -1,7 +1,11 @@
 import * as React from "react";
 
-const Director = () => {
-  return <div>Director</div>;
+const Director = props => {
+  const {
+    match: { params }
+  } = props;
+
+  return <div>{params.name}</div>;
 };
 
 export default Director;

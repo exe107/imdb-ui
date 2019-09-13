@@ -14,12 +14,12 @@ export const MOVIE_ROUTE = {
 };
 
 export const ACTOR_ROUTE = {
-  path: "/actor",
+  path: "/actor/:name",
   component: Actor
 };
 
 export const DIRECTOR_ROUTE = {
-  path: "/director",
+  path: "/director/:name",
   component: Director
 };
 
