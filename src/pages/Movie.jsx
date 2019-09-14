@@ -13,28 +13,41 @@ const MoviePoster = styled.img`
 
 const Movie = props => {
   const {
-    match: { params },
+    match,
     showSpinner,
     hideSpinner
   } = props;
 
+  const { title } = match.params;
+
   const [movie, setMovie] = React.useState(null);
+  const [fetchingFinished, setFetchingFinished] = React.useState(false);
 
   React.useEffect(() => {
     showSpinner();
 
-    searchByTitle(params.title)
+    searchByTitle(title)
       .then(response => response.json())
       .then(response => {
-        setMovie(response);
+        const { Response } = response;
+
+        if (Response === "True") {
+          setMovie(response);
+        }
+
+        setFetchingFinished(true);
         hideSpinner();
       })
-      .catch(error => console.log(error));
-  }, [params.title, showSpinner, hideSpinner]);
+      .catch(console.log);
+  }, [title, showSpinner, hideSpinner]);
 
   if (!movie) {
+    if (fetchingFinished) {
+      return <h1 className="alert alert-danger">No information available for movie {title}</h1>
+    }
+
     return null;
-  };
+  }
 
   const {
     Poster,
@@ -45,6 +58,7 @@ const Movie = props => {
     imdbVotes,
     Genre,
     Runtime,
+    Language,
     Released,
     Website,
     Director,
@@ -67,6 +81,7 @@ const Movie = props => {
           <h4>Genre: {Genre}</h4>
           <h4>Runtime: {Runtime}</h4>
           <h4>Released: {Released}</h4>
+          <h4>Language: {Language}</h4>
           {Website !== "N/A" && (
             <h4>
               Website: <a href={Website}>{Website}</a>
@@ -75,14 +90,15 @@ const Movie = props => {
         </div>
         <div className="col">
           <h4>
+            Director:
             <a href={constructUrl(DIRECTOR_ROUTE.path, [Director])}>
-              {Director}
+              {` ${Director}`}
             </a>
           </h4>
           <h4>Stars:</h4>
           <ul>
             {Actors.split(", ").map(actor => (
-              <li>
+              <li key={actor}>
                 <h4>
                   <a href={constructUrl(ACTOR_ROUTE.path, [actor])}>{actor}</a>
                 </h4>

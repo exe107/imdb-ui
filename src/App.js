@@ -9,7 +9,7 @@ import { connect } from "react-redux";
 import { Route, Switch, Link } from "react-router-dom";
 import styled from "styled-components";
 import { getSpinner } from "./redux/spinner/selectors";
-import { ROUTES } from "./navigation/routes";
+import { MOVIES_SEARCH_ROUTE, ROUTES } from "./navigation/routes";
 import Home from "./pages/Home";
 
 const Spinner = styled.div`
@@ -29,7 +29,7 @@ function App({ spinner }) {
           <div className="spinner-border" />
         </Spinner>
       )}
-      <nav className="navbar navbar-expand-lg navbar-light bg-light">
+      <nav className="navbar navbar-expand-lg navbar-light bg-light mb-5">
         <span className="navbar-brand">Open Data</span>
         <button
           className="navbar-toggler"
@@ -43,7 +43,12 @@ function App({ spinner }) {
         <div className="collapse navbar-collapse" id="navbarContent">
           <ul className="navbar-nav mr-auto">
             <li className="nav-item">
-              <Link className="nav-link" to="/movies-search">
+              <Link className="nav-link" to="/">
+                Home
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to={MOVIES_SEARCH_ROUTE.path}>
                 Movies
               </Link>
             </li>
