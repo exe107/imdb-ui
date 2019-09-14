@@ -10,9 +10,9 @@ const MoviesSection = props => {
       <React.Fragment>
         <h4>{header}:</h4>
         <ul>
-          {movies.map(movie => (
-            <li key={movie}>
-              <a href={constructUrl(MOVIE_ROUTE.path, [movie])}>{movie}</a>
+          {movies.map(({ name, id }) => (
+            <li key={id}>
+              <a href={constructUrl(MOVIE_ROUTE.path, [], { id })}>{name}</a>
             </li>
           ))}
         </ul>

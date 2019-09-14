@@ -8,7 +8,7 @@ const Home = () => {
   const [movie, setMovie] = React.useState("");
 
   const onSearchClick = React.useCallback(() => {
-    history.push(constructUrl(MOVIE_ROUTE.path, [movie]));
+    history.push(constructUrl(MOVIE_ROUTE.path, [], { title: movie }));
   }, [movie]);
 
   return (

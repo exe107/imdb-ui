@@ -1,19 +1,20 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { showSpinner, hideSpinner } from "../redux/spinner/actions";
-import {
-  findMoviesByDirector,
-  findMoviesByWriter,
-  findPersonAbstract,
-  runDbpediaQuery
-} from "../sparql/dbpedia";
+import { findPersonAbstract, runDbpediaQuery } from "../sparql/dbpedia";
 import {
   findDirectorAwards,
   findDirectorImage,
   findDirectorNominations,
+  findMoviesByDirector,
+  findMoviesByWriter,
   runWikidataQuery
 } from "../sparql/wikidata";
-import { extractQueryResult, extractQueryResults } from "../util";
+import {
+  extractMoviesQueryResults,
+  extractQueryResult,
+  extractQueryResults
+} from "../util";
 import { PersonImage } from "../common";
 import imageNotFound from "../image_not_found.png";
 import MoviesSection from "./MoviesSection";
@@ -49,14 +50,14 @@ const Director = props => {
       })
       .then(response => {
         setAwards(extractQueryResults(response));
-        return runDbpediaQuery(findMoviesByDirector(name));
+        return runWikidataQuery(findMoviesByDirector(name));
       })
       .then(response => {
-        setMoviesDirected(extractQueryResults(response));
-        return runDbpediaQuery(findMoviesByWriter(name));
+        setMoviesDirected(extractMoviesQueryResults(response));
+        return runWikidataQuery(findMoviesByWriter(name));
       })
       .then(response => {
-        setMoviesWritten(extractQueryResults(response));
+        setMoviesWritten(extractMoviesQueryResults(response));
         hideSpinner();
         setFetchingFinished(true);
       })

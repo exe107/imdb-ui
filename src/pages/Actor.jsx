@@ -1,19 +1,18 @@
 import * as React from "react";
-import { showSpinner, hideSpinner } from "../redux/spinner/actions";
 import { connect } from "react-redux";
 import {
-  findMoviesByActor,
   findPersonAbstract,
   runDbpediaQuery
 } from "../sparql/dbpedia";
-import { extractQueryResult, extractQueryResults } from "../util";
+import { extractMoviesQueryResults, extractQueryResult, extractQueryResults } from "../util";
 import {
   findActorAwards,
   findActorImage,
-  findActorNominations,
+  findActorNominations, findMoviesByActor,
   runWikidataQuery
 } from "../sparql/wikidata";
 import { PersonImage } from "../common";
+import { showSpinner, hideSpinner } from "../redux/spinner/actions";
 import imageNotFound from "../image_not_found.png";
 import MoviesSection from "./MoviesSection";
 import AchievementsSection from "./AchievementsSection";
@@ -47,10 +46,10 @@ const Actor = props => {
       })
       .then(response => {
         setAwards(extractQueryResults(response));
-        return runDbpediaQuery(findMoviesByActor(name));
+        return runWikidataQuery(findMoviesByActor(name));
       })
       .then(response => {
-        setMoviesActedIn(extractQueryResults(response));
+        setMoviesActedIn(extractMoviesQueryResults(response));
         hideSpinner();
         setFetchingFinished(true);
       })

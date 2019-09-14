@@ -9,7 +9,7 @@ export const MOVIES_SEARCH_ROUTE = {
 };
 
 export const MOVIE_ROUTE = {
-  path: "/movie/:title",
+  path: "/movie",
   component: Movie
 };
 
