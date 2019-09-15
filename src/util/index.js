@@ -35,9 +35,10 @@ export const extractQueryResults = response => {
   return response.results.bindings.map(binding => binding.result.value);
 };
 
-export const extractMoviesQueryResults = response => {
-  return response.results.bindings.map(({ name, id }) => ({
+export const extractMultipleColumnsQueryResults = response => {
+  return response.results.bindings.map(({ name, id, year }) => ({
     name: name.value,
-    id: id.value
+    id: id.value,
+    year: year && year.value
   }));
 };

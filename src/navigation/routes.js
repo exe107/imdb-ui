@@ -1,7 +1,6 @@
 import MoviesSearch from "../pages/MoviesSearch";
 import Movie from "../pages/Movie";
-import Actor from "../pages/Actor";
-import Director from "../pages/Director";
+import Person from "../pages/Person";
 
 export const MOVIES_SEARCH_ROUTE = {
   path: "/movies-search",
@@ -13,14 +12,9 @@ export const MOVIE_ROUTE = {
   component: Movie
 };
 
-export const ACTOR_ROUTE = {
-  path: "/actor/:name",
-  component: Actor
+export const PERSON_ROUTE = {
+  path: "/person/:id",
+  component: Person
 };
 
-export const DIRECTOR_ROUTE = {
-  path: "/director/:name",
-  component: Director
-};
-
-export const ROUTES = [MOVIES_SEARCH_ROUTE, MOVIE_ROUTE, ACTOR_ROUTE, DIRECTOR_ROUTE];
+export const ROUTES = [MOVIES_SEARCH_ROUTE, MOVIE_ROUTE, PERSON_ROUTE];

@@ -34,5 +34,7 @@ export const findPersonAbstract = person =>
 
 export const runDbpediaQuery = query =>
   fetch(
-    `https://dbpedia.org/sparql?default-graph-uri=http://dbpedia.org&format=json&query=${query}`
+    encodeURI(
+      `https://dbpedia.org/sparql?default-graph-uri=http://dbpedia.org&format=json&query=${query}`
+    )
   ).then(response => response.json());

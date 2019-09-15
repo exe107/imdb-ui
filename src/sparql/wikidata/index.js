@@ -1,107 +1,133 @@
-export const findMovieActors = imdbID =>
-  `SELECT DISTINCT ?result WHERE {
+export const findMovieActors = id =>
+  `SELECT DISTINCT ?name ?id WHERE {
      ?movie wdt:P31 wd:Q11424;
-            wdt:P345 "${imdbID}";
+            wdt:P345 "${id}";
             wdt:P161 ?actor.
-     ?actor rdfs:label ?result.
-     filter(lang(?result) = 'en')
+     ?actor wdt:P345 ?id;
+            rdfs:label ?name.
+     FILTER(lang(?name) = 'en')
 }`;
 
-export const findMoviesByActor = actor =>
+export const findMoviesByActor = id =>
   `SELECT ?name ?id WHERE {
-    ?actor wdt:P106 wd:Q10800557;
-           rdfs:label "${actor}"@en.
+    ?actor wdt:P345 "${id}".
     ?movie wdt:P31 wd:Q11424;
            wdt:P161 ?actor;
-           rdfs:label ?name;
-           wdt:P345 ?id.
-    filter(lang(?name) = 'en')
+           wdt:P345 ?id;
+           rdfs:label ?name.
+    FILTER(lang(?name) = 'en')
 }`;
 
-export const findMoviesByDirector = director =>
+export const findMoviesByDirector = id =>
   `SELECT ?name ?id WHERE {
-    ?director wdt:P106 wd:Q2526255;
-              rdfs:label "${director}"@en.
+    ?director wdt:P345 "${id}".
     ?movie wdt:P31 wd:Q11424;
-              wdt:P57 ?director;
-              rdfs:label ?name;
-              wdt:P345 ?id.
-    filter(lang(?name) = 'en')
+           wdt:P57 ?director;
+           wdt:P345 ?id;
+           rdfs:label ?name.
+    FILTER(lang(?name) = 'en')
 }`;
 
-export const findMoviesByWriter = writer =>
+export const findMoviesByWriter = id =>
   `SELECT ?name ?id WHERE {
-    ?writer wdt:P106 wd:Q28389;
-              rdfs:label "${writer}"@en.
+    ?writer wdt:P345 "${id}".
     ?movie wdt:P31 wd:Q11424;
-              wdt:P58 ?writer;
-              rdfs:label ?name;
-              wdt:P345 ?id.
-    filter(lang(?name) = 'en')
+           wdt:P58 ?writer;
+           wdt:P345 ?id;
+           rdfs:label ?name.
+    FILTER(lang(?name) = 'en')
 }`;
 
-export const findMoviesByYearAndGenre = (genre, yearFrom, yearTo) =>
-  `SELECT DISTINCT ?result WHERE {
-    ?genre wdt:P31 wd:Q201658;
-    rdfs:label ?genre_name.
-    FILTER(lang(?genre_name) = 'en' && regex(?genre_name, "${genre}", "i"))
-    ?result wdt:P31 wd:Q11424;
-    wdt:P577 ?date;
-    wdt:P136 ?genre;
-    FILTER(year(?date) >= ${yearFrom} && year(?date) <= ${yearTo})
-}`;
+export const findMoviesByYearAndGenre = (
+  genre,
+  yearFrom = 2000,
+  yearTo = 2049
+) => {
+  if (!genre) {
+    return findMoviesByYear(yearFrom, yearTo);
+  }
 
-export const findActorAwards = actor =>
+  return `SELECT DISTINCT ?name ?id ?year
+          WITH {
+            ${findMoviesWithYear()}
+          } AS %movies
+          
+          WITH {
+            SELECT ?genre {
+              ?genre wdt:P31 wd:Q201658;
+                     rdfs:label ?genre_name.
+              FILTER(lang(?genre_name) = 'en' && regex(?genre_name, "${genre}", "i"))  
+            }
+          } AS %genres
+          
+          WHERE {
+            INCLUDE %movies.
+            INCLUDE %genres.
+            FILTER(?year >= ${yearFrom} && ?year <= ${yearTo})
+            ?movie wdt:P136 ?genre;
+                   wdt:P345 ?id;
+                   rdfs:label ?name.
+            FILTER(lang(?name) = 'en')
+          } ORDER BY DESC(?year)`;
+};
+
+const findMoviesByYear = (yearFrom, yearTo) =>
+  `SELECT DISTINCT ?name ?id ?year 
+    WITH {
+      ${findMoviesWithYear()}
+    } AS %movies
+    WHERE {
+      INCLUDE %movies.
+      FILTER(?year >= ${yearFrom} && ?year <= ${yearTo})
+      ?movie wdt:P345 ?id;
+             rdfs:label ?name.
+      FILTER(lang(?name) = 'en')
+    } ORDER BY DESC(?year)`;
+
+const findMoviesWithYear = () =>
+  `SELECT ?movie (MIN(year(?date)) as ?year) WHERE {
+    ?movie wdt:P31 wd:Q11424;
+           wdt:P577 ?date.
+  } GROUP BY ?movie`;
+
+export const findPersonId = name =>
   `SELECT ?result WHERE {
-    ?actor wdt:P106 wd:Q33999;
-    rdfs:label "${actor}"@en;
-    wdt:P166 ?award.
+    ?person rdfs:label "${name}"@en;
+            wdt:P345 ?result.
+  }`;
+
+export const findPersonName = id =>
+  `SELECT ?result WHERE {
+    ?person wdt:P345 "${id}";
+            rdfs:label ?result.
+    FILTER(lang(?result) = 'en')
+  }`;
+
+export const findPersonAwards = id =>
+  `SELECT ?result WHERE {
+    ?person wdt:P345 "${id}";
+            wdt:P166 ?award.
     ?award rdfs:label ?result.
     FILTER(lang(?result) = 'en')
 }`;
 
-export const findActorNominations = actor =>
+export const findPersonNominations = id =>
   `SELECT ?result WHERE {
-    ?actor wdt:P106 wd:Q33999;
-    rdfs:label "${actor}"@en;
-    wdt:P1411 ?nomination.
+    ?person wdt:P345 "${id}";
+            wdt:P1411 ?nomination.
     ?nomination rdfs:label ?result.
     FILTER(lang(?result) = 'en')
 }`;
 
-export const findDirectorAwards = director =>
+export const findPersonImage = id =>
   `SELECT ?result WHERE {
-    ?director wdt:P106 wd:Q2526255;
-    rdfs:label "${director}"@en;
-    wdt:P166 ?award.
-    ?award rdfs:label ?result.
-    FILTER(lang(?result) = 'en')
-}`;
-
-export const findDirectorNominations = director =>
-  `SELECT ?result WHERE {
-    ?director wdt:P106 wd:Q2526255;
-    rdfs:label "${director}"@en;
-    wdt:P1411 ?nomination.
-    ?nomination rdfs:label ?result.
-    FILTER(lang(?result) = 'en')
-}`;
-
-export const findDirectorImage = director =>
-  `SELECT ?result WHERE {
-  ?director wdt:P106 wd:Q2526255;
-            rdfs:label "${director}"@en;
+    ?person wdt:P345 "${id}";
             wdt:P18 ?result.
 }`;
 
-export const findActorImage = actor =>
-  `SELECT ?result WHERE {
-  ?actor wdt:P106 wd:Q10800557;
-         rdfs:label "${actor}"@en;
-         wdt:P18 ?result.
-}`;
-
 export const runWikidataQuery = query =>
-  fetch(`https://query.wikidata.org/sparql?format=json&query=${query}`).then(
-    response => response.json()
-  );
+  fetch(
+    `https://query.wikidata.org/sparql?format=json&query=${encodeURIComponent(
+      query
+    )}`
+  ).then(response => response.json());

@@ -2,9 +2,17 @@ import * as React from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import { searchMovie } from "../omdb";
-import { findMovieActors, runWikidataQuery } from "../sparql/wikidata";
-import { ACTOR_ROUTE, DIRECTOR_ROUTE } from "../navigation/routes";
-import { constructUrl, extractQueryResults } from "../util";
+import {
+  findMovieActors,
+  findPersonId,
+  runWikidataQuery
+} from "../sparql/wikidata";
+import { PERSON_ROUTE } from "../navigation/routes";
+import {
+  constructUrl,
+  extractMultipleColumnsQueryResults,
+  extractQueryResult
+} from "../util";
 import { showSpinner, hideSpinner } from "../redux/spinner/actions";
 import imageNotFound from "../image_not_found.png";
 
@@ -16,6 +24,7 @@ const MoviePoster = styled.img`
 const Movie = props => {
   const { showSpinner, hideSpinner } = props;
   const [movie, setMovie] = React.useState(null);
+  const [directors, setDirectors] = React.useState([]);
   const [cast, setCast] = React.useState(null);
   const [fetchingFinished, setFetchingFinished] = React.useState(false);
 
@@ -25,27 +34,50 @@ const Movie = props => {
     searchMovie()
       .then(response => response.json())
       .then(response => {
-        const { Response, Error } = response;
+        const { Director, imdbID, Response, Error } = response;
 
         if (Response === "True") {
           setMovie(response);
-          return response.imdbID;
+
+          const promise = Director.split(", ").reduce(
+            (promise, director) =>
+              promise.then(() =>
+                runWikidataQuery(findPersonId(director)).then(response => {
+                  const id = extractQueryResult(response);
+                  setDirectors(prevState => [...prevState, { id, director }]);
+                })
+              ),
+            new Promise(resolve => resolve())
+          );
+
+          return promise.then(() => imdbID);
         }
 
         setFetchingFinished(true);
         hideSpinner();
+
         return Promise.reject(Error);
       })
       .then(imdbID => {
         return runWikidataQuery(findMovieActors(imdbID));
       })
       .then(response => {
-        setCast(extractQueryResults(response));
+        setCast(extractMultipleColumnsQueryResults(response));
         setFetchingFinished(true);
         hideSpinner();
       })
       .catch(console.log);
   }, [showSpinner, hideSpinner]);
+
+  const formatActorName = React.useCallback(
+    name =>
+      [...name.toLowerCase()]
+        .map(character =>
+          character >= "a" && character <= "z" ? character : ""
+        )
+        .join(""),
+    []
+  );
 
   if (fetchingFinished) {
     if (!movie) {
@@ -64,9 +96,13 @@ const Movie = props => {
       Language,
       Released,
       Website,
-      Director,
       Actors
     } = movie;
+
+    const actorToIdMap = {};
+    cast.forEach(({ name, id }) => {
+      actorToIdMap[formatActorName(name)] = id;
+    });
 
     const image = Poster !== "N/A" ? Poster : imageNotFound;
 
@@ -92,35 +128,42 @@ const Movie = props => {
             </h4>
             <h4>Cast:</h4>
             <ul>
-              {cast.map(actor => (
-                <li key={actor}>
+              {cast.map(({ name, id }) => (
+                <li key={id}>
                   <h4>
-                    <a href={constructUrl(ACTOR_ROUTE.path, [actor])}>
-                      {actor}
-                    </a>
+                    <a href={constructUrl(PERSON_ROUTE.path, [id])}>{name}</a>
                   </h4>
                 </li>
               ))}
             </ul>
           </div>
           <div className="col">
-            <h4>
-              Director:
-              <a href={constructUrl(DIRECTOR_ROUTE.path, [Director])}>
-                {` ${Director}`}
-              </a>
-            </h4>
-            <h4>Stars:</h4>
+            <h4>Directors:</h4>
             <ul>
-              {Actors.split(", ").map(actor => (
-                <li key={actor}>
+              {directors.map(({ director, id }) => (
+                <li key={id}>
                   <h4>
-                    <a href={constructUrl(ACTOR_ROUTE.path, [actor])}>
-                      {actor}
+                    <a href={constructUrl(PERSON_ROUTE.path, [id])}>
+                      {director}
                     </a>
                   </h4>
                 </li>
               ))}
+            </ul>
+
+            <h4>Stars:</h4>
+            <ul>
+              {Actors.split(", ").map(name => {
+                const id = actorToIdMap[formatActorName(name)];
+
+                return (
+                  <li key={id}>
+                    <h4>
+                      <a href={constructUrl(PERSON_ROUTE.path, [id])}>{name}</a>
+                    </h4>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         </div>
