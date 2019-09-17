@@ -68,6 +68,7 @@ const Person = props => {
         return runWikidataQuery(findMoviesByActor(id));
       })
       .then(response => {
+        console.log(response.results.bindings);
         setMoviesActedIn(extractMultipleColumnsQueryResults(response));
         hideSpinner();
         setFetchingFinished(true);

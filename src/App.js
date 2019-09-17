@@ -29,7 +29,7 @@ function App({ spinner }) {
           <div className="spinner-border" />
         </Spinner>
       )}
-      <nav className="navbar navbar-expand-lg navbar-light bg-light mb-5">
+      <nav className="navbar navbar-expand-lg navbar-light bg-light">
         <span className="navbar-brand">Open Data</span>
         <button
           className="navbar-toggler"
@@ -57,8 +57,8 @@ function App({ spinner }) {
       </nav>
       <div className="container-fluid">
         <div className="row full-screen">
-          <div className="col-sm-2" />
-          <div className="col-sm-8">
+          <div className="col-sm-2 bg-secondary" />
+          <div className="col-sm-8 pt-5">
             <Switch>
               {ROUTES.map(route => (
                 <Route key={route.path} {...route} />
@@ -66,7 +66,7 @@ function App({ spinner }) {
               <Route component={Home} />
             </Switch>
           </div>
-          <div className="col-sm-8" />
+          <div className="col-sm-2 bg-secondary" />
         </div>
       </div>
     </React.Fragment>

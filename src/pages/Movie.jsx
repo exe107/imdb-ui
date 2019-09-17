@@ -7,14 +7,13 @@ import {
   findPersonId,
   runWikidataQuery
 } from "../sparql/wikidata";
-import { PERSON_ROUTE } from "../navigation/routes";
 import {
-  constructUrl,
   extractMultipleColumnsQueryResults,
   extractQueryResult
 } from "../util";
 import { showSpinner, hideSpinner } from "../redux/spinner/actions";
 import imageNotFound from "../image_not_found.png";
+import PeopleSection from "./PeopleSection";
 
 const MoviePoster = styled.img`
   width: 100%;
@@ -40,11 +39,11 @@ const Movie = props => {
           setMovie(response);
 
           const promise = Director.split(", ").reduce(
-            (promise, director) =>
+            (promise, name) =>
               promise.then(() =>
-                runWikidataQuery(findPersonId(director)).then(response => {
+                runWikidataQuery(findPersonId(name)).then(response => {
                   const id = extractQueryResult(response);
-                  setDirectors(prevState => [...prevState, { id, director }]);
+                  setDirectors(prevState => [...prevState, { id, name }]);
                 })
               ),
             new Promise(resolve => resolve())
@@ -100,9 +99,17 @@ const Movie = props => {
     } = movie;
 
     const actorToIdMap = {};
+
     cast.forEach(({ name, id }) => {
       actorToIdMap[formatActorName(name)] = id;
     });
+
+    const stars = Actors.split(", ")
+      .map(name => ({
+        name,
+        id: actorToIdMap[formatActorName(name)]
+      }))
+      .filter(actor => actor.id);
 
     const image = Poster !== "N/A" ? Poster : imageNotFound;
 
@@ -123,48 +130,16 @@ const Movie = props => {
             <h4>Runtime: {Runtime}</h4>
             <h4>Released: {Released}</h4>
             <h4>Language: {Language}</h4>
-            <h4>
-              Website: <a href={Website}>{Website}</a>
-            </h4>
-            <h4>Cast:</h4>
-            <ul>
-              {cast.map(({ name, id }) => (
-                <li key={id}>
-                  <h4>
-                    <a href={constructUrl(PERSON_ROUTE.path, [id])}>{name}</a>
-                  </h4>
-                </li>
-              ))}
-            </ul>
+            {Website !== "N/A" && (
+              <h4>
+                Website: <a href={Website}>{Website}</a>
+              </h4>
+            )}
+            <PeopleSection header="Cast" people={cast} />
           </div>
           <div className="col">
-            <h4>Directors:</h4>
-            <ul>
-              {directors.map(({ director, id }) => (
-                <li key={id}>
-                  <h4>
-                    <a href={constructUrl(PERSON_ROUTE.path, [id])}>
-                      {director}
-                    </a>
-                  </h4>
-                </li>
-              ))}
-            </ul>
-
-            <h4>Stars:</h4>
-            <ul>
-              {Actors.split(", ").map(name => {
-                const id = actorToIdMap[formatActorName(name)];
-
-                return (
-                  <li key={id}>
-                    <h4>
-                      <a href={constructUrl(PERSON_ROUTE.path, [id])}>{name}</a>
-                    </h4>
-                  </li>
-                );
-              })}
-            </ul>
+            <PeopleSection header="Directors" people={directors} />
+            <PeopleSection header="Stars" people={stars} />
           </div>
         </div>
       </React.Fragment>

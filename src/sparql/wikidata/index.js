@@ -9,14 +9,15 @@ export const findMovieActors = id =>
 }`;
 
 export const findMoviesByActor = id =>
-  `SELECT ?name ?id WHERE {
+  `SELECT ?name ?id (MIN(year(?date)) as ?year) WHERE {
     ?actor wdt:P345 "${id}".
     ?movie wdt:P31 wd:Q11424;
            wdt:P161 ?actor;
            wdt:P345 ?id;
+           wdt:P577 ?date;
            rdfs:label ?name.
     FILTER(lang(?name) = 'en')
-}`;
+} GROUP BY ?name ?id ORDER BY DESC(?year)`;
 
 export const findMoviesByDirector = id =>
   `SELECT ?name ?id WHERE {
@@ -24,9 +25,10 @@ export const findMoviesByDirector = id =>
     ?movie wdt:P31 wd:Q11424;
            wdt:P57 ?director;
            wdt:P345 ?id;
+           wdt:P577 ?date;
            rdfs:label ?name.
     FILTER(lang(?name) = 'en')
-}`;
+} GROUP BY ?name ?id ORDER BY DESC(?year)`;
 
 export const findMoviesByWriter = id =>
   `SELECT ?name ?id WHERE {
@@ -34,9 +36,10 @@ export const findMoviesByWriter = id =>
     ?movie wdt:P31 wd:Q11424;
            wdt:P58 ?writer;
            wdt:P345 ?id;
+           wdt:P577 ?date;
            rdfs:label ?name.
     FILTER(lang(?name) = 'en')
-}`;
+} GROUP BY ?name ?id ORDER BY DESC(?year)`;
 
 export const findMoviesByYearAndGenre = (
   genre,
