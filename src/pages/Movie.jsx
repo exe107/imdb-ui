@@ -111,7 +111,9 @@ const Movie = props => {
       }))
       .filter(actor => actor.id);
 
-    const image = Poster !== "N/A" ? Poster : imageNotFound;
+    const NOT_AVAILABLE = "N/A";
+
+    const image = Poster !== NOT_AVAILABLE ? Poster : imageNotFound;
 
     return (
       <React.Fragment>
@@ -119,7 +121,7 @@ const Movie = props => {
         <h1 className="text-center my-5">
           {Title} ({Year})
         </h1>
-        <h5 className="my-5">{Plot}</h5>
+        {Plot !== NOT_AVAILABLE && <h5 className="my-5">{Plot}</h5>}
         <div className="d-flex">
           <div className="col">
             <h4>
@@ -130,7 +132,7 @@ const Movie = props => {
             <h4>Runtime: {Runtime}</h4>
             <h4>Released: {Released}</h4>
             <h4>Language: {Language}</h4>
-            {Website !== "N/A" && (
+            {Website !== NOT_AVAILABLE && (
               <h4 className="text-break">
                 Website: <a href={Website}>{Website}</a>
               </h4>
