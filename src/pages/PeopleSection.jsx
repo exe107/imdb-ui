@@ -11,9 +11,13 @@ const PeopleSection = props => {
         <h4>{header}:</h4>
         <ul>
           {people.map(({ name, id }) => (
-            <li key={id}>
+            <li key={name}>
               <h4>
-                <a href={constructUrl(PERSON_ROUTE.path, [id])}>{name}</a>
+                {id ? (
+                  <a href={constructUrl(PERSON_ROUTE.path, [id])}>{name}</a>
+                ) : (
+                  <span>{name}</span>
+                )}
               </h4>
             </li>
           ))}

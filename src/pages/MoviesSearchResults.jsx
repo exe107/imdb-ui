@@ -38,7 +38,7 @@ const MoviesSearchResults = props => {
   const isFirstPage = pageIndex === 0;
   const isLastPage = lastMovieOrdinal === movies.length;
 
-  return (
+  return movies.length > 0 ? (
     <div className="mt-5">
       <div className="d-flex">
         <h1>Search results:</h1>
@@ -86,7 +86,7 @@ const MoviesSearchResults = props => {
         )}
       </div>
     </div>
-  );
+  ) : <h1 className="text-center">No movies match your search</h1>;
 };
 
 export default MoviesSearchResults;
