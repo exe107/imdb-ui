@@ -131,7 +131,7 @@ const Movie = props => {
             <h4>Released: {Released}</h4>
             <h4>Language: {Language}</h4>
             {Website !== "N/A" && (
-              <h4>
+              <h4 className="text-break">
                 Website: <a href={Website}>{Website}</a>
               </h4>
             )}

@@ -20,7 +20,7 @@ export const findMoviesByActor = id =>
 } GROUP BY ?name ?id ORDER BY DESC(?year)`;
 
 export const findMoviesByDirector = id =>
-  `SELECT ?name ?id WHERE {
+  `SELECT ?name ?id (MIN(year(?date)) as ?year) WHERE {
     ?director wdt:P345 "${id}".
     ?movie wdt:P31 wd:Q11424;
            wdt:P57 ?director;
@@ -31,7 +31,7 @@ export const findMoviesByDirector = id =>
 } GROUP BY ?name ?id ORDER BY DESC(?year)`;
 
 export const findMoviesByWriter = id =>
-  `SELECT ?name ?id WHERE {
+  `SELECT ?name ?id (MIN(year(?date)) as ?year) WHERE {
     ?writer wdt:P345 "${id}".
     ?movie wdt:P31 wd:Q11424;
            wdt:P58 ?writer;
