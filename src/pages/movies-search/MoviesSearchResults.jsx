@@ -1,8 +1,7 @@
 import * as React from "react";
 import _range from "lodash/range";
-import { constructUrl } from "../../util";
-import { MOVIE_ROUTE } from "../../navigation/routes";
 import { StyledInput } from "../../common";
+import MovieResult from "./MovieResult";
 
 const MoviesSearchResults = props => {
   const { movies, children } = props;
@@ -21,18 +20,11 @@ const MoviesSearchResults = props => {
     firstMovieOrdinal = Math.max(1, lastMovieOrdinal - (moviesPerPage - 1));
   }
 
-  const onSetMoviesPerPage = React.useCallback(
-    () => {
-      const newMoviesPerPage = Number(moviesPerPageInputRef.current.value);
-
-      if (pageIndex * newMoviesPerPage + 1 > movies.length) {
-        setPageIndex(0);
-      }
-
-      setMoviesPerPage(newMoviesPerPage);
-    },
-    [pageIndex, movies]
-  );
+  const onSetMoviesPerPage = React.useCallback(() => {
+    const newMoviesPerPage = Number(moviesPerPageInputRef.current.value);
+    setPageIndex(0);
+    setMoviesPerPage(newMoviesPerPage);
+  }, []);
 
   const onNextClick = React.useCallback(
     () => setPageIndex(prevPageIndex => prevPageIndex + 1),
@@ -71,18 +63,8 @@ const MoviesSearchResults = props => {
       </div>
       {_range(firstMovieOrdinal, lastMovieOrdinal + 1).map(ordinal => {
         const movie = movies[ordinal - 1];
-        const { name, id, year } = movie;
 
-        return (
-          <div key={id}>
-            <h4>
-              {`${ordinal}. `}
-              <a href={constructUrl(MOVIE_ROUTE.path, [], { id })}>
-                {name} ({year})
-              </a>
-            </h4>
-          </div>
-        );
+        return <MovieResult key={movie.id} ordinal={ordinal} movie={movie} />;
       })}
       <h5>
         {`Showing ${firstMovieOrdinal} to ${lastMovieOrdinal} out of total ${movies.length} results`}
