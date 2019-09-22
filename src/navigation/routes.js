@@ -1,4 +1,4 @@
-import MoviesSearch from "../pages/MoviesSearch";
+import MoviesSearch from "../pages/movies-search/MoviesSearch";
 import Movie from "../pages/Movie";
 import Person from "../pages/Person";
 

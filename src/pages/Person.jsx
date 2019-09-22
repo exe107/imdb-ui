@@ -19,8 +19,8 @@ import {
 } from "../util";
 import { PersonImage } from "../common";
 import imageNotFound from "../image_not_found.png";
-import MoviesSection from "./MoviesSection";
-import AchievementsSection from "./AchievementsSection";
+import MoviesSection from "./section/MoviesSection";
+import AchievementsSection from "./section/AchievementsSection";
 
 const Person = props => {
   const { match, showSpinner, hideSpinner } = props;
@@ -68,7 +68,6 @@ const Person = props => {
         return runWikidataQuery(findMoviesByActor(id));
       })
       .then(response => {
-        console.log(response.results.bindings);
         setMoviesActedIn(extractMultipleColumnsQueryResults(response));
         hideSpinner();
         setFetchingFinished(true);

@@ -1,6 +1,6 @@
 import * as React from "react";
-import { constructUrl } from "../util";
-import { PERSON_ROUTE } from "../navigation/routes";
+import { constructUrl } from "../../util";
+import { PERSON_ROUTE } from "../../navigation/routes";
 
 const PeopleSection = props => {
   const { header, people } = props;

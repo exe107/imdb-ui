@@ -1,10 +1,13 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { findMoviesByYearAndGenre, runWikidataQuery } from "../sparql/wikidata";
-import { extractMultipleColumnsQueryResults } from "../util";
-import { showSpinner, hideSpinner } from "../redux/spinner/actions";
+import {
+  findMoviesByYearAndGenre,
+  runWikidataQuery
+} from "../../sparql/wikidata";
+import { extractMultipleColumnsQueryResults } from "../../util";
+import { showSpinner, hideSpinner } from "../../redux/spinner/actions";
 import MoviesSearchResults from "./MoviesSearchResults";
-import { StyledInput } from "../common";
+import { StyledInput } from "../../common";
 
 const MoviesSearch = props => {
   const { showSpinner, hideSpinner } = props;
@@ -12,6 +15,34 @@ const MoviesSearch = props => {
   const [yearFrom, setYearFrom] = React.useState();
   const [yearTo, setYearTo] = React.useState();
   const [movies, setMovies] = React.useState();
+  const [sortKey, setSortKey] = React.useState("year");
+  const [sortOrder, setSortOrder] = React.useState("DESC");
+
+  const comparator = React.useCallback(
+    (first, second) => {
+      const orderSign = sortOrder === "DESC" ? -1 : 1;
+      let sign;
+
+      if (first[sortKey] < second[sortKey]) {
+        sign = -1;
+      } else if (first[sortKey] > second[sortKey]) {
+        sign = 1;
+      } else {
+        sign = 0;
+      }
+
+      return orderSign * sign;
+    },
+    [sortOrder, sortKey]
+  );
+
+  const sortedMovies = React.useMemo(() => {
+    if (!movies) {
+      return null;
+    }
+
+    return movies.sort(comparator);
+  }, [movies, comparator]);
 
   const MOVIE_GENRES = React.useMemo(
     () => [
@@ -32,7 +63,21 @@ const MoviesSearch = props => {
     []
   );
 
+  const SORT_KEYS = React.useMemo(() => ["year", "name"], []);
+  const SORT_ORDERS = React.useMemo(() => ["ASC", "DESC"], []);
+
+  const onSortKeyClick = React.useCallback(
+    event => setSortKey(event.target.value),
+    []
+  );
+
+  const onSortOrderClick = React.useCallback(
+    event => setSortOrder(event.target.value),
+    []
+  );
+
   const onSearchClick = React.useCallback(() => {
+    setMovies(null);
     showSpinner();
 
     runWikidataQuery(findMoviesByYearAndGenre(genre, yearFrom, yearTo)).then(
@@ -53,11 +98,9 @@ const MoviesSearch = props => {
               className="form-control ml-3"
               id="genre"
               defaultValue=""
-              onChange={event => setGenre(event.target.value)}
+              onChange={event => setGenre(event.target.value || undefined)}
             >
-              <option value="" disabled>
-                Choose a genre
-              </option>
+              <option value="">Choose a genre</option>
               {MOVIE_GENRES.map(({ name, keyword }) => (
                 <option key={keyword} value={keyword}>
                   {name}
@@ -92,7 +135,42 @@ const MoviesSearch = props => {
           </button>
         </form>
       </div>
-      {movies && <MoviesSearchResults movies={movies} />}
+      {movies && (
+        <React.Fragment>
+          <MoviesSearchResults movies={sortedMovies}>
+            <div className="d-flex align-items-baseline">
+              Sort by:
+              {SORT_KEYS.map(key => (
+                <div className="ml-3" key={key}>
+                  <input
+                    className="mr-1"
+                    type="radio"
+                    name="sortKey"
+                    id={key}
+                    value={key}
+                    checked={key === sortKey}
+                    onChange={onSortKeyClick}
+                  />
+                  <label htmlFor={key} className="text-capitalize">
+                    {key}
+                  </label>
+                </div>
+              ))}
+              <select
+                className="ml-3"
+                value={sortOrder}
+                onChange={onSortOrderClick}
+              >
+                {SORT_ORDERS.map(order => (
+                  <option key={order} value={order}>
+                    {order}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </MoviesSearchResults>
+        </React.Fragment>
+      )}
     </React.Fragment>
   );
 };

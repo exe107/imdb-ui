@@ -1,11 +1,11 @@
 import * as React from "react";
 import _range from "lodash/range";
-import { constructUrl } from "../util";
-import { MOVIE_ROUTE } from "../navigation/routes";
-import { StyledInput } from "../common";
+import { constructUrl } from "../../util";
+import { MOVIE_ROUTE } from "../../navigation/routes";
+import { StyledInput } from "../../common";
 
 const MoviesSearchResults = props => {
-  const { movies } = props;
+  const { movies, children } = props;
   const [moviesPerPage, setMoviesPerPage] = React.useState(50);
   const [pageIndex, setPageIndex] = React.useState(0);
   const moviesPerPageInputRef = React.useRef();
@@ -22,8 +22,16 @@ const MoviesSearchResults = props => {
   }
 
   const onSetMoviesPerPage = React.useCallback(
-    () => setMoviesPerPage(Number(moviesPerPageInputRef.current.value)),
-    []
+    () => {
+      const newMoviesPerPage = Number(moviesPerPageInputRef.current.value);
+
+      if (pageIndex * newMoviesPerPage + 1 > movies.length) {
+        setPageIndex(0);
+      }
+
+      setMoviesPerPage(newMoviesPerPage);
+    },
+    [pageIndex, movies]
   );
 
   const onNextClick = React.useCallback(
@@ -42,17 +50,23 @@ const MoviesSearchResults = props => {
     <div className="mt-5">
       <div className="d-flex">
         <h1>Search results:</h1>
-        <div className="ml-auto d-flex align-items-baseline">
-          <span>Results per page:</span>
-          <StyledInput
-            className="ml-2 form-control"
-            type="number"
-            defaultValue={moviesPerPage}
-            ref={moviesPerPageInputRef}
-          />
-          <button className="btn btn-primary ml-2" onClick={onSetMoviesPerPage}>
-            Set
-          </button>
+        <div className="ml-auto">
+          <div className="mb-3 w-100 d-flex align-items-baseline">
+            <span>Results per page:</span>
+            <StyledInput
+              className="ml-2 form-control"
+              type="number"
+              defaultValue={moviesPerPage}
+              ref={moviesPerPageInputRef}
+            />
+            <button
+              className="btn btn-primary ml-2"
+              onClick={onSetMoviesPerPage}
+            >
+              Set
+            </button>
+          </div>
+          {children}
         </div>
       </div>
       {_range(firstMovieOrdinal, lastMovieOrdinal + 1).map(ordinal => {
@@ -74,19 +88,21 @@ const MoviesSearchResults = props => {
         {`Showing ${firstMovieOrdinal} to ${lastMovieOrdinal} out of total ${movies.length} results`}
       </h5>
       <div className="mb-5">
-        {!isLastPage && (
-          <button className="mr-5 btn btn-primary" onClick={onNextClick}>
-            Next
+        {!isFirstPage && (
+          <button className="mr-5 btn btn-secondary" onClick={onPreviousClick}>
+            Previous
           </button>
         )}
-        {!isFirstPage && (
-          <button className="btn btn-secondary" onClick={onPreviousClick}>
-            Previous
+        {!isLastPage && (
+          <button className="btn btn-primary" onClick={onNextClick}>
+            Next
           </button>
         )}
       </div>
     </div>
-  ) : <h1 className="text-center">No movies match your search</h1>;
+  ) : (
+    <h1 className="text-center">No movies match your search</h1>
+  );
 };
 
 export default MoviesSearchResults;

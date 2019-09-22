@@ -13,7 +13,7 @@ import {
 } from "../util";
 import { showSpinner, hideSpinner } from "../redux/spinner/actions";
 import imageNotFound from "../image_not_found.png";
-import PeopleSection from "./PeopleSection";
+import PeopleSection from "./section/PeopleSection";
 
 const MoviePoster = styled.img`
   width: 100%;

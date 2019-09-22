@@ -1,6 +1,6 @@
 import * as React from "react";
-import { MOVIE_ROUTE } from "../navigation/routes";
-import { constructUrl } from "../util";
+import { MOVIE_ROUTE } from "../../navigation/routes";
+import { constructUrl } from "../../util";
 
 const MoviesSection = props => {
   const { header, movies } = props;
