@@ -12,8 +12,8 @@ const Home = () => {
   }, [movie]);
 
   return (
-    <div className="d-flex full-screen">
-      <div className="input-group m-auto">
+    <div className="full-screen">
+      <div className="input-group">
         <div className="input-group-prepend">
           <button className="btn btn-secondary" onClick={onSearchClick}>
             <i className="fa fa-search" />

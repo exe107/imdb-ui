@@ -63,8 +63,9 @@ const MoviesSearchResults = props => {
       </div>
       {_range(firstMovieOrdinal, lastMovieOrdinal + 1).map(ordinal => {
         const movie = movies[ordinal - 1];
+        const {id, name} = movie;
 
-        return <MovieResult key={movie.id} ordinal={ordinal} movie={movie} />;
+        return <MovieResult key={`${id}-${name}`} ordinal={ordinal} movie={movie} />;
       })}
       <h5>
         {`Showing ${firstMovieOrdinal} to ${lastMovieOrdinal} out of total ${movies.length} results`}
