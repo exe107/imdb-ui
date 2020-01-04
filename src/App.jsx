@@ -12,6 +12,7 @@ import styled from 'styled-components';
 import { MOVIES_SEARCH_ROUTE, ROUTES } from 'navigation/routes';
 import { getSpinner } from 'redux-config/spinner/selectors';
 import Home from 'pages/home/Home';
+import User from 'pages/user/User';
 import type { Route as RouteType } from 'flow';
 
 const PageContentContainer = styled.div`
@@ -39,29 +40,31 @@ function App({ spinner }: Props) {
           <div className="spinner-border" />
         </Spinner>
       )}
-      <nav className="navbar navbar-expand-lg navbar-light bg-light">
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-toggle="collapse"
-          data-target="#navbarContent"
-        >
-          <span className="navbar-toggler-icon" />
-        </button>
-
-        <div className="collapse navbar-collapse" id="navbarContent">
-          <ul className="navbar-nav mr-auto">
-            <li className="nav-item">
-              <Link className="nav-link" to="/">
-                Home
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to={MOVIES_SEARCH_ROUTE.path}>
-                Movies
-              </Link>
-            </li>
-          </ul>
+      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div className="container">
+          <button
+            className="navbar-toggler"
+            type="button"
+            data-toggle="collapse"
+            data-target="#navbarContent"
+          >
+            <span className="navbar-toggler-icon" />
+          </button>
+          <div className="collapse navbar-collapse" id="navbarContent">
+            <ul className="navbar-nav mr-auto">
+              <li className="nav-item">
+                <Link className="nav-link" to="/">
+                  Home
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to={MOVIES_SEARCH_ROUTE.path}>
+                  Movies
+                </Link>
+              </li>
+              <User />
+            </ul>
+          </div>
         </div>
       </nav>
       <PageContentContainer className="container-fluid">

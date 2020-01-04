@@ -2,6 +2,8 @@
 import MoviesSearch from 'pages/movies-search/MoviesSearch';
 import Movie from 'pages/movie/Movie';
 import Person from 'pages/person/Person';
+import Register from 'pages/forms/Register';
+import Login from 'pages/forms/Login';
 
 export const MOVIES_SEARCH_ROUTE = {
   path: '/movies-search',
@@ -18,4 +20,20 @@ export const PERSON_ROUTE = {
   component: Person,
 };
 
-export const ROUTES = [MOVIES_SEARCH_ROUTE, MOVIE_ROUTE, PERSON_ROUTE];
+export const REGISTER_ROUTE = {
+  path: '/register',
+  component: Register,
+};
+
+export const LOGIN_ROUTE = {
+  path: '/login',
+  component: Login,
+};
+
+export const ROUTES = [
+  MOVIES_SEARCH_ROUTE,
+  MOVIE_ROUTE,
+  PERSON_ROUTE,
+  REGISTER_ROUTE,
+  LOGIN_ROUTE,
+];
