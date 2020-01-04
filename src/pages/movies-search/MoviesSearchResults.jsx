@@ -1,19 +1,24 @@
-import * as React from "react";
-import _range from "lodash/range";
-import { StyledInput } from "../../common";
-import MovieResult from "./MovieResult";
+// @flow
+import * as React from 'react';
+import _range from 'lodash/range';
+import MovieResult from 'pages/movies-search/MovieResult';
+import type { Movie } from 'flow';
 
-const MoviesSearchResults = props => {
-  const { movies, children } = props;
+type Props = {
+  children: React.Node,
+  movies: Movie[],
+};
+
+const MoviesSearchResults = ({ children, movies }: Props): React.Node => {
   const [moviesPerPage, setMoviesPerPage] = React.useState(50);
   const [pageIndex, setPageIndex] = React.useState(0);
-  const moviesPerPageInputRef = React.useRef();
+  const moviesPerPageInputRef = React.useRef<Object>();
 
   let firstMovieOrdinal = pageIndex * moviesPerPage + 1;
 
   const lastMovieOrdinal = Math.min(
     firstMovieOrdinal + moviesPerPage - 1,
-    movies.length
+    movies.length,
   );
 
   if (firstMovieOrdinal > lastMovieOrdinal) {
@@ -28,11 +33,11 @@ const MoviesSearchResults = props => {
 
   const onNextClick = React.useCallback(
     () => setPageIndex(prevPageIndex => prevPageIndex + 1),
-    []
+    [],
   );
   const onPreviousClick = React.useCallback(
     () => setPageIndex(prevPageIndex => prevPageIndex - 1),
-    []
+    [],
   );
 
   const isFirstPage = pageIndex === 0;
@@ -45,8 +50,9 @@ const MoviesSearchResults = props => {
         <div className="ml-auto">
           <div className="mb-3 w-100 d-flex align-items-baseline">
             <span>Results per page:</span>
-            <StyledInput
+            <input
               className="ml-2 form-control"
+              width={80}
               type="number"
               defaultValue={moviesPerPage}
               ref={moviesPerPageInputRef}
@@ -63,9 +69,11 @@ const MoviesSearchResults = props => {
       </div>
       {_range(firstMovieOrdinal, lastMovieOrdinal + 1).map(ordinal => {
         const movie = movies[ordinal - 1];
-        const {id, name} = movie;
+        const { id, name } = movie;
 
-        return <MovieResult key={`${id}-${name}`} ordinal={ordinal} movie={movie} />;
+        return (
+          <MovieResult key={`${id}-${name}`} ordinal={ordinal} movie={movie} />
+        );
       })}
       <h5>
         {`Showing ${firstMovieOrdinal} to ${lastMovieOrdinal} out of total ${movies.length} results`}

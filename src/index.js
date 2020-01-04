@@ -1,12 +1,12 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import "./index.css";
-import App from "./App";
-import * as serviceWorker from "./serviceWorker";
-import { store } from "./redux";
-import { ConnectedRouter } from "connected-react-router";
-import { history } from "./redux/history";
-import { Provider } from "react-redux";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import { store } from 'redux-config';
+import { ConnectedRouter } from 'connected-react-router';
+import { history } from 'redux-config/history';
+import App from 'App';
+import * as serviceWorker from 'serviceWorker';
+import 'index.css';
 
 ReactDOM.render(
   <Provider store={store}>
@@ -14,7 +14,7 @@ ReactDOM.render(
       <App />
     </ConnectedRouter>
   </Provider>,
-  document.getElementById("root")
+  document.getElementById('root'),
 );
 
 // If you want your app to work offline and load faster, you can change

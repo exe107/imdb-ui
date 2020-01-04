@@ -1,31 +1,31 @@
-import * as React from "react";
-import { connect } from "react-redux";
-import {
-  findMoviesByYearAndGenre,
-  runWikidataQuery
-} from "../../sparql/wikidata";
-import { extractMultipleColumnsQueryResults } from "../../util";
-import { showSpinner, hideSpinner } from "../../redux/spinner/actions";
-import MoviesSearchResults from "./MoviesSearchResults";
-import { StyledInput } from "../../common";
+// @flow
+import * as React from 'react';
+import _get from 'lodash/get';
+import _isEmpty from 'lodash/isEmpty';
+import { findMoviesByYearAndGenre, runWikidataQuery } from 'movies/wikidata';
+import { asyncOperation } from 'common/util';
+import { extractMoviesQueryResults } from 'movies/util';
+import MoviesSearchResults from 'pages/movies-search/MoviesSearchResults';
+import type { Movie } from 'flow';
 
-const MoviesSearch = props => {
-  const { showSpinner, hideSpinner } = props;
+const MoviesSearch = (): React.Node => {
   const [genre, setGenre] = React.useState();
   const [yearFrom, setYearFrom] = React.useState();
   const [yearTo, setYearTo] = React.useState();
-  const [movies, setMovies] = React.useState();
-  const [sortKey, setSortKey] = React.useState("year");
-  const [sortOrder, setSortOrder] = React.useState("DESC");
+  const [movies, setMovies] = React.useState([]);
+  const [sortKey, setSortKey] = React.useState('year');
+  const [sortOrder, setSortOrder] = React.useState('DESC');
 
   const comparator = React.useCallback(
-    (first, second) => {
-      const orderSign = sortOrder === "DESC" ? -1 : 1;
+    (first: Movie, second: Movie) => {
+      const firstKey = _get(first, sortKey);
+      const secondKey = _get(second, sortKey);
+      const orderSign = sortOrder === 'DESC' ? -1 : 1;
       let sign;
 
-      if (first[sortKey] < second[sortKey]) {
+      if (firstKey < secondKey) {
         sign = -1;
-      } else if (first[sortKey] > second[sortKey]) {
+      } else if (firstKey > secondKey) {
         sign = 1;
       } else {
         sign = 0;
@@ -33,60 +33,55 @@ const MoviesSearch = props => {
 
       return orderSign * sign;
     },
-    [sortOrder, sortKey]
+    [sortOrder, sortKey],
   );
 
-  const sortedMovies = React.useMemo(() => {
-    if (!movies) {
-      return null;
-    }
-
-    return movies.sort(comparator);
-  }, [movies, comparator]);
+  const sortedMovies = React.useMemo(() => movies.sort(comparator), [
+    movies,
+    comparator,
+  ]);
 
   const MOVIE_GENRES = React.useMemo(
     () => [
-      { name: "Comedy", keyword: "comedy" },
-      { name: "Science Fiction", keyword: "science fiction" },
-      { name: "Horror", keyword: "horror" },
-      { name: "Romance", keyword: "roman" },
-      { name: "Action", keyword: "action" },
-      { name: "Thriller", keyword: "thriller" },
-      { name: "Drama", keyword: "drama" },
-      { name: "Mystery", keyword: "mystery" },
-      { name: "Crime", keyword: "crime" },
-      { name: "Animation", keyword: "animat" },
-      { name: "Adventure", keyword: "adventure" },
-      { name: "Fantasy", keyword: "fantasy" },
-      { name: "Superhero", keyword: "superhero" }
+      { name: 'Comedy', keyword: 'comedy' },
+      { name: 'Science Fiction', keyword: 'science fiction' },
+      { name: 'Horror', keyword: 'horror' },
+      { name: 'Romance', keyword: 'roman' },
+      { name: 'Action', keyword: 'action' },
+      { name: 'Thriller', keyword: 'thriller' },
+      { name: 'Drama', keyword: 'drama' },
+      { name: 'Mystery', keyword: 'mystery' },
+      { name: 'Crime', keyword: 'crime' },
+      { name: 'Animation', keyword: 'animat' },
+      { name: 'Adventure', keyword: 'adventure' },
+      { name: 'Fantasy', keyword: 'fantasy' },
+      { name: 'Superhero', keyword: 'superhero' },
     ],
-    []
+    [],
   );
 
-  const SORT_KEYS = React.useMemo(() => ["year", "name"], []);
-  const SORT_ORDERS = React.useMemo(() => ["ASC", "DESC"], []);
+  const SORT_KEYS = React.useMemo(() => ['year', 'name'], []);
+  const SORT_ORDERS = React.useMemo(() => ['ASC', 'DESC'], []);
 
   const onSortKeyClick = React.useCallback(
     event => setSortKey(event.target.value),
-    []
+    [],
   );
 
   const onSortOrderClick = React.useCallback(
     event => setSortOrder(event.target.value),
-    []
+    [],
   );
 
   const onSearchClick = React.useCallback(() => {
-    setMovies(null);
-    showSpinner();
+    setMovies([]);
 
-    runWikidataQuery(findMoviesByYearAndGenre(genre, yearFrom, yearTo)).then(
-      response => {
-        setMovies(extractMultipleColumnsQueryResults(response));
-        hideSpinner();
-      }
+    asyncOperation(() =>
+      runWikidataQuery(findMoviesByYearAndGenre(genre, yearFrom, yearTo))
+        .then(response => setMovies(extractMoviesQueryResults(response)))
+        .catch(console.log),
     );
-  }, [genre, yearFrom, yearTo, showSpinner, hideSpinner]);
+  }, [genre, yearFrom, yearTo]);
 
   return (
     <React.Fragment>
@@ -110,8 +105,9 @@ const MoviesSearch = props => {
           </div>
           <div className="form-group mr-5">
             <label htmlFor="yearFrom">From (year):</label>
-            <StyledInput
+            <input
               className="form-control ml-3"
+              width={80}
               id="yearFrom"
               type="number"
               onBlur={event => setYearFrom(event.target.value || undefined)}
@@ -119,8 +115,9 @@ const MoviesSearch = props => {
           </div>
           <div className="form-group">
             <label htmlFor="yearTo">To (year):</label>
-            <StyledInput
+            <input
               className="form-control ml-3"
+              width={80}
               id="yearTo"
               type="number"
               onBlur={event => setYearTo(event.target.value || undefined)}
@@ -135,52 +132,42 @@ const MoviesSearch = props => {
           </button>
         </form>
       </div>
-      {movies && (
-        <React.Fragment>
-          <MoviesSearchResults movies={sortedMovies}>
-            <div className="d-flex align-items-baseline">
-              Sort by:
-              {SORT_KEYS.map(key => (
-                <div className="ml-3" key={key}>
-                  <input
-                    className="mr-1"
-                    type="radio"
-                    name="sortKey"
-                    id={key}
-                    value={key}
-                    checked={key === sortKey}
-                    onChange={onSortKeyClick}
-                  />
-                  <label htmlFor={key} className="text-capitalize">
-                    {key}
-                  </label>
-                </div>
+      {!_isEmpty(movies) && (
+        <MoviesSearchResults movies={sortedMovies}>
+          <div className="d-flex align-items-baseline">
+            Sort by:
+            {SORT_KEYS.map(key => (
+              <div className="ml-3" key={key}>
+                <input
+                  className="mr-1"
+                  type="radio"
+                  name="sortKey"
+                  id={key}
+                  value={key}
+                  checked={key === sortKey}
+                  onChange={onSortKeyClick}
+                />
+                <label htmlFor={key} className="text-capitalize">
+                  {key}
+                </label>
+              </div>
+            ))}
+            <select
+              className="ml-3"
+              value={sortOrder}
+              onChange={onSortOrderClick}
+            >
+              {SORT_ORDERS.map(order => (
+                <option key={order} value={order}>
+                  {order}
+                </option>
               ))}
-              <select
-                className="ml-3"
-                value={sortOrder}
-                onChange={onSortOrderClick}
-              >
-                {SORT_ORDERS.map(order => (
-                  <option key={order} value={order}>
-                    {order}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </MoviesSearchResults>
-        </React.Fragment>
+            </select>
+          </div>
+        </MoviesSearchResults>
       )}
     </React.Fragment>
   );
 };
 
-const mapDispatchToProps = {
-  showSpinner,
-  hideSpinner
-};
-
-export default connect(
-  null,
-  mapDispatchToProps
-)(MoviesSearch);
+export default MoviesSearch;

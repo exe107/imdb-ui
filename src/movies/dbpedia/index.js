@@ -1,4 +1,5 @@
-export const findMoviesByWriter = writer =>
+// @flow
+export const findMoviesByWriter = (writer: string) =>
   `SELECT DISTINCT ?result WHERE {
     ?writer rdfs:label "${writer}"@en.
     ?movie dbo:writer ?writer;
@@ -7,7 +8,7 @@ export const findMoviesByWriter = writer =>
     filter(lang(?result) = 'en')
 }`;
 
-export const findMoviesByDirector = director =>
+export const findMoviesByDirector = (director: string) =>
   `SELECT DISTINCT ?result WHERE {
     ?director rdfs:label "${director}"@en.
     ?movie dbo:director ?director;
@@ -16,7 +17,7 @@ export const findMoviesByDirector = director =>
     filter(lang(?result) = 'en')
 }`;
 
-export const findMoviesByActor = actor =>
+export const findMoviesByActor = (actor: string) =>
   `SELECT DISTINCT ?result WHERE {
     ?actor rdfs:label "${actor}"@en.
     ?movie dbo:starring ?actor;
@@ -25,16 +26,16 @@ export const findMoviesByActor = actor =>
     filter(lang(?result) = 'en')
 }`;
 
-export const findPersonAbstract = person =>
+export const findPersonAbstract = (person: string) =>
   `SELECT ?result WHERE {
   ?person rdfs:label "${person}"@en;
           dbo:abstract ?result.
   filter(lang(?result) = 'en')
 }`;
 
-export const runDbpediaQuery = query =>
+export const runDbpediaQuery = (query: string) =>
   fetch(
     encodeURI(
-      `https://dbpedia.org/sparql?default-graph-uri=http://dbpedia.org&format=json&query=${query}`
-    )
+      `https://dbpedia.org/sparql?default-graph-uri=http://dbpedia.org&format=json&query=${query}`,
+    ),
   ).then(response => response.json());

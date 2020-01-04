@@ -1,16 +1,22 @@
-import * as React from "react";
-import "./App.css";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.min";
-import "jquery/dist/jquery.min";
-import "popper.js/dist/popper.min";
+// @flow
+import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.min';
+import 'jquery/dist/jquery.min';
+import 'popper.js/dist/popper.min';
 
-import { connect } from "react-redux";
-import { Route, Switch, Link } from "react-router-dom";
-import styled from "styled-components";
-import { getSpinner } from "./redux/spinner/selectors";
-import { MOVIES_SEARCH_ROUTE, ROUTES } from "./navigation/routes";
-import Home from "./pages/Home";
+import * as React from 'react';
+import { connect } from 'react-redux';
+import { Route, Switch, Link } from 'react-router-dom';
+import styled from 'styled-components';
+import { MOVIES_SEARCH_ROUTE, ROUTES } from 'navigation/routes';
+import { getSpinner } from 'redux-config/spinner/selectors';
+import Home from 'pages/home/Home';
+import type { Route as RouteType } from 'flow';
+
+const PageContentContainer = styled.div`
+  height: calc(100vh - 56px);
+`;
 
 const Spinner = styled.div`
   position: absolute;
@@ -21,7 +27,11 @@ const Spinner = styled.div`
   z-index: 7;
 `;
 
-function App({ spinner }) {
+type Props = {
+  spinner: boolean,
+};
+
+function App({ spinner }: Props) {
   return (
     <React.Fragment>
       {spinner && (
@@ -30,7 +40,6 @@ function App({ spinner }) {
         </Spinner>
       )}
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
-        <span className="navbar-brand">Open Data</span>
         <button
           className="navbar-toggler"
           type="button"
@@ -55,20 +64,20 @@ function App({ spinner }) {
           </ul>
         </div>
       </nav>
-      <div className="container-fluid">
-        <div className="row full-screen">
+      <PageContentContainer className="container-fluid">
+        <div className="row h-100">
           <div className="col-sm-2 bg-secondary" />
           <div className="col-sm-8 pt-5">
             <Switch>
-              {ROUTES.map(route => (
-                <Route key={route.path} {...route} />
+              {ROUTES.map(({ path, component }: RouteType) => (
+                <Route key={path} path={path} component={component} />
               ))}
               <Route component={Home} />
             </Switch>
           </div>
           <div className="col-sm-2 bg-secondary" />
         </div>
-      </div>
+      </PageContentContainer>
     </React.Fragment>
   );
 }

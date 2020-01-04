@@ -1,4 +1,5 @@
-export const findMovieActors = id =>
+// @flow
+export const findMovieActors = (id: string) =>
   `SELECT DISTINCT ?name ?id WHERE {
      ?movie wdt:P31 wd:Q11424;
             wdt:P345 "${id}";
@@ -8,7 +9,7 @@ export const findMovieActors = id =>
      FILTER(lang(?name) = 'en')
 }`;
 
-export const findMoviesByActor = id =>
+export const findMoviesByActor = (id: string) =>
   `SELECT ?name ?id (MIN(year(?date)) as ?year) WHERE {
     ?actor wdt:P345 "${id}".
     ?movie wdt:P31 wd:Q11424;
@@ -19,7 +20,7 @@ export const findMoviesByActor = id =>
     FILTER(lang(?name) = 'en')
 } GROUP BY ?name ?id ORDER BY DESC(?year)`;
 
-export const findMoviesByDirector = id =>
+export const findMoviesByDirector = (id: string) =>
   `SELECT ?name ?id (MIN(year(?date)) as ?year) WHERE {
     ?director wdt:P345 "${id}".
     ?movie wdt:P31 wd:Q11424;
@@ -30,7 +31,7 @@ export const findMoviesByDirector = id =>
     FILTER(lang(?name) = 'en')
 } GROUP BY ?name ?id ORDER BY DESC(?year)`;
 
-export const findMoviesByWriter = id =>
+export const findMoviesByWriter = (id: string) =>
   `SELECT ?name ?id (MIN(year(?date)) as ?year) WHERE {
     ?writer wdt:P345 "${id}".
     ?movie wdt:P31 wd:Q11424;
@@ -42,9 +43,9 @@ export const findMoviesByWriter = id =>
 } GROUP BY ?name ?id ORDER BY DESC(?year)`;
 
 export const findMoviesByYearAndGenre = (
-  genre,
-  yearFrom = 2000,
-  yearTo = 2049
+  genre: ?string,
+  yearFrom: number = 2000,
+  yearTo: number = 2049,
 ) => {
   if (!genre) {
     return findMoviesByYear(yearFrom, yearTo);
@@ -74,7 +75,7 @@ export const findMoviesByYearAndGenre = (
           } ORDER BY DESC(?year)`;
 };
 
-const findMoviesByYear = (yearFrom, yearTo) =>
+const findMoviesByYear = (yearFrom: number, yearTo: number) =>
   `SELECT DISTINCT ?name ?id ?year 
     WITH {
       ${findMoviesWithYear()}
@@ -93,20 +94,20 @@ const findMoviesWithYear = () =>
            wdt:P577 ?date.
   } GROUP BY ?movie`;
 
-export const findPersonId = name =>
+export const findPersonId = (name: string) =>
   `SELECT ?result WHERE {
     ?person rdfs:label "${name}"@en;
             wdt:P345 ?result.
   }`;
 
-export const findPersonName = id =>
+export const findPersonName = (id: string) =>
   `SELECT ?result WHERE {
     ?person wdt:P345 "${id}";
             rdfs:label ?result.
     FILTER(lang(?result) = 'en')
   }`;
 
-export const findPersonAwards = id =>
+export const findPersonAwards = (id: string) =>
   `SELECT ?result WHERE {
     ?person wdt:P345 "${id}";
             wdt:P166 ?award.
@@ -114,7 +115,7 @@ export const findPersonAwards = id =>
     FILTER(lang(?result) = 'en')
 }`;
 
-export const findPersonNominations = id =>
+export const findPersonNominations = (id: string) =>
   `SELECT ?result WHERE {
     ?person wdt:P345 "${id}";
             wdt:P1411 ?nomination.
@@ -122,15 +123,15 @@ export const findPersonNominations = id =>
     FILTER(lang(?result) = 'en')
 }`;
 
-export const findPersonImage = id =>
+export const findPersonImage = (id: string) =>
   `SELECT ?result WHERE {
     ?person wdt:P345 "${id}";
             wdt:P18 ?result.
 }`;
 
-export const runWikidataQuery = query =>
+export const runWikidataQuery = (query: string) =>
   fetch(
     `https://query.wikidata.org/sparql?format=json&query=${encodeURIComponent(
-      query
-    )}`
+      query,
+    )}`,
   ).then(response => response.json());
