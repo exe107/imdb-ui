@@ -6,67 +6,22 @@ import 'jquery/dist/jquery.min';
 import 'popper.js/dist/popper.min';
 
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { Route, Switch, Link } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
-import { MOVIES_SEARCH_ROUTE, ROUTES } from 'navigation/routes';
-import { getSpinner } from 'redux-config/spinner/selectors';
-import Home from 'pages/home/Home';
-import User from 'pages/user/User';
-import type { Route as RouteType } from 'flow';
+import { ROUTES } from 'app/navigation/routes';
+import AppInitializer from 'app/components/AppInitializer';
+import NavigationBar from 'app/components/NavigationBar';
+import Home from 'app/pages/home/Home';
+import type { Route as RouteType } from 'app/flow';
 
 const PageContentContainer = styled.div`
   height: calc(100vh - 56px);
 `;
 
-const Spinner = styled.div`
-  position: absolute;
-  margin: 0;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 7;
-`;
-
-type Props = {
-  spinner: boolean,
-};
-
-function App({ spinner }: Props) {
+const App = (): React.Node => {
   return (
-    <React.Fragment>
-      {spinner && (
-        <Spinner>
-          <div className="spinner-border" />
-        </Spinner>
-      )}
-      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div className="container">
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-toggle="collapse"
-            data-target="#navbarContent"
-          >
-            <span className="navbar-toggler-icon" />
-          </button>
-          <div className="collapse navbar-collapse" id="navbarContent">
-            <ul className="navbar-nav mr-auto">
-              <li className="nav-item">
-                <Link className="nav-link" to="/">
-                  Home
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to={MOVIES_SEARCH_ROUTE.path}>
-                  Movies
-                </Link>
-              </li>
-              <User />
-            </ul>
-          </div>
-        </div>
-      </nav>
+    <AppInitializer>
+      <NavigationBar />
       <PageContentContainer className="container-fluid">
         <div className="row h-100">
           <div className="col-sm-2 bg-secondary" />
@@ -81,10 +36,8 @@ function App({ spinner }: Props) {
           <div className="col-sm-2 bg-secondary" />
         </div>
       </PageContentContainer>
-    </React.Fragment>
+    </AppInitializer>
   );
-}
+};
 
-const mapStateToProps = state => ({ spinner: getSpinner(state) });
-
-export default connect(mapStateToProps)(App);
+export default App;

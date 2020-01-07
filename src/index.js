@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { store } from 'redux-config';
+import { store } from 'app/redux';
 import { ConnectedRouter } from 'connected-react-router';
-import { history } from 'redux-config/history';
+import { history } from 'app/redux/history';
 import App from 'App';
 import * as serviceWorker from 'serviceWorker';
 import 'index.css';
