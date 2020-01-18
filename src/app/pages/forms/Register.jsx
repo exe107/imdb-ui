@@ -2,7 +2,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Form } from 'react-final-form';
-import { FORM_ERROR } from 'final-form';
 import { asyncOperation } from 'app/common/util';
 import { registerUser } from 'app/http';
 import { goBack } from 'app/navigation/util';
@@ -14,6 +13,7 @@ import {
   minLengthValidator,
   requiredValidator,
 } from 'app/pages/forms/validators';
+import { addError } from 'app/redux/errors/actions';
 import { FormContainer } from 'app/pages/forms/styles';
 import InputField from 'app/pages/forms/InputField';
 import type { FormRenderProps } from 'react-final-form';
@@ -22,15 +22,17 @@ import type {
   UserCredentials,
   UserPersonalDetails,
 } from 'app/redux/user/flow';
+import type { AddErrorAction } from 'app/redux/errors/flow';
 
 type FormValues = UserPersonalDetails & UserCredentials;
 
 type Props = {
   user: UserPersonalDetails,
   saveUser: UserPersonalDetails => SaveUserAction,
+  addError: string => AddErrorAction,
 };
 
-const Register = ({ user, saveUser }: Props) => {
+const Register = ({ user, saveUser, addError }: Props) => {
   const nameValidator = React.useCallback(
     composeValidators([requiredValidator, alphabeticValidator]),
     [],
@@ -42,15 +44,14 @@ const Register = ({ user, saveUser }: Props) => {
   );
 
   const onSubmit = React.useCallback(
-    async (formValues: FormValues) => {
-      const response = await asyncOperation(() => registerUser(formValues));
-      if (response.status === 409) {
-        return { [FORM_ERROR]: response.message };
-      }
-
-      saveUser(response);
+    (formValues: FormValues) => {
+      asyncOperation(() =>
+        registerUser(formValues)
+          .then(saveUser)
+          .catch(addError),
+      );
     },
-    [saveUser],
+    [saveUser, addError],
   );
 
   if (user) {
@@ -100,6 +101,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   saveUser,
+  addError,
 };
 
 export default connect(

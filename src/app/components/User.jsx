@@ -5,7 +5,9 @@ import styled from 'styled-components';
 import { asyncOperation } from 'app/common/util';
 import { logoutUser } from 'app/http';
 import { clearUser } from 'app/redux/user/actions';
+import { addError } from 'app/redux/errors/actions';
 import type { ClearUserAction, UserPersonalDetails } from 'app/redux/user/flow';
+import type { AddErrorAction } from 'app/redux/errors/flow';
 
 const UserButton = styled.button`
   :focus {
@@ -16,14 +18,21 @@ const UserButton = styled.button`
 type Props = {
   user: UserPersonalDetails,
   clearUser: () => ClearUserAction,
+  addError: string => AddErrorAction,
 };
 
-export const User = ({ user, clearUser }: Props): React.Node => {
+export const User = ({ user, clearUser, addError }: Props): React.Node => {
   const { name, surname } = user;
 
-  const onLogoutClick = React.useCallback(() => {
-    asyncOperation(() => logoutUser().then(clearUser));
-  }, [clearUser]);
+  const onLogoutClick = React.useCallback(
+    () =>
+      asyncOperation(() =>
+        logoutUser()
+          .then(clearUser)
+          .catch(addError),
+      ),
+    [clearUser, addError],
+  );
 
   return (
     <div className="dropdown">
@@ -48,6 +57,7 @@ export const User = ({ user, clearUser }: Props): React.Node => {
 
 const mapDispatchToProps = {
   clearUser,
+  addError,
 };
 
 export default connect(

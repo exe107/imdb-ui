@@ -2,7 +2,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Form } from 'react-final-form';
-import { FORM_ERROR } from 'final-form';
 import { asyncOperation } from 'app/common/util';
 import { loginUser } from 'app/http';
 import { goBack } from 'app/navigation/util';
@@ -21,30 +20,32 @@ import type {
   UserCredentials,
   UserPersonalDetails,
 } from 'app/redux/user/flow';
+import { addError } from 'app/redux/errors/actions';
+import type { AddErrorAction } from 'app/redux/errors/flow';
 
 type FormValues = UserCredentials;
 
 type Props = {
   user: UserPersonalDetails,
   saveUser: UserPersonalDetails => SaveUserAction,
+  addError: string => AddErrorAction,
 };
 
-const Login = ({ user, saveUser }: Props): React.Node => {
+const Login = ({ user, saveUser, addError }: Props): React.Node => {
   const passwordValidator = React.useCallback(
     composeValidators([requiredValidator, minLengthValidator(7)]),
     [],
   );
 
   const onSubmit = React.useCallback(
-    async (formValues: FormValues) => {
-      const response = await asyncOperation(() => loginUser(formValues));
-      if (response.status === 401) {
-        return { [FORM_ERROR]: response.message };
-      }
-
-      saveUser(response);
+    (formValues: FormValues) => {
+      asyncOperation(() =>
+        loginUser(formValues)
+          .then(saveUser)
+          .catch(addError),
+      );
     },
-    [saveUser],
+    [saveUser, addError],
   );
 
   if (user) {
@@ -91,6 +92,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   saveUser,
+  addError,
 };
 
 export default connect(
