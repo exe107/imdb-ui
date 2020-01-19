@@ -8,13 +8,17 @@ import { getSpinner } from 'app/redux/spinner/selectors';
 import { saveUser } from 'app/redux/user/actions';
 import type { SaveUserAction, User } from 'app/redux/user/flow';
 
+const SpinnerContainer = styled.div`
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  z-index: 7;
+`;
+
 const Spinner = styled.div`
   position: absolute;
-  margin: 0;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 7;
 `;
 
 type InitializationData = {
@@ -42,9 +46,9 @@ const AppInitializer = ({ children, spinner, saveUser }: Props): React.Node => {
   return (
     <React.Fragment>
       {spinner && (
-        <Spinner>
-          <div className="spinner-border" />
-        </Spinner>
+        <SpinnerContainer>
+          <Spinner className="spinner-border" />
+        </SpinnerContainer>
       )}
       {fetchingFinished && children}
     </React.Fragment>

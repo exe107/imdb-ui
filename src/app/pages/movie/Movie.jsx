@@ -1,5 +1,6 @@
 // @flow
 import * as React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { asyncOperation } from 'app/common/util';
 import { searchMovie } from 'app/movies/omdb';
@@ -12,15 +13,22 @@ import {
   extractPeopleQueryResults,
   extractQuerySingleResult,
 } from 'app/movies/util';
+import { getUser } from 'app/redux/user/selectors';
 import imageNotFound from 'app/images/image_not_found.png';
 import PeopleSection from 'app/common/components/PeopleSection';
+import MovieRating from 'app/pages/movie/MovieRating';
 import type { MovieDetails, Person, SparqlResponse } from 'app/flow';
+import type { User } from 'app/redux/user/flow';
 
 const MoviePoster = styled.img`
   height: 700px;
 `;
 
-const Movie = (): React.Node => {
+type Props = {
+  user: User,
+};
+
+const Movie = ({ user }: Props): React.Node => {
   const [movie, setMovie] = React.useState<?MovieDetails>();
   const [directors, setDirectors] = React.useState([]);
   const [cast, setCast] = React.useState([]);
@@ -77,6 +85,7 @@ const Movie = (): React.Node => {
     }
 
     const {
+      imdbID,
       Poster,
       Title,
       Year,
@@ -105,17 +114,27 @@ const Movie = (): React.Node => {
       .filter(actor => actor.id);
 
     const NOT_AVAILABLE = 'N/A';
-
     const image = Poster !== NOT_AVAILABLE ? Poster : imageNotFound;
+
+    const userMovie = {
+      id: imdbID,
+      name: Title,
+      year: Number(Year),
+      imageUrl: Poster,
+      rating: Number(imdbRating),
+    };
 
     return (
       <React.Fragment>
         <div className="d-flex justify-content-center">
           <MoviePoster src={image} />
         </div>
-        <h1 className="text-center my-5">
-          {Title} ({Year})
-        </h1>
+        <div className="d-flex justify-content-center my-5">
+          <h1>
+            {Title} ({Year})
+          </h1>
+          {user && <MovieRating user={user} movie={userMovie} />}
+        </div>
         {Plot !== NOT_AVAILABLE && (
           <h5 className="my-5 text-justify px-5">{Plot}</h5>
         )}
@@ -148,4 +167,8 @@ const Movie = (): React.Node => {
   return null;
 };
 
-export default Movie;
+const mapStateToProps = state => ({
+  user: getUser(state),
+});
+
+export default connect(mapStateToProps)(Movie);

@@ -35,6 +35,27 @@ export type SaveUserAction = Action & {
 
 export type ClearUserAction = Action;
 
+export type RateMovieAction = Action & {
+  movieRating: UserMovieRating,
+  isNewRating: boolean,
+};
+
+export type SaveRatingAction = Action & {
+  movieRating: UserMovieRating,
+};
+
+export type UpdateRatingAction = Action & {
+  movieRating: UserMovieRating,
+};
+
+export type DeleteRatingAction = Action & {
+  movieId: string,
+};
+
+export type RemoveRatingAction = Action & {
+  movieId: string,
+};
+
 export type UserState = {
   user: User,
 };
