@@ -11,12 +11,30 @@ export type UserCredentials = {
   password: string,
 };
 
+export type UserMovie = {
+  id: string,
+  name: string,
+  year: number,
+  imageUrl: string,
+  rating: number,
+};
+
+export type UserMovieRating = {
+  movie: UserMovie,
+  rating: number,
+};
+
+export type User = {
+  personalDetails: UserPersonalDetails,
+  movieRatings: UserMovieRating[],
+};
+
 export type SaveUserAction = Action & {
-  user: UserPersonalDetails,
+  user: User,
 };
 
 export type ClearUserAction = Action;
 
 export type UserState = {
-  user: UserPersonalDetails,
+  user: User,
 };

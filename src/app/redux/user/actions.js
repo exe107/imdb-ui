@@ -2,13 +2,13 @@
 import type {
   ClearUserAction,
   SaveUserAction,
-  UserPersonalDetails,
+  User,
 } from 'app/redux/user/flow';
 
 export const SAVE_USER = 'SAVE_USER';
 export const CLEAR_USER = 'CLEAR_USER';
 
-export const saveUser = (user: UserPersonalDetails): SaveUserAction => ({
+export const saveUser = (user: User): SaveUserAction => ({
   type: SAVE_USER,
   user,
 });

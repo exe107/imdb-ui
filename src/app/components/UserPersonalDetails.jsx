@@ -6,7 +6,10 @@ import { asyncOperation } from 'app/common/util';
 import { logoutUser } from 'app/http';
 import { clearUser } from 'app/redux/user/actions';
 import { addError } from 'app/redux/errors/actions';
-import type { ClearUserAction, UserPersonalDetails } from 'app/redux/user/flow';
+import type {
+  ClearUserAction,
+  UserPersonalDetails as PersonalDetails,
+} from 'app/redux/user/flow';
 import type { AddErrorAction } from 'app/redux/errors/flow';
 
 const UserButton = styled.button`
@@ -16,13 +19,17 @@ const UserButton = styled.button`
 `;
 
 type Props = {
-  user: UserPersonalDetails,
+  personalDetails: PersonalDetails,
   clearUser: () => ClearUserAction,
   addError: string => AddErrorAction,
 };
 
-export const User = ({ user, clearUser, addError }: Props): React.Node => {
-  const { name, surname } = user;
+export const UserPersonalDetails = ({
+  personalDetails,
+  clearUser,
+  addError,
+}: Props): React.Node => {
+  const { name, surname } = personalDetails;
 
   const onLogoutClick = React.useCallback(
     () =>
@@ -63,4 +70,4 @@ const mapDispatchToProps = {
 export default connect(
   null,
   mapDispatchToProps,
-)(User);
+)(UserPersonalDetails);

@@ -6,7 +6,7 @@ import { asyncOperation } from 'app/common/util';
 import { getInitializationData } from 'app/http';
 import { getSpinner } from 'app/redux/spinner/selectors';
 import { saveUser } from 'app/redux/user/actions';
-import type { SaveUserAction, UserPersonalDetails } from 'app/redux/user/flow';
+import type { SaveUserAction, User } from 'app/redux/user/flow';
 
 const Spinner = styled.div`
   position: absolute;
@@ -18,13 +18,13 @@ const Spinner = styled.div`
 `;
 
 type InitializationData = {
-  user: UserPersonalDetails,
+  user: User,
 };
 
 type Props = {
   children: React.Node,
   spinner: boolean,
-  saveUser: UserPersonalDetails => SaveUserAction,
+  saveUser: User => SaveUserAction,
 };
 
 const AppInitializer = ({ children, spinner, saveUser }: Props): React.Node => {

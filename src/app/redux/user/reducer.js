@@ -1,10 +1,9 @@
 // @flow
 import { createReducer } from 'app/redux/util';
 import { CLEAR_USER, SAVE_USER } from 'app/redux/user/actions';
-import type { SaveUserAction, UserPersonalDetails } from 'app/redux/user/flow';
+import type { SaveUserAction, User } from 'app/redux/user/flow';
 
-const saveUser = (state: UserPersonalDetails, action: SaveUserAction) =>
-  action.user;
+const saveUser = (state: User, action: SaveUserAction) => action.user;
 
 const clearUser = () => null;
 

@@ -8,11 +8,11 @@ import {
   REGISTER_ROUTE,
 } from 'app/navigation/routes';
 import { getUser } from 'app/redux/user/selectors';
-import User from 'app/components/User';
-import type { UserPersonalDetails } from 'app/redux/user/flow';
+import UserPersonalDetails from 'app/components/UserPersonalDetails';
+import type { User } from 'app/redux/user/flow';
 
 type Props = {
-  user: UserPersonalDetails,
+  user: User,
 };
 
 const NavigationBar = ({ user }: Props) => (
@@ -54,7 +54,7 @@ const NavigationBar = ({ user }: Props) => (
           )}
         </ul>
       </div>
-      {user && <User user={user} />}
+      {user && <UserPersonalDetails personalDetails={user.personalDetails} />}
     </div>
   </nav>
 );

@@ -19,6 +19,7 @@ import InputField from 'app/pages/forms/InputField';
 import type { FormRenderProps } from 'react-final-form';
 import type {
   SaveUserAction,
+  User,
   UserCredentials,
   UserPersonalDetails,
 } from 'app/redux/user/flow';
@@ -27,8 +28,8 @@ import type { AddErrorAction } from 'app/redux/errors/flow';
 type FormValues = UserPersonalDetails & UserCredentials;
 
 type Props = {
-  user: UserPersonalDetails,
-  saveUser: UserPersonalDetails => SaveUserAction,
+  user: User,
+  saveUser: User => SaveUserAction,
   addError: string => AddErrorAction,
 };
 
