@@ -45,9 +45,9 @@ export const getInitializationData = () => GET('/initialization');
 export const registerUser = (body: UserPersonalDetails & UserCredentials) =>
   POST('/register', body);
 
-export const loginUser = (body: UserCredentials) => POST('/login', body);
+export const logInUser = (body: UserCredentials) => POST('/login', body);
 
-export const logoutUser = () => POST('/logout');
+export const logOutUser = () => POST('/logout');
 
 export const rateMovie = (body: UserMovieRating) =>
   POST('/movies/ratings', body);

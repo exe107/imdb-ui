@@ -1,42 +1,75 @@
 // @flow
 import { takeEvery, call, put, all } from 'redux-saga/effects';
 import {
+  LOGIN_USER,
+  LOGOUT_USER,
   DELETE_RATING,
   RATE_MOVIE,
+  clearUser,
   removeRating,
   saveRating,
   updateRating,
+  saveUser,
+  REGISTER_USER,
 } from 'app/redux/user/actions';
-import { deleteRating, rateMovie } from 'app/http';
+import {
+  deleteRating,
+  logInUser,
+  logOutUser,
+  rateMovie,
+  registerUser,
+} from 'app/http';
 import { hideSpinner, showSpinner } from 'app/redux/spinner/actions';
 import { addError } from 'app/redux/errors/actions';
-import type { DeleteRatingAction, RateMovieAction } from 'app/redux/user/flow';
+import type {
+  DeleteRatingAction,
+  LogInUserAction,
+  RateMovieAction,
+  RegisterUserAction,
+} from 'app/redux/user/flow';
 
 type SagaFunction = Generator<any, any, any>;
 
 function withSpinner(worker: Function): Function {
   return function*(...args) {
     yield put(showSpinner());
-    yield call(worker, ...args);
+
+    try {
+      yield call(worker, ...args);
+    } catch (error) {
+      yield put(addError(error));
+    }
+
     yield put(hideSpinner());
   };
+}
+
+function* registerWorker({ userDetails }: RegisterUserAction): SagaFunction {
+  const user = yield call(registerUser, userDetails);
+  yield put(saveUser(user));
+}
+
+function* logInWorker({ userCredentials }: LogInUserAction): SagaFunction {
+  const user = yield call(logInUser, userCredentials);
+  yield put(saveUser(user));
+}
+
+function* logOutWorker(): SagaFunction {
+  yield call(logOutUser);
+  yield put(clearUser());
 }
 
 function* rateMovieWorker({
   movieRating,
   isNewRating,
 }: RateMovieAction): SagaFunction {
-  try {
-    yield call(rateMovie, movieRating);
+  yield call(rateMovie, movieRating);
 
-    const action = isNewRating
-      ? saveRating(movieRating)
-      : updateRating(movieRating);
+  const action = isNewRating
+    ? saveRating(movieRating)
+    : updateRating(movieRating);
 
-    yield put(action);
-  } catch (error) {
-    yield put(addError(error));
-  }
+  yield put(action);
 }
 
 function* deleteRatingWorker({ movieId }: DeleteRatingAction): SagaFunction {
@@ -48,6 +81,18 @@ function* deleteRatingWorker({ movieId }: DeleteRatingAction): SagaFunction {
   }
 }
 
+function* registerWatcher(): SagaFunction {
+  yield takeEvery(REGISTER_USER, withSpinner(registerWorker));
+}
+
+function* logInWatcher(): SagaFunction {
+  yield takeEvery(LOGIN_USER, withSpinner(logInWorker));
+}
+
+function* logOutWatcher(): SagaFunction {
+  yield takeEvery(LOGOUT_USER, withSpinner(logOutWorker));
+}
+
 function* rateMovieWatcher(): SagaFunction {
   yield takeEvery(RATE_MOVIE, withSpinner(rateMovieWorker));
 }
@@ -57,5 +102,11 @@ function* deleteRatingWatcher(): SagaFunction {
 }
 
 export default function* rootSaga(): SagaFunction {
-  yield all([rateMovieWatcher(), deleteRatingWatcher()]);
+  yield all([
+    registerWatcher(),
+    logInWatcher(),
+    logOutWatcher(),
+    rateMovieWatcher(),
+    deleteRatingWatcher(),
+  ]);
 }

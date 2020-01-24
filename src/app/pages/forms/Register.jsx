@@ -2,18 +2,15 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Form } from 'react-final-form';
-import { asyncOperation } from 'app/common/util';
-import { registerUser } from 'app/http';
 import { goBack } from 'app/navigation/util';
 import { getUser } from 'app/redux/user/selectors';
-import { saveUser } from 'app/redux/user/actions';
+import { registerUser } from 'app/redux/user/actions';
 import {
   alphabeticValidator,
   composeValidators,
   minLengthValidator,
   requiredValidator,
 } from 'app/pages/forms/validators';
-import { addError } from 'app/redux/errors/actions';
 import { FormContainer } from 'app/pages/forms/styles';
 import InputField from 'app/pages/forms/InputField';
 import type { FormRenderProps } from 'react-final-form';
@@ -23,17 +20,15 @@ import type {
   UserCredentials,
   UserPersonalDetails,
 } from 'app/redux/user/flow';
-import type { AddErrorAction } from 'app/redux/errors/flow';
 
 type FormValues = UserPersonalDetails & UserCredentials;
 
 type Props = {
   user: User,
-  saveUser: User => SaveUserAction,
-  addError: string => AddErrorAction,
+  registerUser: FormValues => SaveUserAction,
 };
 
-const Register = ({ user, saveUser, addError }: Props) => {
+const Register = ({ user, registerUser }: Props) => {
   const nameValidator = React.useCallback(
     composeValidators([requiredValidator, alphabeticValidator]),
     [],
@@ -44,24 +39,13 @@ const Register = ({ user, saveUser, addError }: Props) => {
     [],
   );
 
-  const onSubmit = React.useCallback(
-    (formValues: FormValues) => {
-      asyncOperation(() =>
-        registerUser(formValues)
-          .then(saveUser)
-          .catch(addError),
-      );
-    },
-    [saveUser, addError],
-  );
-
   if (user) {
     goBack();
     return null;
   }
 
   return (
-    <Form onSubmit={onSubmit}>
+    <Form onSubmit={registerUser}>
       {({ handleSubmit, submitError }: FormRenderProps<FormValues>) => (
         <FormContainer>
           <h1 className="text-center mb-4">Sign up</h1>
@@ -101,8 +85,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  saveUser,
-  addError,
+  registerUser,
 };
 
 export default connect(

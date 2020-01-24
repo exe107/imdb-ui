@@ -8,7 +8,8 @@ import {
   REGISTER_ROUTE,
 } from 'app/navigation/routes';
 import { getUser } from 'app/redux/user/selectors';
-import UserPersonalDetails from 'app/components/UserPersonalDetails';
+import SearchBar from 'app/components/navbar/SearchBar';
+import UserPersonalDetails from 'app/components/navbar/UserPersonalDetails';
 import type { User } from 'app/redux/user/flow';
 
 type Props = {
@@ -52,6 +53,9 @@ const NavigationBar = ({ user }: Props) => (
               </li>
             </React.Fragment>
           )}
+          <li className="nav-item w-50 ml-auto">
+            <SearchBar />
+          </li>
         </ul>
       </div>
       {user && <UserPersonalDetails personalDetails={user.personalDetails} />}

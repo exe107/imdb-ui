@@ -33,9 +33,11 @@ export const findPersonAbstract = (person: string) =>
   filter(lang(?result) = 'en')
 }`;
 
+const herokuProxy = String(process.env.REACT_APP_HEROKU_PROXY);
+
 export const runDbpediaQuery = (query: string) =>
   fetch(
     encodeURI(
-      `https://dbpedia.org/sparql?default-graph-uri=http://dbpedia.org&format=json&query=${query}`,
+      `${herokuProxy}https://dbpedia.org/sparql?default-graph-uri=http://dbpedia.org&format=json&query=${query}`,
     ),
   ).then(response => response.json());

@@ -2,11 +2,9 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Form } from 'react-final-form';
-import { asyncOperation } from 'app/common/util';
-import { loginUser } from 'app/http';
+import { logInUser } from 'app/redux/user/actions';
 import { goBack } from 'app/navigation/util';
 import { getUser } from 'app/redux/user/selectors';
-import { saveUser } from 'app/redux/user/actions';
 import {
   composeValidators,
   minLengthValidator,
@@ -20,32 +18,18 @@ import type {
   User,
   UserCredentials,
 } from 'app/redux/user/flow';
-import { addError } from 'app/redux/errors/actions';
-import type { AddErrorAction } from 'app/redux/errors/flow';
 
 type FormValues = UserCredentials;
 
 type Props = {
   user: User,
-  saveUser: User => SaveUserAction,
-  addError: string => AddErrorAction,
+  logInUser: UserCredentials => SaveUserAction,
 };
 
-const Login = ({ user, saveUser, addError }: Props): React.Node => {
+const Login = ({ user, logInUser }: Props): React.Node => {
   const passwordValidator = React.useCallback(
     composeValidators([requiredValidator, minLengthValidator(7)]),
     [],
-  );
-
-  const onSubmit = React.useCallback(
-    (formValues: FormValues) => {
-      asyncOperation(() =>
-        loginUser(formValues)
-          .then(saveUser)
-          .catch(addError),
-      );
-    },
-    [saveUser, addError],
   );
 
   if (user) {
@@ -54,7 +38,7 @@ const Login = ({ user, saveUser, addError }: Props): React.Node => {
   }
 
   return (
-    <Form onSubmit={onSubmit}>
+    <Form onSubmit={logInUser}>
       {({ handleSubmit, submitError }: FormRenderProps<FormValues>) => (
         <FormContainer>
           <h1 className="text-center">Sign in</h1>
@@ -91,8 +75,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  saveUser,
-  addError,
+  logInUser,
 };
 
 export default connect(

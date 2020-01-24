@@ -4,15 +4,16 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.min';
 import 'jquery/dist/jquery.min';
 import 'popper.js/dist/popper.min';
+import 'font-awesome/css/font-awesome.min.css';
 
 import * as React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
 import { ROUTES } from 'app/navigation/routes';
 import AppInitializer from 'app/components/AppInitializer';
-import NavigationBar from 'app/components/NavigationBar';
+import NavigationBar from 'app/components/navbar/NavigationBar';
 import Errors from 'app/components/Errors';
-import Home from 'app/pages/home/Home';
+import MoviesSearch from 'app/pages/movies-search/MoviesSearch';
 import type { Route as RouteType } from 'app/flow';
 
 const PageContentContainer = styled.div`
@@ -31,7 +32,7 @@ const App = (): React.Node => (
             {ROUTES.map(({ path, component }: RouteType) => (
               <Route key={path} path={path} component={component} />
             ))}
-            <Route component={Home} />
+            <Route component={MoviesSearch} />
           </Switch>
         </div>
         <div className="col-sm-2 bg-secondary" />

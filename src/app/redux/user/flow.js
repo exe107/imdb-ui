@@ -29,6 +29,14 @@ export type User = {
   movieRatings: UserMovieRating[],
 };
 
+export type RegisterUserAction = Action & {
+  userDetails: UserPersonalDetails & UserCredentials,
+};
+
+export type LogInUserAction = Action & {
+  userCredentials: UserCredentials,
+};
+
 export type SaveUserAction = Action & {
   user: User,
 };

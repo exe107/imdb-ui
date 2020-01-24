@@ -2,15 +2,9 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { asyncOperation } from 'app/common/util';
-import { logoutUser } from 'app/http';
-import { clearUser } from 'app/redux/user/actions';
-import { addError } from 'app/redux/errors/actions';
-import type {
-  ClearUserAction,
-  UserPersonalDetails as PersonalDetails,
-} from 'app/redux/user/flow';
-import type { AddErrorAction } from 'app/redux/errors/flow';
+import { logOutUser } from 'app/redux/user/actions';
+import type { Action } from 'redux';
+import type { UserPersonalDetails as PersonalDetails } from 'app/redux/user/flow';
 
 const UserButton = styled.button`
   :focus {
@@ -20,26 +14,14 @@ const UserButton = styled.button`
 
 type Props = {
   personalDetails: PersonalDetails,
-  clearUser: () => ClearUserAction,
-  addError: string => AddErrorAction,
+  logOutUser: () => Action,
 };
 
 export const UserPersonalDetails = ({
   personalDetails,
-  clearUser,
-  addError,
+  logOutUser,
 }: Props): React.Node => {
   const { name, surname } = personalDetails;
-
-  const onLogoutClick = React.useCallback(
-    () =>
-      asyncOperation(() =>
-        logoutUser()
-          .then(clearUser)
-          .catch(addError),
-      ),
-    [clearUser, addError],
-  );
 
   return (
     <div className="dropdown">
@@ -54,7 +36,7 @@ export const UserPersonalDetails = ({
         </span>
       </UserButton>
       <div className="dropdown-menu">
-        <button type="button" className="dropdown-item" onClick={onLogoutClick}>
+        <button type="button" className="dropdown-item" onClick={logOutUser}>
           Log out
         </button>
       </div>
@@ -63,8 +45,7 @@ export const UserPersonalDetails = ({
 };
 
 const mapDispatchToProps = {
-  clearUser,
-  addError,
+  logOutUser,
 };
 
 export default connect(

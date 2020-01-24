@@ -1,17 +1,17 @@
 // @flow
-import 'font-awesome/css/font-awesome.min.css';
-
 import * as React from 'react';
 import { history } from 'app/redux/history';
 import { MOVIE_ROUTE } from 'app/navigation/routes';
 import { constructUrl } from 'app/navigation/util';
 
-const Home = () => {
+const SearchBar = () => {
   const [movieTitle, setMovieTitle] = React.useState('');
 
-  const onSearchClick = React.useCallback(() => {
-    history.push(constructUrl(MOVIE_ROUTE.path, [], { title: movieTitle }));
-  }, [movieTitle]);
+  const onSearchClick = React.useCallback(
+    () =>
+      history.push(constructUrl(MOVIE_ROUTE.path, [], { title: movieTitle })),
+    [movieTitle],
+  );
 
   const onBlur = React.useCallback(
     event => setMovieTitle(event.target.value),
@@ -19,7 +19,7 @@ const Home = () => {
   );
 
   return (
-    <div className="input-group">
+    <div className="input-group w-100">
       <div className="input-group-prepend">
         <button className="btn btn-secondary" onClick={onSearchClick}>
           <i className="fa fa-search" />
@@ -34,4 +34,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default SearchBar;
