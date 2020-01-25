@@ -7,13 +7,22 @@ import { constructUrl } from 'app/navigation/util';
 const SearchBar = () => {
   const [movieTitle, setMovieTitle] = React.useState('');
 
-  const onSearchClick = React.useCallback(
+  const onSearch = React.useCallback(
     () =>
       history.push(constructUrl(MOVIE_ROUTE.path, [], { title: movieTitle })),
     [movieTitle],
   );
 
-  const onBlur = React.useCallback(
+  const onKeyPress = React.useCallback(
+    event => {
+      if (event.key === 'Enter') {
+        onSearch();
+      }
+    },
+    [onSearch],
+  );
+
+  const onChange = React.useCallback(
     event => setMovieTitle(event.target.value),
     [],
   );
@@ -21,14 +30,15 @@ const SearchBar = () => {
   return (
     <div className="input-group w-100">
       <div className="input-group-prepend">
-        <button className="btn btn-secondary" onClick={onSearchClick}>
+        <button className="btn btn-secondary" onClick={onSearch}>
           <i className="fa fa-search" />
         </button>
       </div>
       <input
         className="form-control"
         placeholder="Search for a movie"
-        onBlur={onBlur}
+        onChange={onChange}
+        onKeyPress={onKeyPress}
       />
     </div>
   );

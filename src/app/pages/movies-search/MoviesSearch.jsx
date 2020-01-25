@@ -1,15 +1,14 @@
 // @flow
 import * as React from 'react';
-import _get from 'lodash/get';
 import _isEmpty from 'lodash/isEmpty';
 import {
   findMoviesByYearAndGenre,
   runWikidataQuery,
 } from 'app/movies/wikidata';
+import { ASCENDING, DESCENDING, createNaturalOrderComparator } from 'app/util';
 import { asyncOperation } from 'app/common/util';
 import { extractMoviesQueryResults } from 'app/movies/util';
 import MoviesSearchResults from 'app/pages/movies-search/MoviesSearchResults';
-import type { Movie } from 'app/flow';
 
 const MoviesSearch = (): React.Node => {
   const [genre, setGenre] = React.useState();
@@ -17,26 +16,11 @@ const MoviesSearch = (): React.Node => {
   const [yearTo, setYearTo] = React.useState();
   const [movies, setMovies] = React.useState([]);
   const [sortKey, setSortKey] = React.useState('year');
-  const [sortOrder, setSortOrder] = React.useState('DESC');
+  const [sortOrder, setSortOrder] = React.useState(DESCENDING);
 
-  const comparator = React.useCallback(
-    (first: Movie, second: Movie) => {
-      const firstKey = _get(first, sortKey);
-      const secondKey = _get(second, sortKey);
-      const orderSign = sortOrder === 'DESC' ? -1 : 1;
-      let sign;
-
-      if (firstKey < secondKey) {
-        sign = -1;
-      } else if (firstKey > secondKey) {
-        sign = 1;
-      } else {
-        sign = 0;
-      }
-
-      return orderSign * sign;
-    },
-    [sortOrder, sortKey],
+  const comparator = React.useMemo(
+    () => createNaturalOrderComparator(sortKey, sortOrder),
+    [sortKey, sortOrder],
   );
 
   const sortedMovies = React.useMemo(() => movies.sort(comparator), [
@@ -64,7 +48,7 @@ const MoviesSearch = (): React.Node => {
   );
 
   const SORT_KEYS = React.useMemo(() => ['year', 'name'], []);
-  const SORT_ORDERS = React.useMemo(() => ['ASC', 'DESC'], []);
+  const SORT_ORDERS = React.useMemo(() => [ASCENDING, DESCENDING], []);
 
   const onSortKeyClick = React.useCallback(
     event => setSortKey(event.target.value),

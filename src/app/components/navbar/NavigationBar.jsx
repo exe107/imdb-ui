@@ -5,7 +5,9 @@ import { Link } from 'react-router-dom';
 import {
   LOGIN_ROUTE,
   MOVIES_SEARCH_ROUTE,
+  RATINGS_ROUTE,
   REGISTER_ROUTE,
+  WATCHLIST_ROUTE,
 } from 'app/navigation/routes';
 import { getUser } from 'app/redux/user/selectors';
 import SearchBar from 'app/components/navbar/SearchBar';
@@ -39,7 +41,20 @@ const NavigationBar = ({ user }: Props) => (
               Movies
             </Link>
           </li>
-          {!user && (
+          {user ? (
+            <React.Fragment>
+              <li className="nav-item">
+                <Link className="nav-link" to={RATINGS_ROUTE.path}>
+                  My ratings
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to={WATCHLIST_ROUTE.path}>
+                  Watchlist
+                </Link>
+              </li>
+            </React.Fragment>
+          ) : (
             <React.Fragment>
               <li className="nav-item">
                 <Link className="nav-link" to={LOGIN_ROUTE.path}>

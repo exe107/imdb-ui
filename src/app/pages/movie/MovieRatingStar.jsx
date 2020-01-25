@@ -1,14 +1,8 @@
 // @flow
 import * as React from 'react';
-import styled from 'styled-components';
+import { Star } from 'app/styled';
 import RatingModal from 'app/components/RatingModal';
 import type { User, UserMovie, UserMovieRating } from 'app/redux/user/flow';
-
-const RatingModalStar = styled.i`
-  :hover {
-    cursor: pointer;
-  }
-`;
 
 type Props = {
   user: User,
@@ -18,7 +12,7 @@ type Props = {
 const MODAL_NAME = 'ratingModal';
 const MODAL_ID = `#${MODAL_NAME}`;
 
-const MovieRating = ({ user, movie }: Props): React.Node => {
+const MovieRatingStar = ({ user, movie }: Props): React.Node => {
   const movieRating = user.movieRatings.find(
     (movieRating: UserMovieRating) => movieRating.movie.id === movie.id,
   );
@@ -29,12 +23,12 @@ const MovieRating = ({ user, movie }: Props): React.Node => {
   return (
     <React.Fragment>
       <h1
-        className="ml-3"
+        className="ml-3 d-inline"
         data-toggle="tooltip"
         data-placement="right"
         title="Rate this movie"
       >
-        <RatingModalStar
+        <Star
           className={`fa ${starClassName} text-warning`}
           data-toggle="modal"
           data-target={MODAL_ID}
@@ -51,4 +45,4 @@ const MovieRating = ({ user, movie }: Props): React.Node => {
   );
 };
 
-export default MovieRating;
+export default MovieRatingStar;

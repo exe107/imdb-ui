@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import _range from 'lodash/range';
 import $ from 'jquery';
 import { deleteRating, rateMovie } from 'app/redux/user/actions';
+import { Star } from 'app/styled';
 import type {
   UserMovie,
   UserMovieRating,
@@ -15,12 +16,6 @@ import type {
 const ModalBody = styled.div`
   width: 400px;
   margin: 0 auto;
-`;
-
-const Star = styled.i`
-  :hover {
-    cursor: pointer;
-  }
 `;
 
 type Props = {
@@ -92,13 +87,15 @@ const RatingModal = ({
             <h3 className="ml-auto">{rating}</h3>
           </ModalBody>
           <div className="modal-footer">
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={onRateClick}
-            >
-              Rate
-            </button>
+            {selectedRating > 0 && (
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={onRateClick}
+              >
+                Rate
+              </button>
+            )}
             {!isNewRating && (
               <button
                 type="button"

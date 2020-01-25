@@ -15,6 +15,7 @@ export type UserMovie = {
   id: string,
   name: string,
   year: number,
+  genres: string[],
   imageUrl: string,
   rating: number,
 };
@@ -22,6 +23,7 @@ export type UserMovie = {
 export type UserMovieRating = {
   movie: UserMovie,
   rating: number,
+  date?: string,
 };
 
 export type User = {

@@ -1,6 +1,5 @@
 // @flow
 import { parse } from 'qs';
-import { history } from 'app/redux/history';
 import type { MovieDetails } from 'app/flow';
 
 const herokuProxy = String(process.env.REACT_APP_HEROKU_PROXY);
@@ -9,8 +8,8 @@ const apiKey = String(process.env.REACT_APP_OMDB_APIKEY);
 
 const ENDPOINT_PROXY = `${herokuProxy}${omdbEndpoint}?apikey=${apiKey}&type=movie&plot=full`;
 
-export const searchMovie = (): Promise<MovieDetails> => {
-  const queryStringObj = parse(history.location.search, {
+export const searchMovie = (search: string): Promise<MovieDetails> => {
+  const queryStringObj = parse(search, {
     ignoreQueryPrefix: true,
   });
 

@@ -1,5 +1,7 @@
 // @flow
 import * as React from 'react';
+import { compose } from 'redux';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { asyncOperation } from 'app/common/util';
@@ -16,7 +18,7 @@ import {
 import { getUser } from 'app/redux/user/selectors';
 import imageNotFound from 'app/images/image_not_found.png';
 import PeopleSection from 'app/common/components/PeopleSection';
-import MovieRating from 'app/pages/movie/MovieRating';
+import MovieRatingStar from 'app/pages/movie/MovieRatingStar';
 import type { MovieDetails, Person, SparqlResponse } from 'app/flow';
 import type { User } from 'app/redux/user/flow';
 
@@ -26,9 +28,10 @@ const MoviePoster = styled.img`
 
 type Props = {
   user: User,
+  location: Object,
 };
 
-const Movie = ({ user }: Props): React.Node => {
+const Movie = ({ user, location }: Props): React.Node => {
   const [movie, setMovie] = React.useState<?MovieDetails>();
   const [directors, setDirectors] = React.useState([]);
   const [cast, setCast] = React.useState([]);
@@ -36,7 +39,7 @@ const Movie = ({ user }: Props): React.Node => {
 
   React.useEffect(() => {
     asyncOperation(() =>
-      searchMovie()
+      searchMovie(location.search)
         .then((response: MovieDetails) => {
           const { Director, imdbID, Response, Error } = response;
 
@@ -66,7 +69,14 @@ const Movie = ({ user }: Props): React.Node => {
         .catch(console.log)
         .then(() => setFetchingFinished(true)),
     );
-  }, []);
+
+    return () => {
+      setMovie(null);
+      setDirectors([]);
+      setCast([]);
+      setFetchingFinished(false);
+    };
+  }, [location.search]);
 
   // removes non alphabetic characters from name for easier matching between cast and stars
   const formatActorName = React.useCallback(
@@ -120,6 +130,7 @@ const Movie = ({ user }: Props): React.Node => {
       id: imdbID,
       name: Title,
       year: Number(Year),
+      genres: Genre.split(', '),
       imageUrl: Poster,
       rating: Number(imdbRating),
     };
@@ -129,11 +140,11 @@ const Movie = ({ user }: Props): React.Node => {
         <div className="d-flex justify-content-center">
           <MoviePoster src={image} />
         </div>
-        <div className="d-flex justify-content-center my-5">
-          <h1>
+        <div className="text-center my-5">
+          <h1 className="d-inline">
             {Title} ({Year})
           </h1>
-          {user && <MovieRating user={user} movie={userMovie} />}
+          {user && <MovieRatingStar user={user} movie={userMovie} />}
         </div>
         {Plot !== NOT_AVAILABLE && (
           <h5 className="my-5 text-justify px-5">{Plot}</h5>
@@ -171,4 +182,7 @@ const mapStateToProps = state => ({
   user: getUser(state),
 });
 
-export default connect(mapStateToProps)(Movie);
+export default compose(
+  connect(mapStateToProps),
+  withRouter,
+)(Movie);

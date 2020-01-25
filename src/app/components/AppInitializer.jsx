@@ -16,6 +16,8 @@ const SpinnerContainer = styled.div`
 `;
 
 const Spinner = styled.div`
+  height: 50px;
+  width: 50px;
   position: absolute;
   top: 50%;
   left: 50%;
