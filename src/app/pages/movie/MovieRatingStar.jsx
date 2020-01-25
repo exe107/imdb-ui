@@ -1,5 +1,6 @@
 // @flow
 import * as React from 'react';
+import $ from 'jquery';
 import { Star } from 'app/styled';
 import RatingModal from 'app/components/RatingModal';
 import type { User, UserMovie, UserMovieRating } from 'app/redux/user/flow';
@@ -13,6 +14,19 @@ const MODAL_NAME = 'ratingModal';
 const MODAL_ID = `#${MODAL_NAME}`;
 
 const MovieRatingStar = ({ user, movie }: Props): React.Node => {
+  const [showModal, setShowModal] = React.useState(false);
+
+  const toggleModal = React.useCallback(() => setShowModal(!showModal), [
+    showModal,
+  ]);
+
+  React.useEffect(() => {
+    if (showModal) {
+      $(MODAL_ID).modal('show');
+      $(MODAL_ID).on('hidden.bs.modal', toggleModal);
+    }
+  }, [showModal, toggleModal]);
+
   const movieRating = user.movieRatings.find(
     (movieRating: UserMovieRating) => movieRating.movie.id === movie.id,
   );
@@ -30,17 +44,18 @@ const MovieRatingStar = ({ user, movie }: Props): React.Node => {
       >
         <Star
           className={`fa ${starClassName} text-warning`}
-          data-toggle="modal"
-          data-target={MODAL_ID}
+          onClick={toggleModal}
         />
         {rating > 0 && <span className="ml-2">{rating}</span>}
       </h1>
-      <RatingModal
-        modalId={MODAL_ID}
-        modalName={MODAL_NAME}
-        movie={movie}
-        previousRating={rating}
-      />
+      {showModal && (
+        <RatingModal
+          modalId={MODAL_ID}
+          modalName={MODAL_NAME}
+          movie={movie}
+          previousRating={rating}
+        />
+      )}
     </React.Fragment>
   );
 };
