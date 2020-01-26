@@ -1,6 +1,7 @@
 // @flow
 import type {
   UserCredentials,
+  UserMovie,
   UserMovieRating,
   UserPersonalDetails,
 } from 'app/redux/user/flow';
@@ -54,3 +55,9 @@ export const rateMovie = (body: UserMovieRating) =>
 
 export const deleteRating = (movieId: string) =>
   DELETE(`/movies/ratings/${movieId}`);
+
+export const addMovieToWatchlist = (body: UserMovie) =>
+  POST('/movies/watchlist', body);
+
+export const deleteWatchlistMovie = (movieId: string) =>
+  DELETE(`/movies/watchlist/${movieId}`);

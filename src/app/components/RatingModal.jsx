@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import _range from 'lodash/range';
 import $ from 'jquery';
-import { deleteRating, rateMovie } from 'app/redux/user/actions';
+import { deleteRatingAction, rateMovieAction } from 'app/redux/user/actions';
 import { Star } from 'app/styled';
 import type {
   UserMovie,
@@ -120,8 +120,8 @@ const RatingModal = ({
 };
 
 const mapDispatchToProps = {
-  rateMovie,
-  deleteRating,
+  rateMovie: rateMovieAction,
+  deleteRating: deleteRatingAction,
 };
 
 export default connect(

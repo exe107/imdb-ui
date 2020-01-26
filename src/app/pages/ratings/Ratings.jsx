@@ -61,6 +61,13 @@ const Ratings = ({ movieRatings }: Props) => {
     [],
   );
 
+  const comparator = React.useMemo(() => {
+    const comparatorCreator =
+      sortKey === 'date' ? createDatesComparator : createNaturalOrderComparator;
+
+    return comparatorCreator(sortKey, sortOrder);
+  }, [sortKey, sortOrder]);
+
   if (!movieRatings) {
     goBack();
     return null;
@@ -73,10 +80,6 @@ const Ratings = ({ movieRatings }: Props) => {
         )
       : movieRatings;
 
-  const comparatorCreator =
-    sortKey === 'date' ? createDatesComparator : createNaturalOrderComparator;
-
-  const comparator = comparatorCreator(sortKey, sortOrder);
   const ratings = filteredRatings.sort(comparator);
 
   return movieRatings.length > 0 ? (

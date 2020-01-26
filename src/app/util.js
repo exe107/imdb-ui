@@ -39,3 +39,20 @@ export const createDatesComparator = (sortKey: string, sortOrder: string) => (
 
   return orderSign * firstDate.diff(secondDate);
 };
+
+export const formatRuntime = (runtimeInMinutes: number) => {
+  const hours = Math.floor(runtimeInMinutes / 60);
+  const minutes = runtimeInMinutes % 60;
+  const formattedHours = `${hours} hr`;
+  const formattedMinutes = `${minutes} min`;
+
+  if (minutes === 0) {
+    return formattedHours;
+  }
+
+  if (hours === 0) {
+    return formattedMinutes;
+  }
+
+  return `${formattedHours} ${formattedMinutes}`;
+};

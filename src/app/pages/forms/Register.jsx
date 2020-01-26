@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Form } from 'react-final-form';
 import { goBack } from 'app/navigation/util';
 import { getUser } from 'app/redux/user/selectors';
-import { registerUser } from 'app/redux/user/actions';
+import { registerUserAction } from 'app/redux/user/actions';
 import {
   alphabeticValidator,
   composeValidators,
@@ -49,7 +49,7 @@ const Register = ({ user, registerUser }: Props) => {
       {({ handleSubmit, submitError }: FormRenderProps<FormValues>) => (
         <FormContainer>
           <h1 className="text-center mb-4">Sign up</h1>
-          <h5>Please provide the details needed for the form below</h5>
+          <h5>Please fill in the form below</h5>
           <hr />
           <InputField label="Name" name="name" validate={nameValidator} />
           <InputField label="Surname" name="surname" validate={nameValidator} />
@@ -85,7 +85,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  registerUser,
+  registerUser: registerUserAction,
 };
 
 export default connect(

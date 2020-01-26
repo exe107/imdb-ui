@@ -6,13 +6,17 @@ import {
   SAVE_RATING,
   SAVE_USER,
   UPDATE_RATING,
+  WATCHLIST_DELETE_MOVIE,
+  WATCHLIST_SAVE_MOVIE,
 } from 'app/redux/user/actions';
 import _get from 'lodash/get';
 import _isEqualWith from 'lodash/isEqualWith';
 import type {
+  DeleteWatchlistMovieAction,
   RemoveRatingAction,
   SaveRatingAction,
   SaveUserAction,
+  SaveWatchlistMovieAction,
   UpdateRatingAction,
   User,
   UserMovieRating,
@@ -52,6 +56,22 @@ const removeRating = (state: User, action: RemoveRatingAction) => ({
   ),
 });
 
+const saveMovieToWatchlist = (
+  state: User,
+  action: SaveWatchlistMovieAction,
+) => ({
+  ...state,
+  watchlist: [...state.watchlist, action.movie],
+});
+
+const removeWatchlistMovie = (
+  state: User,
+  action: DeleteWatchlistMovieAction,
+) => ({
+  ...state,
+  watchlist: state.watchlist.filter(movie => movie.id !== action.movieId),
+});
+
 export default createReducer(
   {
     [SAVE_USER]: saveUser,
@@ -59,6 +79,8 @@ export default createReducer(
     [SAVE_RATING]: saveRating,
     [UPDATE_RATING]: updateRating,
     [REMOVE_RATING]: removeRating,
+    [WATCHLIST_SAVE_MOVIE]: saveMovieToWatchlist,
+    [WATCHLIST_DELETE_MOVIE]: removeWatchlistMovie,
   },
   null,
 );

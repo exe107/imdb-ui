@@ -1,6 +1,5 @@
 // @flow
 import * as React from 'react';
-import styled from 'styled-components';
 import $ from 'jquery';
 import moment from 'moment';
 import { constructUrl } from 'app/navigation/util';
@@ -9,10 +8,6 @@ import { Star } from 'app/styled';
 import imageNotFound from 'app/images/image_not_found.png';
 import RatingModal from 'app/components/RatingModal';
 import type { UserMovieRating } from 'app/redux/user/flow';
-
-const Image = styled.img`
-  height: 160px;
-`;
 
 type Props = {
   ordinal: number,
@@ -46,7 +41,7 @@ const Rating = ({ ordinal, movieRating }: Props) => {
 
   return (
     <div className="d-flex mt-5">
-      <Image src={image} />
+      <img src={image} height={160} alt="" />
       <div className="ml-3">
         <h3>
           <span>{ordinal}.</span>

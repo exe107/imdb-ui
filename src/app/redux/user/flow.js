@@ -17,7 +17,8 @@ export type UserMovie = {
   year: number,
   genres: string[],
   imageUrl: string,
-  rating: number,
+  rating: ?number,
+  runtime: ?number,
 };
 
 export type UserMovieRating = {
@@ -29,6 +30,7 @@ export type UserMovieRating = {
 export type User = {
   personalDetails: UserPersonalDetails,
   movieRatings: UserMovieRating[],
+  watchlist: UserMovie[],
 };
 
 export type RegisterUserAction = Action & {
@@ -63,6 +65,22 @@ export type DeleteRatingAction = Action & {
 };
 
 export type RemoveRatingAction = Action & {
+  movieId: string,
+};
+
+export type AddWatchlistMovieAction = Action & {
+  movie: UserMovie,
+};
+
+export type SaveWatchlistMovieAction = Action & {
+  movie: UserMovie,
+};
+
+export type RemoveWatchlistMovieAction = Action & {
+  movieId: string,
+};
+
+export type DeleteWatchlistMovieAction = Action & {
   movieId: string,
 };
 

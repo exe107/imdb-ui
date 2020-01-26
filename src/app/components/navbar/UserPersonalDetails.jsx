@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { logOutUser } from 'app/redux/user/actions';
+import { logOutUserAction } from 'app/redux/user/actions';
 import type { Action } from 'redux';
 import type { UserPersonalDetails as PersonalDetails } from 'app/redux/user/flow';
 
@@ -45,7 +45,7 @@ export const UserPersonalDetails = ({
 };
 
 const mapDispatchToProps = {
-  logOutUser,
+  logOutUser: logOutUserAction,
 };
 
 export default connect(

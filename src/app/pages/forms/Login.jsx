@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Form } from 'react-final-form';
-import { logInUser } from 'app/redux/user/actions';
+import { logInUserAction } from 'app/redux/user/actions';
 import { goBack } from 'app/navigation/util';
 import { getUser } from 'app/redux/user/selectors';
 import {
@@ -75,7 +75,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  logInUser,
+  logInUser: logInUserAction,
 };
 
 export default connect(

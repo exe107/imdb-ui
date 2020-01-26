@@ -13,6 +13,11 @@ import type {
   LogInUserAction,
   UserPersonalDetails,
   RegisterUserAction,
+  UserMovie,
+  AddWatchlistMovieAction,
+  SaveWatchlistMovieAction,
+  RemoveWatchlistMovieAction,
+  DeleteWatchlistMovieAction,
 } from 'app/redux/user/flow';
 import { Action } from 'redux';
 
@@ -30,30 +35,36 @@ export const UPDATE_RATING = 'UPDATE_RATING';
 export const DELETE_RATING = 'DELETE_RATING';
 export const REMOVE_RATING = 'REMOVE_RATING';
 
-export const registerUser = (
+export const WATCHLIST_ADD_MOVIE = 'WATCHLIST_ADD_MOVIE';
+export const WATCHLIST_SAVE_MOVIE = 'WATCHLIST_SAVE_MOVIE';
+
+export const WATCHLIST_REMOVE_MOVIE = 'WATCHLIST_REMOVE_MOVIE';
+export const WATCHLIST_DELETE_MOVIE = 'WATCHLIST_DELETE_MOVIE';
+
+export const registerUserAction = (
   userDetails: UserPersonalDetails & UserCredentials,
 ): RegisterUserAction => ({
   type: REGISTER_USER,
   userDetails,
 });
 
-export const logInUser = (
+export const logInUserAction = (
   userCredentials: UserCredentials,
 ): LogInUserAction => ({
   type: LOGIN_USER,
   userCredentials,
 });
 
-export const saveUser = (user: User): SaveUserAction => ({
+export const saveUserAction = (user: User): SaveUserAction => ({
   type: SAVE_USER,
   user,
 });
 
-export const logOutUser = (): Action => ({ type: LOGOUT_USER });
+export const logOutUserAction = (): Action => ({ type: LOGOUT_USER });
 
-export const clearUser = (): ClearUserAction => ({ type: CLEAR_USER });
+export const clearUserAction = (): ClearUserAction => ({ type: CLEAR_USER });
 
-export const rateMovie = (
+export const rateMovieAction = (
   movieRating: UserMovieRating,
   isNewRating: boolean,
 ): RateMovieAction => ({
@@ -62,24 +73,54 @@ export const rateMovie = (
   isNewRating,
 });
 
-export const deleteRating = (movieId: string): DeleteRatingAction => ({
+export const deleteRatingAction = (movieId: string): DeleteRatingAction => ({
   type: DELETE_RATING,
   movieId,
 });
 
-export const saveRating = (movieRating: UserMovieRating): SaveRatingAction => ({
+export const saveRatingAction = (
+  movieRating: UserMovieRating,
+): SaveRatingAction => ({
   type: SAVE_RATING,
   movieRating,
 });
 
-export const updateRating = (
+export const updateRatingAction = (
   movieRating: UserMovieRating,
 ): UpdateRatingAction => ({
   type: UPDATE_RATING,
   movieRating,
 });
 
-export const removeRating = (movieId: string): RemoveRatingAction => ({
+export const removeRatingAction = (movieId: string): RemoveRatingAction => ({
   type: REMOVE_RATING,
+  movieId,
+});
+
+export const addMovieToWatchlistAction = (
+  movie: UserMovie,
+): AddWatchlistMovieAction => ({
+  type: WATCHLIST_ADD_MOVIE,
+  movie,
+});
+
+export const saveMovieToWatchlistAction = (
+  movie: UserMovie,
+): SaveWatchlistMovieAction => ({
+  type: WATCHLIST_SAVE_MOVIE,
+  movie,
+});
+
+export const removeWatchlistMovieAction = (
+  movieId: string,
+): RemoveWatchlistMovieAction => ({
+  type: WATCHLIST_REMOVE_MOVIE,
+  movieId,
+});
+
+export const deleteWatchlistMovieAction = (
+  movieId: string,
+): DeleteWatchlistMovieAction => ({
+  type: WATCHLIST_DELETE_MOVIE,
   movieId,
 });

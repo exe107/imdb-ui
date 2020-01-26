@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { asyncOperation } from 'app/common/util';
 import { getInitializationData } from 'app/http';
 import { getSpinner } from 'app/redux/spinner/selectors';
-import { saveUser } from 'app/redux/user/actions';
+import { saveUserAction } from 'app/redux/user/actions';
 import type { SaveUserAction, User } from 'app/redux/user/flow';
 
 const SpinnerContainer = styled.div`
@@ -62,7 +62,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  saveUser,
+  saveUser: saveUserAction,
 };
 
 export default connect(

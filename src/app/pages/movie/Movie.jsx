@@ -19,6 +19,7 @@ import { getUser } from 'app/redux/user/selectors';
 import imageNotFound from 'app/images/image_not_found.png';
 import PeopleSection from 'app/common/components/PeopleSection';
 import MovieRatingStar from 'app/pages/movie/MovieRatingStar';
+import WatchlistButton from 'app/pages/movie/WatchlistButton';
 import type { MovieDetails, Person, SparqlResponse } from 'app/flow';
 import type { User } from 'app/redux/user/flow';
 
@@ -126,13 +127,16 @@ const Movie = ({ user, location }: Props): React.Node => {
     const NOT_AVAILABLE = 'N/A';
     const image = Poster !== NOT_AVAILABLE ? Poster : imageNotFound;
 
+    const runtimeMinutes = Runtime.split(' ')[0];
+
     const userMovie = {
       id: imdbID,
       name: Title,
       year: Number(Year),
       genres: Genre.split(', '),
       imageUrl: Poster,
-      rating: Number(imdbRating),
+      rating: Number(imdbRating) || null,
+      runtime: Number(runtimeMinutes) || null,
     };
 
     return (
@@ -144,7 +148,12 @@ const Movie = ({ user, location }: Props): React.Node => {
           <h1 className="d-inline">
             {Title} ({Year})
           </h1>
-          {user && <MovieRatingStar user={user} movie={userMovie} />}
+          {user && (
+            <React.Fragment>
+              <MovieRatingStar user={user} movie={userMovie} />
+              <WatchlistButton movie={userMovie} watchlist={user.watchlist} />
+            </React.Fragment>
+          )}
         </div>
         {Plot !== NOT_AVAILABLE && (
           <h5 className="my-5 text-justify px-5">{Plot}</h5>
