@@ -4,12 +4,12 @@ import { connect } from 'react-redux';
 import _range from 'lodash/range';
 import { goBack } from 'app/navigation/util';
 import {
-  ASCENDING,
   DESCENDING,
   createDatesComparator,
   createNaturalOrderComparator,
 } from 'app/util';
 import { getMovieRatings } from 'app/redux/user/selectors';
+import SortingSelect from 'app/components/sorting/SortingSelect';
 import Rating from 'app/pages/ratings/Rating';
 import type { UserMovieRating } from 'app/redux/user/flow';
 
@@ -20,7 +20,7 @@ type Props = {
 const Ratings = ({ movieRatings }: Props) => {
   const [ratingToFilterBy, setRatingToFilterBy] = React.useState(0);
 
-  const SORT_CRITERIA = React.useMemo(() => {
+  const sortingOptions = React.useMemo(() => {
     const sortCriteria = [
       { key: 'movie.year', name: 'Year' },
       { key: 'movie.name', name: 'Name' },
@@ -33,8 +33,6 @@ const Ratings = ({ movieRatings }: Props) => {
 
     return sortCriteria;
   }, [ratingToFilterBy]);
-
-  const SORT_ORDERS = React.useMemo(() => [ASCENDING, DESCENDING], []);
 
   const [sortKey, setSortKey] = React.useState('date');
   const [sortOrder, setSortOrder] = React.useState(DESCENDING);
@@ -56,11 +54,6 @@ const Ratings = ({ movieRatings }: Props) => {
     [],
   );
 
-  const onSortOrderChange = React.useCallback(
-    event => setSortOrder(event.target.value),
-    [],
-  );
-
   const comparator = React.useMemo(() => {
     const comparatorCreator =
       sortKey === 'date' ? createDatesComparator : createNaturalOrderComparator;
@@ -78,7 +71,7 @@ const Ratings = ({ movieRatings }: Props) => {
       ? movieRatings.filter(
           ({ rating }: UserMovieRating) => rating === ratingToFilterBy,
         )
-      : movieRatings;
+      : [...movieRatings];
 
   const ratings = filteredRatings.sort(comparator);
 
@@ -101,31 +94,13 @@ const Ratings = ({ movieRatings }: Props) => {
             ))}
           </select>
         </div>
-        <div>
-          <span>Sort by:</span>
-          <select
-            className="form-control ml-1"
-            value={sortKey}
-            onChange={onSortKeyChange}
-          >
-            {SORT_CRITERIA.map(({ key, name }) => (
-              <option key={key} value={key}>
-                {name}
-              </option>
-            ))}
-          </select>
-          <select
-            className="form-control ml-3"
-            value={sortOrder}
-            onChange={onSortOrderChange}
-          >
-            {SORT_ORDERS.map(key => (
-              <option key={key} value={key}>
-                {key}
-              </option>
-            ))}
-          </select>
-        </div>
+        <SortingSelect
+          sortingOptions={sortingOptions}
+          sortKey={sortKey}
+          sortOrder={sortOrder}
+          onSortKeyChange={onSortKeyChange}
+          setSortOrder={setSortOrder}
+        />
       </div>
       {ratings.length > 0 ? (
         ratings.map((movieRating: UserMovieRating, index: number) => (

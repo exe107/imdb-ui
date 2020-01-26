@@ -2,8 +2,8 @@
 import _get from 'lodash/get';
 import moment from 'moment';
 
-export const ASCENDING = 'ASC';
-export const DESCENDING = 'DESC';
+export const ASCENDING = 'Ascending';
+export const DESCENDING = 'Descending';
 
 export const createNaturalOrderComparator = (
   sortKey: string,

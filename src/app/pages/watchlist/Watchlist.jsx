@@ -2,8 +2,9 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { goBack } from 'app/navigation/util';
-import { ASCENDING, createNaturalOrderComparator, DESCENDING } from 'app/util';
+import { createNaturalOrderComparator, DESCENDING } from 'app/util';
 import { getWatchlist } from 'app/redux/user/selectors';
+import SortingSelect from 'app/components/sorting/SortingSelect';
 import WatchlistMovie from 'app/pages/watchlist/WatchlistMovie';
 import type { UserMovie } from 'app/redux/user/flow';
 
@@ -15,7 +16,7 @@ const Watchlist = ({ watchlist }: Props) => {
   const [sortKey, setSortKey] = React.useState('year');
   const [sortOrder, setSortOrder] = React.useState(DESCENDING);
 
-  const SORT_CRITERIA = React.useMemo(
+  const sortingOptions = React.useMemo(
     () => [
       { key: 'year', name: 'Year' },
       { key: 'name', name: 'Name' },
@@ -24,15 +25,8 @@ const Watchlist = ({ watchlist }: Props) => {
     [],
   );
 
-  const SORT_ORDERS = React.useMemo(() => [ASCENDING, DESCENDING], []);
-
   const onSortKeyChange = React.useCallback(
     event => setSortKey(event.target.value),
-    [],
-  );
-
-  const onSortOrderChange = React.useCallback(
-    event => setSortOrder(event.target.value),
     [],
   );
 
@@ -53,29 +47,13 @@ const Watchlist = ({ watchlist }: Props) => {
       <h1>Your watchlist</h1>
       <hr />
       <div className="form-inline">
-        <span>Sort by:</span>
-        <select
-          className="form-control ml-1"
-          value={sortKey}
-          onChange={onSortKeyChange}
-        >
-          {SORT_CRITERIA.map(({ key, name }) => (
-            <option key={key} value={key}>
-              {name}
-            </option>
-          ))}
-        </select>
-        <select
-          className="form-control ml-3"
-          value={sortOrder}
-          onChange={onSortOrderChange}
-        >
-          {SORT_ORDERS.map(key => (
-            <option key={key} value={key}>
-              {key}
-            </option>
-          ))}
-        </select>
+        <SortingSelect
+          sortingOptions={sortingOptions}
+          sortKey={sortKey}
+          sortOrder={sortOrder}
+          onSortKeyChange={onSortKeyChange}
+          setSortOrder={setSortOrder}
+        />
       </div>
       {movies.map((movie: UserMovie, index: number) => (
         <WatchlistMovie key={movie.id} ordinal={index + 1} movie={movie} />
