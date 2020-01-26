@@ -6,9 +6,9 @@ import {
   runWikidataQuery,
 } from 'app/movies/wikidata';
 import { ASCENDING, DESCENDING, createNaturalOrderComparator } from 'app/util';
-import { asyncOperation } from 'app/common/util';
 import { extractMoviesQueryResults } from 'app/movies/util';
 import MoviesSearchResults from 'app/pages/movies-search/MoviesSearchResults';
+import { asyncOperation } from 'app/redux/util';
 
 const MoviesSearch = (): React.Node => {
   const [genre, setGenre] = React.useState();

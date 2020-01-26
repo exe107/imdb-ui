@@ -1,7 +1,6 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components';
-import { asyncOperation } from 'app/common/util';
 import { findPersonAbstract, runDbpediaQuery } from 'app/movies/dbpedia';
 import {
   findPersonImage,
@@ -19,9 +18,10 @@ import {
   extractQueryMultipleResults,
 } from 'app/movies/util';
 import imageNotFound from 'app/images/image_not_found.png';
-import MoviesSection from 'app/common/components/MoviesSection';
-import AchievementsSection from 'app/common/components/AchievementsSection';
+import MoviesSection from 'app/components/section/MoviesSection';
+import AchievementsSection from 'app/components/section/AchievementsSection';
 import type { SparqlResponse } from 'app/flow';
+import { asyncOperation } from 'app/redux/util';
 
 const PersonImage = styled.img`
   width: 100%;

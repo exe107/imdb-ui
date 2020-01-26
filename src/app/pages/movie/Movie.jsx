@@ -4,7 +4,6 @@ import { compose } from 'redux';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { asyncOperation } from 'app/common/util';
 import { searchMovie } from 'app/movies/omdb';
 import {
   findMovieActors,
@@ -17,11 +16,12 @@ import {
 } from 'app/movies/util';
 import { getUser } from 'app/redux/user/selectors';
 import imageNotFound from 'app/images/image_not_found.png';
-import PeopleSection from 'app/common/components/PeopleSection';
+import PeopleSection from 'app/components/section/PeopleSection';
 import MovieRatingStar from 'app/pages/movie/MovieRatingStar';
 import WatchlistButton from 'app/pages/movie/WatchlistButton';
 import type { MovieDetails, Person, SparqlResponse } from 'app/flow';
 import type { User } from 'app/redux/user/flow';
+import { asyncOperation } from 'app/redux/util';
 
 const MoviePoster = styled.img`
   height: 700px;
