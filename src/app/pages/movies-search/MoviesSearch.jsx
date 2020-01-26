@@ -5,10 +5,11 @@ import {
   findMoviesByYearAndGenre,
   runWikidataQuery,
 } from 'app/movies/wikidata';
-import { ASCENDING, DESCENDING, createNaturalOrderComparator } from 'app/util';
+import { DESCENDING, createNaturalOrderComparator } from 'app/util';
 import { extractMoviesQueryResults } from 'app/movies/util';
-import MoviesSearchResults from 'app/pages/movies-search/MoviesSearchResults';
 import { asyncOperation } from 'app/redux/util';
+import MoviesSearchResults from 'app/pages/movies-search/MoviesSearchResults';
+import SortingSelect from 'app/components/sorting/SortingSelect';
 
 const MoviesSearch = (): React.Node => {
   const [genre, setGenre] = React.useState();
@@ -47,16 +48,13 @@ const MoviesSearch = (): React.Node => {
     [],
   );
 
-  const SORT_KEYS = React.useMemo(() => ['year', 'name'], []);
-  const SORT_ORDERS = React.useMemo(() => [ASCENDING, DESCENDING], []);
-
-  const onSortKeyClick = React.useCallback(
-    event => setSortKey(event.target.value),
+  const sortingOptions = React.useMemo(
+    () => [{ key: 'year', name: 'Year' }, { key: 'name', name: 'Name' }],
     [],
   );
 
-  const onSortOrderClick = React.useCallback(
-    event => setSortOrder(event.target.value),
+  const onSortKeyChange = React.useCallback(
+    event => setSortKey(event.target.value),
     [],
   );
 
@@ -94,7 +92,6 @@ const MoviesSearch = (): React.Node => {
             <label htmlFor="yearFrom">From (year):</label>
             <input
               className="form-control ml-3"
-              width={80}
               id="yearFrom"
               type="number"
               onBlur={event => setYearFrom(event.target.value || undefined)}
@@ -104,7 +101,6 @@ const MoviesSearch = (): React.Node => {
             <label htmlFor="yearTo">To (year):</label>
             <input
               className="form-control ml-3"
-              width={80}
               id="yearTo"
               type="number"
               onBlur={event => setYearTo(event.target.value || undefined)}
@@ -121,36 +117,13 @@ const MoviesSearch = (): React.Node => {
       </div>
       {!_isEmpty(movies) && (
         <MoviesSearchResults movies={sortedMovies}>
-          <div className="d-flex align-items-baseline">
-            Sort by:
-            {SORT_KEYS.map(key => (
-              <div className="ml-3" key={key}>
-                <input
-                  className="mr-1"
-                  type="radio"
-                  name="sortKey"
-                  id={key}
-                  value={key}
-                  checked={key === sortKey}
-                  onChange={onSortKeyClick}
-                />
-                <label htmlFor={key} className="text-capitalize">
-                  {key}
-                </label>
-              </div>
-            ))}
-            <select
-              className="ml-3"
-              value={sortOrder}
-              onChange={onSortOrderClick}
-            >
-              {SORT_ORDERS.map(order => (
-                <option key={order} value={order}>
-                  {order}
-                </option>
-              ))}
-            </select>
-          </div>
+          <SortingSelect
+            sortingOptions={sortingOptions}
+            sortKey={sortKey}
+            sortOrder={sortOrder}
+            onSortKeyChange={onSortKeyChange}
+            setSortOrder={setSortOrder}
+          />
         </MoviesSearchResults>
       )}
     </React.Fragment>

@@ -31,41 +31,32 @@ const MoviesSearchResults = ({ children, movies }: Props): React.Node => {
     setMoviesPerPage(newMoviesPerPage);
   }, []);
 
-  const onNextClick = React.useCallback(
-    () => setPageIndex(prevPageIndex => prevPageIndex + 1),
-    [],
-  );
-  const onPreviousClick = React.useCallback(
-    () => setPageIndex(prevPageIndex => prevPageIndex - 1),
-    [],
-  );
+  const onNextClick = React.useCallback(() => setPageIndex(pageIndex + 1), [
+    pageIndex,
+  ]);
+
+  const onPreviousClick = React.useCallback(() => setPageIndex(pageIndex - 1), [
+    pageIndex,
+  ]);
 
   const isFirstPage = pageIndex === 0;
   const isLastPage = lastMovieOrdinal === movies.length;
 
   return movies.length > 0 ? (
     <div className="mt-5">
-      <div className="d-flex">
+      <div className="form-inline">
         <h1>Search results:</h1>
-        <div className="ml-auto">
-          <div className="mb-3 w-100 d-flex align-items-baseline">
-            <span>Results per page:</span>
-            <input
-              className="ml-2 form-control"
-              width={80}
-              type="number"
-              defaultValue={moviesPerPage}
-              ref={moviesPerPageInputRef}
-            />
-            <button
-              className="btn btn-primary ml-2"
-              onClick={onSetMoviesPerPage}
-            >
-              Set
-            </button>
-          </div>
-          {children}
-        </div>
+        <div className="ml-auto mr-3">{children}</div>
+        <span>Results per page:</span>
+        <input
+          className="ml-3 form-control"
+          type="number"
+          defaultValue={moviesPerPage}
+          ref={moviesPerPageInputRef}
+        />
+        <button className="btn btn-primary ml-3" onClick={onSetMoviesPerPage}>
+          Set
+        </button>
       </div>
       {_range(firstMovieOrdinal, lastMovieOrdinal + 1).map(ordinal => {
         const movie = movies[ordinal - 1];

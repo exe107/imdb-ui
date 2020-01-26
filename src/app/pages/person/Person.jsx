@@ -17,11 +17,11 @@ import {
   extractQuerySingleResult,
   extractQueryMultipleResults,
 } from 'app/movies/util';
+import { asyncOperation } from 'app/redux/util';
 import imageNotFound from 'app/images/image_not_found.png';
 import MoviesSection from 'app/components/section/MoviesSection';
 import AchievementsSection from 'app/components/section/AchievementsSection';
 import type { SparqlResponse } from 'app/flow';
-import { asyncOperation } from 'app/redux/util';
 
 const PersonImage = styled.img`
   width: 100%;

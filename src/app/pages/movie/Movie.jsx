@@ -14,6 +14,7 @@ import {
   extractPeopleQueryResults,
   extractQuerySingleResult,
 } from 'app/movies/util';
+import { asyncOperation } from 'app/redux/util';
 import { getUser } from 'app/redux/user/selectors';
 import imageNotFound from 'app/images/image_not_found.png';
 import PeopleSection from 'app/components/section/PeopleSection';
@@ -21,7 +22,6 @@ import MovieRatingStar from 'app/pages/movie/MovieRatingStar';
 import WatchlistButton from 'app/pages/movie/WatchlistButton';
 import type { MovieDetails, Person, SparqlResponse } from 'app/flow';
 import type { User } from 'app/redux/user/flow';
-import { asyncOperation } from 'app/redux/util';
 
 const MoviePoster = styled.img`
   height: 700px;
@@ -158,24 +158,26 @@ const Movie = ({ user, location }: Props): React.Node => {
         {Plot !== NOT_AVAILABLE && (
           <h5 className="my-5 text-justify px-5">{Plot}</h5>
         )}
-        <div className="d-flex justify-content-around px-5">
+        <div className="d-flex justify-content-between px-5">
           <div>
-            <h4>
-              Rating: {imdbRating} <i className="text-warning fa fa-star" /> (
-              {imdbVotes} votes)
-            </h4>
+            {imdbRating !== NOT_AVAILABLE && (
+              <h4>
+                Rating: {imdbRating} <i className="text-warning fa fa-star" /> (
+                {imdbVotes} votes)
+              </h4>
+            )}
             <h4>Genre: {Genre}</h4>
-            <h4>Runtime: {Runtime}</h4>
-            <h4>Released: {Released}</h4>
+            {Runtime !== NOT_AVAILABLE && <h4>Runtime: {Runtime}</h4>}
+            {Released !== NOT_AVAILABLE && <h4>Released: {Released}</h4>}
             <h4>Language: {Language}</h4>
             {Website !== NOT_AVAILABLE && (
               <h4 className="text-break">
                 Website: <a href={Website}>{Website}</a>
               </h4>
             )}
-            <PeopleSection header="Cast" people={cast} />
           </div>
-          <div>
+          <div className="list-group">
+            <PeopleSection header="Cast" people={cast} />
             <PeopleSection header="Directors" people={directors} />
             <PeopleSection header="Stars" people={stars} />
           </div>

@@ -3,10 +3,10 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { getInitializationData } from 'app/http';
+import { asyncOperation } from 'app/redux/util';
 import { getSpinner } from 'app/redux/spinner/selectors';
 import { saveUserAction } from 'app/redux/user/actions';
 import type { SaveUserAction, User } from 'app/redux/user/flow';
-import { asyncOperation } from 'app/redux/util';
 
 const SpinnerContainer = styled.div`
   position: fixed;

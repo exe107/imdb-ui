@@ -129,9 +129,11 @@ export const findPersonImage = (id: string) =>
             wdt:P18 ?result.
 }`;
 
+const herokuProxy = String(process.env.REACT_APP_HEROKU_PROXY);
+
 export const runWikidataQuery = (query: string) =>
   fetch(
-    `https://query.wikidata.org/sparql?format=json&query=${encodeURIComponent(
+    `${herokuProxy}https://query.wikidata.org/sparql?format=json&query=${encodeURIComponent(
       query,
     )}`,
   ).then(response => response.json());
