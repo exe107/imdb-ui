@@ -5,6 +5,7 @@ import type {
   UserMovieRating,
   UserPersonalDetails,
 } from 'app/redux/user/flow';
+import type { NewComment } from 'app/pages/movie/comments/flow';
 
 const createRequestOptions = (
   method: string,
@@ -61,3 +62,10 @@ export const addMovieToWatchlist = (body: UserMovie) =>
 
 export const deleteWatchlistMovie = (movieId: string) =>
   DELETE(`/movies/watchlist/${movieId}`);
+
+export const getComments = (movieId: string) => GET(`/comments/${movieId}`);
+
+export const addComment = (body: NewComment) => POST('/comments', body);
+
+export const deleteComment = (commentId: number) =>
+  DELETE(`/comments/${commentId}`);

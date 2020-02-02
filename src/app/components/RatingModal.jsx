@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import _range from 'lodash/range';
 import $ from 'jquery';
 import { deleteRatingAction, rateMovieAction } from 'app/redux/user/actions';
-import { Star } from 'app/styled';
+import { ClickableElement } from 'app/styled';
 import type {
   UserMovie,
   UserMovieRating,
@@ -75,7 +75,7 @@ const RatingModal = ({
               const onMouseLeave = () => setCurrentRating(0);
 
               return (
-                <Star
+                <ClickableElement
                   key={index}
                   className={`fa fa-2x ${starClassName} text-warning`}
                   onClick={onClick}

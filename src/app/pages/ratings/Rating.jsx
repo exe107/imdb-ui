@@ -4,7 +4,7 @@ import $ from 'jquery';
 import moment from 'moment';
 import { constructUrl } from 'app/navigation/util';
 import { MOVIE_ROUTE } from 'app/navigation/routes';
-import { Star } from 'app/styled';
+import { ClickableElement } from 'app/styled';
 import imageNotFound from 'app/images/image_not_found.png';
 import RatingModal from 'app/components/RatingModal';
 import type { UserMovieRating } from 'app/redux/user/flow';
@@ -53,7 +53,7 @@ const Rating = ({ ordinal, movieRating }: Props) => {
         <h5>Genre: {genres.join(', ')}</h5>
         <h5>
           <span>Your rating: {rating}</span>
-          <Star
+          <ClickableElement
             className="fa fa-star text-warning ml-1"
             onClick={toggleModal}
           />

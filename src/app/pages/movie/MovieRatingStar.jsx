@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import $ from 'jquery';
-import { Star } from 'app/styled';
+import { ClickableElement } from 'app/styled';
 import RatingModal from 'app/components/RatingModal';
 import type { User, UserMovie, UserMovieRating } from 'app/redux/user/flow';
 
@@ -42,7 +42,7 @@ const MovieRatingStar = ({ user, movie }: Props): React.Node => {
         data-placement="right"
         title="Rate this movie"
       >
-        <Star
+        <ClickableElement
           className={`fa ${starClassName} text-warning`}
           onClick={toggleModal}
         />

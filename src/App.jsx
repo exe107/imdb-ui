@@ -5,6 +5,7 @@ import 'bootstrap/dist/js/bootstrap.min';
 import 'jquery/dist/jquery.min';
 import 'popper.js/dist/popper.min';
 import 'font-awesome/css/font-awesome.min.css';
+import 'react-quill/dist/quill.snow.css';
 
 import * as React from 'react';
 import { Route, Switch } from 'react-router-dom';
@@ -25,8 +26,8 @@ const App = (): React.Node => (
     <NavigationBar />
     <PageContentContainer className="container-fluid">
       <div className="row h-100">
-        <div className="col-sm-2 bg-secondary" />
-        <div className="col-sm-8 pt-5">
+        <div className="col-sm-1 bg-secondary" />
+        <div className="col-sm-10 pt-5">
           <Errors />
           <Switch>
             {ROUTES.map(({ path, component }: RouteType) => (
@@ -35,7 +36,7 @@ const App = (): React.Node => (
             <Route component={MoviesSearch} />
           </Switch>
         </div>
-        <div className="col-sm-2 bg-secondary" />
+        <div className="col-sm-1 bg-secondary" />
       </div>
     </PageContentContainer>
   </AppInitializer>

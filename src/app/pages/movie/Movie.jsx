@@ -15,13 +15,17 @@ import {
   extractQuerySingleResult,
 } from 'app/movies/util';
 import { asyncOperation } from 'app/redux/util';
+import { getComments } from 'app/http';
 import { getUser } from 'app/redux/user/selectors';
+import { addError } from 'app/redux/errors/actions';
 import imageNotFound from 'app/images/image_not_found.png';
 import PeopleSection from 'app/components/section/PeopleSection';
 import MovieRatingStar from 'app/pages/movie/MovieRatingStar';
 import WatchlistButton from 'app/pages/movie/WatchlistButton';
+import Comments from 'app/pages/movie/comments/Comments';
 import type { MovieDetails, Person, SparqlResponse } from 'app/flow';
 import type { User } from 'app/redux/user/flow';
+import type { AddErrorAction, ApiError } from 'app/redux/errors/flow';
 
 const MoviePoster = styled.img`
   height: 700px;
@@ -30,12 +34,14 @@ const MoviePoster = styled.img`
 type Props = {
   user: User,
   location: Object,
+  addError: ApiError => AddErrorAction,
 };
 
 const Movie = ({ user, location }: Props): React.Node => {
   const [movie, setMovie] = React.useState<?MovieDetails>();
   const [directors, setDirectors] = React.useState([]);
   const [cast, setCast] = React.useState([]);
+  const [comments, setComments] = React.useState([]);
   const [fetchingFinished, setFetchingFinished] = React.useState(false);
 
   React.useEffect(() => {
@@ -65,11 +71,18 @@ const Movie = ({ user, location }: Props): React.Node => {
 
           return Promise.reject(Error);
         })
-        .then(imdbID => runWikidataQuery(findMovieActors(imdbID)))
-        .then(response => setCast(extractPeopleQueryResults(response)))
-        .catch(console.log)
-        .then(() => setFetchingFinished(true)),
-    );
+        .then(imdbID => {
+          const actorsPromise = runWikidataQuery(findMovieActors(imdbID))
+            .then(response => setCast(extractPeopleQueryResults(response)))
+            .catch(console.log);
+
+          const commentsPromise = getComments(imdbID)
+            .then(setComments)
+            .catch(addError);
+
+          return Promise.all([actorsPromise, commentsPromise]);
+        }),
+    ).then(() => setFetchingFinished(true));
 
     return () => {
       setMovie(null);
@@ -175,6 +188,7 @@ const Movie = ({ user, location }: Props): React.Node => {
                 Website: <a href={Website}>{Website}</a>
               </h4>
             )}
+            <Comments user={user} movie={userMovie} comments={comments} />
           </div>
           <div className="list-group">
             <PeopleSection header="Cast" people={cast} />
@@ -193,7 +207,14 @@ const mapStateToProps = state => ({
   user: getUser(state),
 });
 
+const mapDispatchToProps = {
+  addError,
+};
+
 export default compose(
-  connect(mapStateToProps),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
   withRouter,
 )(Movie);

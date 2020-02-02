@@ -28,6 +28,7 @@ export type UserMovieRating = {
 };
 
 export type User = {
+  username: string,
   personalDetails: UserPersonalDetails,
   movieRatings: UserMovieRating[],
   watchlist: UserMovie[],
