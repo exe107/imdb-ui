@@ -55,6 +55,10 @@ const Comments = ({
   );
 
   const onAddComment = React.useCallback(() => {
+    if (!commentText) {
+      return;
+    }
+
     const comment = {
       movie,
       comment: commentText,

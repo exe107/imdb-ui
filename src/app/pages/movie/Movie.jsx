@@ -85,9 +85,7 @@ const Movie = ({ user, location }: Props): React.Node => {
     ).then(() => setFetchingFinished(true));
 
     return () => {
-      setMovie(null);
       setDirectors([]);
-      setCast([]);
       setFetchingFinished(false);
     };
   }, [location.search]);
@@ -191,9 +189,9 @@ const Movie = ({ user, location }: Props): React.Node => {
             <Comments user={user} movie={userMovie} comments={comments} />
           </div>
           <div className="list-group">
-            <PeopleSection header="Cast" people={cast} />
             <PeopleSection header="Directors" people={directors} />
             <PeopleSection header="Stars" people={stars} />
+            <PeopleSection header="Cast" people={cast} />
           </div>
         </div>
       </React.Fragment>

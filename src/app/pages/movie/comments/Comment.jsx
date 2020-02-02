@@ -19,7 +19,7 @@ const Comment = ({ comment, username, onDeleteComment }: Props) => {
 
   return (
     <div className="mt-5 border border-info rounded">
-      <div className="d-flex justify-content-between bg-light border-bottom border-info p-3">
+      <div className="d-flex justify-content-between align-items-center bg-light border-bottom border-info p-3">
         <span>
           <b>{usernameLabel}</b> wrote on {formattedDate}:
         </span>
