@@ -3,7 +3,7 @@ import * as React from 'react';
 import _isEmpty from 'lodash/isEmpty';
 import { PERSON_ROUTE } from 'app/navigation/routes';
 import { constructUrl } from 'app/navigation/util';
-import { PanelButton } from 'app/styled';
+import { PanelButton } from 'app/styles';
 import type { Person } from 'app/flow';
 
 type Props = {
@@ -25,7 +25,7 @@ const PeopleSection = ({ header, people }: Props): React.Node => {
       <React.Fragment>
         <h5>
           <PanelButton
-            className="list-group-item list-group-item-action"
+            className="list-group-item list-group-item-action bg-light"
             data-toggle="collapse"
             data-target={`#${header}`}
             onClick={onPanelClick}

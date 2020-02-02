@@ -172,19 +172,19 @@ const Movie = ({ user, location }: Props): React.Node => {
         <div className="d-flex justify-content-between px-5">
           <div>
             {imdbRating !== NOT_AVAILABLE && (
-              <h4>
+              <h5>
                 Rating: {imdbRating} <i className="text-warning fa fa-star" /> (
                 {imdbVotes} votes)
-              </h4>
+              </h5>
             )}
-            <h4>Genre: {Genre}</h4>
-            {Runtime !== NOT_AVAILABLE && <h4>Runtime: {Runtime}</h4>}
-            {Released !== NOT_AVAILABLE && <h4>Released: {Released}</h4>}
-            <h4>Language: {Language}</h4>
+            <h5>Genre: {Genre}</h5>
+            {Runtime !== NOT_AVAILABLE && <h5>Runtime: {Runtime}</h5>}
+            {Released !== NOT_AVAILABLE && <h5>Released: {Released}</h5>}
+            <h5>Language: {Language}</h5>
             {Website !== NOT_AVAILABLE && (
-              <h4 className="text-break">
+              <h5 className="text-break">
                 Website: <a href={Website}>{Website}</a>
-              </h4>
+              </h5>
             )}
             <Comments user={user} movie={userMovie} comments={comments} />
           </div>

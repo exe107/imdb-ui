@@ -27,7 +27,7 @@ const App = (): React.Node => (
     <PageContentContainer className="container-fluid">
       <div className="row h-100">
         <div className="col-sm-1 bg-secondary" />
-        <div className="col-sm-10 pt-5">
+        <div className="col-sm-10 pt-5 bg-light">
           <Errors />
           <Switch>
             {ROUTES.map(({ path, component }: RouteType) => (

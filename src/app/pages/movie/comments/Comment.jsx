@@ -1,9 +1,14 @@
 // @flow
 import * as React from 'react';
 import ReactHtmlParser from 'react-html-parser';
+import styled from 'styled-components';
 import moment from 'moment';
-import { ClickableElement } from 'app/styled';
+import { ClickableElement } from 'app/styles';
 import type { ExistingComment } from 'app/pages/movie/comments/flow';
+
+const CommentHeading = styled.div`
+  background: sandybrown;
+`;
 
 type Props = {
   comment: ExistingComment,
@@ -19,9 +24,9 @@ const Comment = ({ comment, username, onDeleteComment }: Props) => {
 
   return (
     <div className="mt-5 border border-info rounded">
-      <div className="d-flex justify-content-between align-items-center bg-light border-bottom border-info p-3">
+      <CommentHeading className="d-flex justify-content-between align-items-center border-bottom border-info p-3">
         <span>
-          <b>{usernameLabel}</b> wrote on {formattedDate}:
+          <b>{usernameLabel}</b> wrote on {formattedDate}
         </span>
         {isUserComment && (
           <ClickableElement
@@ -31,7 +36,7 @@ const Comment = ({ comment, username, onDeleteComment }: Props) => {
             onClick={onDeleteComment}
           />
         )}
-      </div>
+      </CommentHeading>
       <div className="p-3">{ReactHtmlParser(commentText)}</div>
     </div>
   );

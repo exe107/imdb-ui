@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import _range from 'lodash/range';
 import $ from 'jquery';
 import { deleteRatingAction, rateMovieAction } from 'app/redux/user/actions';
-import { ClickableElement } from 'app/styled';
+import { ClickableElement } from 'app/styles';
 import type {
   UserMovie,
   UserMovieRating,

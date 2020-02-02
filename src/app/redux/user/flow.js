@@ -34,6 +34,11 @@ export type User = {
   watchlist: UserMovie[],
 };
 
+export type PasswordChangeDetails = {
+  oldPassword: string,
+  newPassword: string,
+};
+
 export type RegisterUserAction = Action & {
   userDetails: UserPersonalDetails & UserCredentials,
 };
@@ -47,6 +52,10 @@ export type SaveUserAction = Action & {
 };
 
 export type ClearUserAction = Action;
+
+export type ChangePasswordAction = Action & {
+  passwordChangeDetails: PasswordChangeDetails,
+};
 
 export type RateMovieAction = Action & {
   movieRating: UserMovieRating,

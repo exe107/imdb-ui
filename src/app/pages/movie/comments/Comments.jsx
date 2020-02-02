@@ -7,13 +7,15 @@ import _get from 'lodash/get';
 import { asyncOperation } from 'app/redux/util';
 import { addComment, deleteComment } from 'app/http';
 import { addError } from 'app/redux/errors/actions';
-import { PanelButton } from 'app/styled';
+import { PanelButton } from 'app/styles';
 import Comment from 'app/pages/movie/comments/Comment';
 import type { ExistingComment } from 'app/pages/movie/comments/flow';
 import type { User, UserMovie } from 'app/redux/user/flow';
 import type { AddErrorAction, ApiError } from 'app/redux/errors/flow';
 
 const CommentEditor = styled(ReactQuill)`
+  width: 100%;
+
   .ql-container {
     height: 150px;
   }
@@ -96,7 +98,7 @@ const Comments = ({
         <React.Fragment>
           <h5>
             <CommentsPanelButton
-              className="list-group-item list-group-item-action"
+              className="list-group-item list-group-item-action bg-light"
               data-toggle="collapse"
               data-target="#comments"
               onClick={onPanelClick}

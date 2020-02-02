@@ -1,5 +1,6 @@
 // @flow
 import type {
+  PasswordChangeDetails,
   UserCredentials,
   UserMovie,
   UserMovieRating,
@@ -50,6 +51,9 @@ export const registerUser = (body: UserPersonalDetails & UserCredentials) =>
 export const logInUser = (body: UserCredentials) => POST('/login', body);
 
 export const logOutUser = () => POST('/logout');
+
+export const changePassword = (body: PasswordChangeDetails) =>
+  POST('/users/edit/password', body);
 
 export const rateMovie = (body: UserMovieRating) =>
   POST('/movies/ratings', body);

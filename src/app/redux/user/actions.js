@@ -18,6 +18,8 @@ import type {
   SaveWatchlistMovieAction,
   RemoveWatchlistMovieAction,
   DeleteWatchlistMovieAction,
+  ChangePasswordAction,
+  PasswordChangeDetails,
 } from 'app/redux/user/flow';
 import { Action } from 'redux';
 
@@ -27,6 +29,8 @@ export const SAVE_USER = 'SAVE_USER';
 
 export const LOGOUT_USER = 'LOGOUT_USER';
 export const CLEAR_USER = 'CLEAR_USER';
+
+export const CHANGE_PASSWORD = 'CHANGE_PASSWORD';
 
 export const RATE_MOVIE = 'RATE_MOVIE';
 export const SAVE_RATING = 'SAVE_RATING';
@@ -61,6 +65,13 @@ export const saveUserAction = (user: User): SaveUserAction => ({
 });
 
 export const logOutUserAction = (): Action => ({ type: LOGOUT_USER });
+
+export const changePasswordAction = (
+  passwordChangeDetails: PasswordChangeDetails,
+): ChangePasswordAction => ({
+  type: CHANGE_PASSWORD,
+  passwordChangeDetails,
+});
 
 export const clearUserAction = (): ClearUserAction => ({ type: CLEAR_USER });
 

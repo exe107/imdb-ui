@@ -2,41 +2,41 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Form } from 'react-final-form';
+import { logInUserAction } from 'app/redux/user/actions';
 import { goBack } from 'app/navigation/util';
 import { getUser } from 'app/redux/user/selectors';
-import { registerUserAction } from 'app/redux/user/actions';
 import {
-  alphabeticValidator,
   composeValidators,
   minLengthValidator,
   requiredValidator,
-} from 'app/pages/forms/validators';
-import { FormContainer } from 'app/pages/forms/styles';
-import InputField from 'app/pages/forms/InputField';
+} from 'app/forms/validators';
+import { FormContainer } from 'app/forms/styles';
+import InputField from 'app/forms/InputField';
 import type { FormRenderProps } from 'react-final-form';
 import type {
   SaveUserAction,
   User,
   UserCredentials,
-  UserPersonalDetails,
 } from 'app/redux/user/flow';
 
-type FormValues = UserPersonalDetails & UserCredentials;
+type FormValues = UserCredentials;
 
 type Props = {
   user: User,
-  registerUser: FormValues => SaveUserAction,
+  logInUser: UserCredentials => SaveUserAction,
 };
 
-const Register = ({ user, registerUser }: Props) => {
-  const nameValidator = React.useCallback(
-    composeValidators([requiredValidator, alphabeticValidator]),
-    [],
-  );
-
+const Login = ({ user, logInUser }: Props): React.Node => {
   const passwordValidator = React.useCallback(
     composeValidators([requiredValidator, minLengthValidator(7)]),
     [],
+  );
+
+  const onSubmit = React.useCallback(
+    (values: FormValues) => {
+      logInUser(values);
+    },
+    [logInUser],
   );
 
   if (user) {
@@ -45,14 +45,11 @@ const Register = ({ user, registerUser }: Props) => {
   }
 
   return (
-    <Form onSubmit={registerUser}>
+    <Form onSubmit={onSubmit}>
       {({ handleSubmit, submitError }: FormRenderProps<FormValues>) => (
         <FormContainer>
-          <h1 className="text-center mb-4">Sign up</h1>
-          <h5>Please fill in the form below</h5>
+          <h1 className="text-center">Sign in</h1>
           <hr />
-          <InputField label="Name" name="name" validate={nameValidator} />
-          <InputField label="Surname" name="surname" validate={nameValidator} />
           <InputField
             label="Username"
             name="username"
@@ -65,7 +62,7 @@ const Register = ({ user, registerUser }: Props) => {
             validate={passwordValidator}
           />
           <button
-            className="btn btn-primary text-white"
+            className="btn btn-primary"
             type="button"
             onClick={handleSubmit}
           >
@@ -85,10 +82,10 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  registerUser: registerUserAction,
+  logInUser: logInUserAction,
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(Register);
+)(Login);

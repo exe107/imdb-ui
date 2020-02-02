@@ -1,7 +1,9 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { CHANGE_PASSWORD_ROUTE } from 'app/navigation/routes';
 import { logOutUserAction } from 'app/redux/user/actions';
 import type { Action } from 'redux';
 import type { UserPersonalDetails as PersonalDetails } from 'app/redux/user/flow';
@@ -17,10 +19,7 @@ type Props = {
   logOutUser: () => Action,
 };
 
-export const UserPersonalDetails = ({
-  personalDetails,
-  logOutUser,
-}: Props): React.Node => {
+export const User = ({ personalDetails, logOutUser }: Props): React.Node => {
   const { name, surname } = personalDetails;
 
   return (
@@ -39,6 +38,9 @@ export const UserPersonalDetails = ({
         <button type="button" className="dropdown-item" onClick={logOutUser}>
           Log out
         </button>
+        <Link className="dropdown-item" to={CHANGE_PASSWORD_ROUTE.path}>
+          Change password
+        </Link>
       </div>
     </div>
   );
@@ -51,4 +53,4 @@ const mapDispatchToProps = {
 export default connect(
   null,
   mapDispatchToProps,
-)(UserPersonalDetails);
+)(User);

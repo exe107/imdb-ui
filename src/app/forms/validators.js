@@ -14,12 +14,23 @@ export const alphabeticValidator = (value: ?any) =>
 export const minLengthValidator = (length: number) => (value: ?any) =>
   value && value.length >= length
     ? undefined
-    : 'Passwords should be at least 7 characters long';
+    : 'Value should be at least 7 characters long';
 
 export const maxLengthValidator = (length: number) => (value: ?any) =>
   value && value.length <= length
     ? undefined
-    : 'Passwords should be at least 7 characters long';
+    : 'Value should be at least 7 characters long';
+
+export const matchingFieldValidator = (
+  fieldName: string,
+  message: string,
+  shouldMatch: boolean,
+) => (value: ?any, allValues: Object) => {
+  const fieldsMatch = value === allValues[fieldName];
+  const isValid = shouldMatch ? fieldsMatch : !fieldsMatch;
+
+  return isValid ? undefined : message;
+};
 
 export const composeValidators = (validators: Validator[]): Validator => (
   value: ?any,

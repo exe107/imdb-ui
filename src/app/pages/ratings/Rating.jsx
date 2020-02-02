@@ -4,7 +4,7 @@ import $ from 'jquery';
 import moment from 'moment';
 import { constructUrl } from 'app/navigation/util';
 import { MOVIE_ROUTE } from 'app/navigation/routes';
-import { ClickableElement } from 'app/styled';
+import { ClickableElement } from 'app/styles';
 import imageNotFound from 'app/images/image_not_found.png';
 import RatingModal from 'app/components/RatingModal';
 import type { UserMovieRating } from 'app/redux/user/flow';

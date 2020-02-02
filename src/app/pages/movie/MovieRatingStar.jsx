@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import $ from 'jquery';
-import { ClickableElement } from 'app/styled';
+import { ClickableElement } from 'app/styles';
 import RatingModal from 'app/components/RatingModal';
 import type { User, UserMovie, UserMovieRating } from 'app/redux/user/flow';
 

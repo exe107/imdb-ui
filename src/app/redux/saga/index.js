@@ -1,5 +1,6 @@
 // @flow
 import { takeEvery, call, put, all } from 'redux-saga/effects';
+import { goBack } from 'app/navigation/util';
 import {
   LOGIN_USER,
   LOGOUT_USER,
@@ -15,9 +16,11 @@ import {
   WATCHLIST_REMOVE_MOVIE,
   WATCHLIST_ADD_MOVIE,
   saveMovieToWatchlistAction,
+  CHANGE_PASSWORD,
 } from 'app/redux/user/actions';
 import {
   addMovieToWatchlist,
+  changePassword,
   deleteRating,
   deleteWatchlistMovie,
   logInUser,
@@ -29,6 +32,7 @@ import { hideSpinner, showSpinner } from 'app/redux/spinner/actions';
 import { addError } from 'app/redux/errors/actions';
 import type {
   AddWatchlistMovieAction,
+  ChangePasswordAction,
   DeleteRatingAction,
   LogInUserAction,
   RateMovieAction,
@@ -65,6 +69,13 @@ function* logInWorker({ userCredentials }: LogInUserAction): SagaFunction {
 function* logOutWorker(): SagaFunction {
   yield call(logOutUser);
   yield put(clearUserAction());
+}
+
+function* changePasswordWorker({
+  passwordChangeDetails,
+}: ChangePasswordAction): SagaFunction {
+  yield call(changePassword, passwordChangeDetails);
+  goBack();
 }
 
 function* rateMovieWorker({
@@ -111,6 +122,10 @@ function* logOutWatcher(): SagaFunction {
   yield takeEvery(LOGOUT_USER, withSpinner(logOutWorker));
 }
 
+function* changePasswordWatcher(): SagaFunction {
+  yield takeEvery(CHANGE_PASSWORD, withSpinner(changePasswordWorker));
+}
+
 function* rateMovieWatcher(): SagaFunction {
   yield takeEvery(RATE_MOVIE, withSpinner(rateMovieWorker));
 }
@@ -135,6 +150,7 @@ export default function* rootSaga(): SagaFunction {
     registerWatcher(),
     logInWatcher(),
     logOutWatcher(),
+    changePasswordWatcher(),
     rateMovieWatcher(),
     deleteRatingWatcher(),
     addMovieToWatchlistWatcher(),
