@@ -17,7 +17,7 @@ const CommentEditor = styled(ReactQuill)`
   width: 100%;
 
   .ql-container {
-    height: 150px;
+    height: 200px;
   }
 `;
 
@@ -56,7 +56,7 @@ const Comments = ({
     [],
   );
 
-  const onAddComment = React.useCallback(() => {
+  const onPostComment = React.useCallback(() => {
     if (!commentText) {
       return;
     }
@@ -81,9 +81,17 @@ const Comments = ({
     (commentId: number) => () => {
       asyncOperation(() =>
         deleteComment(commentId)
-          .then(() =>
-            setComments(comments.filter(comment => comment.id !== commentId)),
-          )
+          .then(() => {
+            const newComments = comments.filter(
+              comment => comment.id !== commentId,
+            );
+
+            setComments(newComments);
+
+            if (newComments.length === 0) {
+              setExpanded(false);
+            }
+          })
           .catch(addError),
       );
     },
@@ -93,7 +101,7 @@ const Comments = ({
   const iconClassName = expanded ? 'fa-minus' : 'fa-plus';
 
   return (
-    <div className="pb-5 mt-5">
+    <div>
       {comments.length > 0 && (
         <React.Fragment>
           <h5>
@@ -131,8 +139,8 @@ const Comments = ({
               onChange={onEditorChange}
             />
             <div className="mt-3">
-              <button className="btn btn-primary mr-3" onClick={onAddComment}>
-                Add
+              <button className="btn btn-primary mr-3" onClick={onPostComment}>
+                Post
               </button>
               <button className="btn btn-danger" onClick={toggleEditor}>
                 Cancel

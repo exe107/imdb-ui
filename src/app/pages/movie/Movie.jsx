@@ -23,12 +23,12 @@ import PeopleSection from 'app/components/section/PeopleSection';
 import MovieRatingStar from 'app/pages/movie/MovieRatingStar';
 import WatchlistButton from 'app/pages/movie/WatchlistButton';
 import Comments from 'app/pages/movie/comments/Comments';
-import type { MovieDetails, Person, SparqlResponse } from 'app/flow';
+import type { MovieDetails, Person, SparqlResponse } from 'app/movies/flow';
 import type { User } from 'app/redux/user/flow';
 import type { AddErrorAction, ApiError } from 'app/redux/errors/flow';
 
 const MoviePoster = styled.img`
-  height: 700px;
+  height: 400px;
 `;
 
 type Props = {
@@ -81,8 +81,10 @@ const Movie = ({ user, location }: Props): React.Node => {
             .catch(addError);
 
           return Promise.all([actorsPromise, commentsPromise]);
-        }),
-    ).then(() => setFetchingFinished(true));
+        })
+        .catch(console.log)
+        .then(() => setFetchingFinished(true)),
+    );
 
     return () => {
       setDirectors([]);
@@ -119,7 +121,11 @@ const Movie = ({ user, location }: Props): React.Node => {
       Language,
       Released,
       Website,
+      Awards,
       Actors,
+      Country,
+      BoxOffice,
+      Production,
     } = movie;
 
     const actorToIdMap = {};
@@ -151,11 +157,8 @@ const Movie = ({ user, location }: Props): React.Node => {
     };
 
     return (
-      <React.Fragment>
-        <div className="d-flex justify-content-center">
-          <MoviePoster src={image} />
-        </div>
-        <div className="text-center my-5">
+      <div className="px-5">
+        <div className="text-center mb-5">
           <h1 className="d-inline">
             {Title} ({Year})
           </h1>
@@ -166,11 +169,9 @@ const Movie = ({ user, location }: Props): React.Node => {
             </React.Fragment>
           )}
         </div>
-        {Plot !== NOT_AVAILABLE && (
-          <h5 className="my-5 text-justify px-5">{Plot}</h5>
-        )}
-        <div className="d-flex justify-content-between px-5">
-          <div>
+        <div className="d-flex">
+          <MoviePoster className="w-25 mr-5" src={image} alt="" />
+          <div className="w-50">
             {imdbRating !== NOT_AVAILABLE && (
               <h5>
                 Rating: {imdbRating} <i className="text-warning fa fa-star" /> (
@@ -186,15 +187,24 @@ const Movie = ({ user, location }: Props): React.Node => {
                 Website: <a href={Website}>{Website}</a>
               </h5>
             )}
-            <Comments user={user} movie={userMovie} comments={comments} />
+            {Country !== NOT_AVAILABLE && <h5>Country: {Country}</h5>}
+            {BoxOffice !== NOT_AVAILABLE && <h5>Box Office: {BoxOffice}</h5>}
+            {Production !== NOT_AVAILABLE && <h5>Production: {Production}</h5>}
+            {Awards !== NOT_AVAILABLE && <h5>{Awards}</h5>}
           </div>
+        </div>
+        {Plot !== NOT_AVAILABLE && (
+          <h5 className="my-5 text-justify">{Plot}</h5>
+        )}
+        <div className="d-flex justify-content-between">
+          <Comments user={user} movie={userMovie} comments={comments} />
           <div className="list-group">
             <PeopleSection header="Directors" people={directors} />
             <PeopleSection header="Stars" people={stars} />
             <PeopleSection header="Cast" people={cast} />
           </div>
         </div>
-      </React.Fragment>
+      </div>
     );
   }
 

@@ -19,7 +19,7 @@ type Props = {
 };
 
 const NavigationBar = ({ user }: Props) => (
-  <nav className="navbar navbar-expand-sm navbar-dark bg-dark">
+  <nav className="fixed-top navbar navbar-expand-sm navbar-dark bg-dark">
     <div className="container">
       <button
         className="navbar-toggler"
@@ -48,7 +48,7 @@ const NavigationBar = ({ user }: Props) => (
                   My ratings
                 </Link>
               </li>
-              <li className="nav-item">
+              <li className="nav-item mr-5">
                 <Link className="nav-link" to={WATCHLIST_ROUTE.path}>
                   Watchlist
                 </Link>
@@ -61,14 +61,14 @@ const NavigationBar = ({ user }: Props) => (
                   Log in
                 </Link>
               </li>
-              <li className="nav-item">
+              <li className="nav-item mr-5">
                 <Link className="nav-link" to={REGISTER_ROUTE.path}>
                   Register
                 </Link>
               </li>
             </React.Fragment>
           )}
-          <li className="nav-item w-50 ml-auto">
+          <li className="nav-item w-50">
             <SearchBar />
           </li>
         </ul>

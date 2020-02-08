@@ -1,6 +1,11 @@
 // @flow
 import _get from 'lodash/get';
-import type { Movie, Person, SparqlBinding, SparqlResponse } from 'app/flow';
+import type {
+  Movie,
+  Person,
+  SparqlBinding,
+  SparqlResponse,
+} from 'app/movies/flow';
 
 export const extractQuerySingleResult = ({ results }: SparqlResponse): string =>
   _get(results, 'bindings[0].result.value');

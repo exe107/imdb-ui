@@ -1,6 +1,6 @@
 // @flow
 import { parse } from 'qs';
-import type { MovieDetails } from 'app/flow';
+import type { MovieDetails } from 'app/movies/flow';
 
 const herokuProxy = String(process.env.REACT_APP_HEROKU_PROXY);
 const omdbEndpoint = String(process.env.REACT_APP_OMDB_ENDPOINT);

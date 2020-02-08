@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { MOVIE_ROUTE } from 'app/navigation/routes';
 import { constructUrl } from 'app/navigation/util';
-import type { Movie } from 'app/flow';
+import type { Movie } from 'app/movies/flow';
 
 type Props = {
   ordinal: number,

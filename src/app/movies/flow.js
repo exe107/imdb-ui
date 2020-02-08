@@ -1,9 +1,4 @@
 // @flow
-export type Route = {
-  component: Function,
-  path: string,
-};
-
 type SparqlResult = {
   value: string,
 };
@@ -46,6 +41,10 @@ export type MovieDetails = {
   Language: string,
   Released: string,
   Website: string,
+  Awards: string,
+  Country: string,
+  BoxOffice: string,
+  Production: string,
   Actors: string,
   Director: string,
 };

@@ -62,12 +62,17 @@ const WatchlistMovie = ({ ordinal, movie, removeWatchlistMovie }: Props) => {
         {hovered && <RemoveIcon className="fa fa-4x fa-remove text-white" />}
       </ImageContainer>
       <div className="ml-3">
-        <h3>
-          <span>{ordinal}.</span>
-          <a className="ml-1" href={constructUrl(MOVIE_ROUTE.path, [], { id })}>
-            {name}
-          </a>
-        </h3>
+        <div className="mb-2">
+          <h5 className="d-inline">{ordinal}.</h5>
+          <h4 className="d-inline">
+            <a
+              className="ml-1"
+              href={constructUrl(MOVIE_ROUTE.path, [], { id })}
+            >
+              {name}
+            </a>
+          </h4>
+        </div>
         <h5>Year: {year}</h5>
         <h5>Genre: {genres.join(', ')}</h5>
         <h5>Runtime: {runtime ? formatRuntime(runtime) : NOT_AVAILABLE}</h5>

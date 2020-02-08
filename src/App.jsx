@@ -15,10 +15,11 @@ import AppInitializer from 'app/components/AppInitializer';
 import NavigationBar from 'app/components/navbar/NavigationBar';
 import Errors from 'app/components/Errors';
 import MoviesSearch from 'app/pages/movies-search/MoviesSearch';
-import type { Route as RouteType } from 'app/flow';
+import type { Route as RouteType } from 'app/navigation/flow';
 
 const PageContentContainer = styled.div`
-  height: calc(100vh - 56px);
+  height: calc(100vh - 62px);
+  margin-top: 62px;
 `;
 
 const App = (): React.Node => (
@@ -27,7 +28,7 @@ const App = (): React.Node => (
     <PageContentContainer className="container-fluid">
       <div className="row h-100">
         <div className="col-sm-1 bg-secondary" />
-        <div className="col-sm-10 pt-5 bg-light">
+        <div className="col-sm-10 py-5 bg-light">
           <Errors />
           <Switch>
             {ROUTES.map(({ path, component }: RouteType) => (
