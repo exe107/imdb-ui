@@ -1,15 +1,18 @@
 // @flow
 import * as React from 'react';
-import { history } from 'app/redux/history';
-import { MOVIE_ROUTE } from 'app/navigation/routes';
-import { constructUrl } from 'app/navigation/util';
+import { MOVIE_SEARCH_RESULTS_ROUTE } from 'app/navigation/routes';
+import { constructUrl, redirect } from 'app/navigation/util';
 
 const SearchBar = () => {
   const [movieTitle, setMovieTitle] = React.useState('');
 
   const onSearch = React.useCallback(
     () =>
-      history.push(constructUrl(MOVIE_ROUTE.path, [], { title: movieTitle })),
+      redirect(
+        constructUrl(MOVIE_SEARCH_RESULTS_ROUTE.path, [], {
+          search: movieTitle,
+        }),
+      ),
     [movieTitle],
   );
 

@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import styled from 'styled-components';
 import {
   LOGIN_ROUTE,
   MOVIES_SEARCH_ROUTE,
@@ -14,12 +15,16 @@ import SearchBar from 'app/components/navbar/SearchBar';
 import User from 'app/components/navbar/User';
 import type { User as UserType } from 'app/redux/user/flow';
 
+const Navbar = styled.nav`
+  height: 62px;
+`;
+
 type Props = {
   user: UserType,
 };
 
 const NavigationBar = ({ user }: Props) => (
-  <nav className="fixed-top navbar navbar-expand-sm navbar-dark bg-dark">
+  <Navbar className="fixed-top navbar navbar-expand-sm navbar-dark bg-dark">
     <div className="container">
       <button
         className="navbar-toggler"
@@ -75,7 +80,7 @@ const NavigationBar = ({ user }: Props) => (
       </div>
       {user && <User personalDetails={user.personalDetails} />}
     </div>
-  </nav>
+  </Navbar>
 );
 
 const mapStateToProps = state => ({

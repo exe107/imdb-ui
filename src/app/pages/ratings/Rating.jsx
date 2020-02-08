@@ -2,6 +2,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import moment from 'moment';
+import { NOT_AVAILABLE } from 'app/constants';
 import { constructUrl } from 'app/navigation/util';
 import { MOVIE_ROUTE } from 'app/navigation/routes';
 import { ClickableElement } from 'app/styles';
@@ -35,8 +36,6 @@ const Rating = ({ ordinal, movieRating }: Props) => {
   }, [MODAL_ID, showModal, toggleModal]);
 
   const formattedDate = moment(date).format('DD MMMM YYYY');
-
-  const NOT_AVAILABLE = 'N/A';
   const image = imageUrl !== NOT_AVAILABLE ? imageUrl : imageNotFound;
 
   return (

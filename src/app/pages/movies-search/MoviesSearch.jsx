@@ -4,9 +4,10 @@ import _isEmpty from 'lodash/isEmpty';
 import {
   findMoviesByYearAndGenre,
   runWikidataQuery,
-} from 'app/movies/wikidata';
-import { DESCENDING, createNaturalOrderComparator } from 'app/util';
-import { extractMoviesQueryResults } from 'app/movies/util';
+} from 'app/api/sparql/wikidata';
+import { DESCENDING } from 'app/constants';
+import { createNaturalOrderComparator } from 'app/util';
+import { extractMoviesQueryResults } from 'app/api/util';
 import { asyncOperation } from 'app/redux/util';
 import MoviesSearchResults from 'app/pages/movies-search/MoviesSearchResults';
 import SortingSelect from 'app/components/sorting/SortingSelect';

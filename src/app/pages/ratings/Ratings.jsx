@@ -3,11 +3,8 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import _range from 'lodash/range';
 import { goBack } from 'app/navigation/util';
-import {
-  DESCENDING,
-  createDatesComparator,
-  createNaturalOrderComparator,
-} from 'app/util';
+import { createDatesComparator, createNaturalOrderComparator } from 'app/util';
+import { DESCENDING } from 'app/constants';
 import { getMovieRatings } from 'app/redux/user/selectors';
 import SortingSelect from 'app/components/sorting/SortingSelect';
 import Rating from 'app/pages/ratings/Rating';

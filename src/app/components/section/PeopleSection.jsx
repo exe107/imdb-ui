@@ -4,7 +4,7 @@ import _isEmpty from 'lodash/isEmpty';
 import { PERSON_ROUTE } from 'app/navigation/routes';
 import { constructUrl } from 'app/navigation/util';
 import { PanelButton } from 'app/styles';
-import type { Person } from 'app/movies/flow';
+import type { Person } from 'app/api/sparql/flow';
 
 type Props = {
   header: string,

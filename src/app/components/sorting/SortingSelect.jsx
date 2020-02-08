@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components';
-import { ASCENDING, DESCENDING } from 'app/util';
+import { ASCENDING, DESCENDING } from 'app/constants';
 
 const SortOrderButton = styled.button`
   :focus {

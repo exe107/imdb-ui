@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import ReactQuill from 'react-quill';
 import styled from 'styled-components';
 import _get from 'lodash/get';
+import $ from 'jquery';
 import { asyncOperation } from 'app/redux/util';
 import { addComment, deleteComment } from 'app/http';
 import { addError } from 'app/redux/errors/actions';
@@ -32,6 +33,9 @@ type Props = {
   addError: ApiError => AddErrorAction,
 };
 
+const COMMENTS_NAME = 'comments';
+const COMMENTS_ID = `#${COMMENTS_NAME}`;
+
 const Comments = ({
   user,
   movie,
@@ -42,6 +46,12 @@ const Comments = ({
   const [comments, setComments] = React.useState(initialComments);
   const [expanded, setExpanded] = React.useState(false);
   const [showEditor, setShowEditor] = React.useState(false);
+
+  React.useEffect(() => {
+    if (expanded) {
+      $(COMMENTS_ID).collapse('show');
+    }
+  }, [expanded]);
 
   const onPanelClick = React.useCallback(() => setExpanded(!expanded), [
     expanded,
@@ -69,13 +79,17 @@ const Comments = ({
     asyncOperation(() =>
       addComment(comment)
         .then(newComment => {
-          setComments([newComment, ...comments]);
           setCommentText('');
           toggleEditor();
+          setComments([newComment, ...comments]);
+
+          if (!expanded) {
+            setExpanded(true);
+          }
         })
         .catch(addError),
     );
-  }, [movie, commentText, comments, addError, toggleEditor]);
+  }, [expanded, movie, commentText, comments, addError, toggleEditor]);
 
   const deleteCommentHandlerCreator = React.useCallback(
     (commentId: number) => () => {
@@ -99,16 +113,17 @@ const Comments = ({
   );
 
   const iconClassName = expanded ? 'fa-minus' : 'fa-plus';
+  const hasComments = comments.length > 0;
 
   return (
     <div>
-      {comments.length > 0 && (
+      {hasComments && (
         <React.Fragment>
           <h5>
             <CommentsPanelButton
               className="list-group-item list-group-item-action bg-light"
               data-toggle="collapse"
-              data-target="#comments"
+              data-target={COMMENTS_ID}
               onClick={onPanelClick}
             >
               <i className={`fa ${iconClassName} mr-2`} />
@@ -118,7 +133,7 @@ const Comments = ({
               )}
             </CommentsPanelButton>
           </h5>
-          <div className="collapse" id="comments">
+          <div className="collapse" id={COMMENTS_NAME}>
             {comments.map(comment => (
               <Comment
                 key={comment.id}
@@ -130,28 +145,30 @@ const Comments = ({
           </div>
         </React.Fragment>
       )}
-      {user &&
-        (showEditor ? (
-          <div>
-            <CommentEditor
-              className="mt-5"
-              value={commentText}
-              onChange={onEditorChange}
-            />
-            <div className="mt-3">
-              <button className="btn btn-primary mr-3" onClick={onPostComment}>
-                Post
-              </button>
-              <button className="btn btn-danger" onClick={toggleEditor}>
-                Cancel
-              </button>
-            </div>
-          </div>
-        ) : (
-          <button className="btn btn-primary mt-5" onClick={toggleEditor}>
-            Write a comment
-          </button>
-        ))}
+      {user && (
+        <div className={hasComments ? 'mt-5' : 'mt-0'}>
+          {showEditor ? (
+            <React.Fragment>
+              <CommentEditor value={commentText} onChange={onEditorChange} />
+              <div className="mt-3">
+                <button
+                  className="btn btn-primary mr-3"
+                  onClick={onPostComment}
+                >
+                  Post
+                </button>
+                <button className="btn btn-danger" onClick={toggleEditor}>
+                  Cancel
+                </button>
+              </div>
+            </React.Fragment>
+          ) : (
+            <button className="btn btn-primary" onClick={toggleEditor}>
+              Write a comment
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 };

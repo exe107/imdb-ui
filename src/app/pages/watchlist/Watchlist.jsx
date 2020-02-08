@@ -2,7 +2,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { goBack } from 'app/navigation/util';
-import { createNaturalOrderComparator, DESCENDING } from 'app/util';
+import { createNaturalOrderComparator } from 'app/util';
+import { DESCENDING } from 'app/constants';
 import { getWatchlist } from 'app/redux/user/selectors';
 import SortingSelect from 'app/components/sorting/SortingSelect';
 import WatchlistMovie from 'app/pages/watchlist/WatchlistMovie';

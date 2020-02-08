@@ -4,16 +4,17 @@ import { compose } from 'redux';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { searchMovie } from 'app/movies/omdb';
+import { getMovie } from 'app/api/omdb';
 import {
   findMovieActors,
   findPersonId,
   runWikidataQuery,
-} from 'app/movies/wikidata';
+} from 'app/api/sparql/wikidata';
 import {
   extractPeopleQueryResults,
   extractQuerySingleResult,
-} from 'app/movies/util';
+} from 'app/api/util';
+import { NOT_AVAILABLE } from 'app/constants';
 import { asyncOperation } from 'app/redux/util';
 import { getComments } from 'app/http';
 import { getUser } from 'app/redux/user/selectors';
@@ -23,9 +24,10 @@ import PeopleSection from 'app/components/section/PeopleSection';
 import MovieRatingStar from 'app/pages/movie/MovieRatingStar';
 import WatchlistButton from 'app/pages/movie/WatchlistButton';
 import Comments from 'app/pages/movie/comments/Comments';
-import type { MovieDetails, Person, SparqlResponse } from 'app/movies/flow';
 import type { User } from 'app/redux/user/flow';
 import type { AddErrorAction, ApiError } from 'app/redux/errors/flow';
+import type { MovieDetailsResponse } from 'app/api/omdb/flow';
+import type { Person, SparqlResponse } from 'app/api/sparql/flow';
 
 const MoviePoster = styled.img`
   height: 400px;
@@ -38,7 +40,7 @@ type Props = {
 };
 
 const Movie = ({ user, location }: Props): React.Node => {
-  const [movie, setMovie] = React.useState<?MovieDetails>();
+  const [movie, setMovie] = React.useState<?MovieDetailsResponse>();
   const [directors, setDirectors] = React.useState([]);
   const [cast, setCast] = React.useState([]);
   const [comments, setComments] = React.useState([]);
@@ -46,8 +48,8 @@ const Movie = ({ user, location }: Props): React.Node => {
 
   React.useEffect(() => {
     asyncOperation(() =>
-      searchMovie(location.search)
-        .then((response: MovieDetails) => {
+      getMovie(location.search)
+        .then((response: MovieDetailsResponse) => {
           const { Director, imdbID, Response, Error } = response;
 
           if (Response === 'True') {
@@ -141,9 +143,7 @@ const Movie = ({ user, location }: Props): React.Node => {
       }))
       .filter(actor => actor.id);
 
-    const NOT_AVAILABLE = 'N/A';
     const image = Poster !== NOT_AVAILABLE ? Poster : imageNotFound;
-
     const runtimeMinutes = Runtime.split(' ')[0];
 
     const userMovie = {
@@ -170,8 +170,8 @@ const Movie = ({ user, location }: Props): React.Node => {
           )}
         </div>
         <div className="d-flex">
-          <MoviePoster className="w-25 mr-5" src={image} alt="" />
-          <div className="w-50">
+          <MoviePoster className="mr-5" src={image} />
+          <div>
             {imdbRating !== NOT_AVAILABLE && (
               <h5>
                 Rating: {imdbRating} <i className="text-warning fa fa-star" /> (

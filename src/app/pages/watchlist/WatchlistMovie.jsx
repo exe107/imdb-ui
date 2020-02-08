@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
+import { NOT_AVAILABLE } from 'app/constants';
 import { constructUrl } from 'app/navigation/util';
 import { MOVIE_ROUTE } from 'app/navigation/routes';
 import { formatRuntime } from 'app/util';
@@ -45,8 +46,6 @@ const WatchlistMovie = ({ ordinal, movie, removeWatchlistMovie }: Props) => {
   ]);
 
   const { id, name, year, genres, imageUrl, runtime, rating } = movie;
-
-  const NOT_AVAILABLE = 'N/A';
   const image = imageUrl !== NOT_AVAILABLE ? imageUrl : imageNotFound;
 
   return (

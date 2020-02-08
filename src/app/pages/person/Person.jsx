@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components';
-import { findPersonAbstract, runDbpediaQuery } from 'app/movies/dbpedia';
+import { findPersonAbstract, runDbpediaQuery } from 'app/api/sparql/dbpedia';
 import {
   findPersonImage,
   findMoviesByDirector,
@@ -11,17 +11,17 @@ import {
   findPersonAwards,
   findPersonName,
   findMoviesByActor,
-} from 'app/movies/wikidata';
+} from 'app/api/sparql/wikidata';
 import {
   extractMoviesQueryResults,
   extractQuerySingleResult,
   extractQueryMultipleResults,
-} from 'app/movies/util';
+} from 'app/api/util';
 import { asyncOperation } from 'app/redux/util';
 import imageNotFound from 'app/images/image_not_found.png';
 import MoviesSection from 'app/components/section/MoviesSection';
 import AchievementsSection from 'app/components/section/AchievementsSection';
-import type { SparqlResponse } from 'app/movies/flow';
+import type { SparqlResponse } from 'app/api/sparql/flow';
 
 const PersonImage = styled.img`
   width: 100%;

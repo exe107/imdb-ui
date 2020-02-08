@@ -5,7 +5,7 @@ import type {
   Person,
   SparqlBinding,
   SparqlResponse,
-} from 'app/movies/flow';
+} from 'app/api/sparql/flow';
 
 export const extractQuerySingleResult = ({ results }: SparqlResponse): string =>
   _get(results, 'bindings[0].result.value');

@@ -2,7 +2,7 @@
 import * as React from 'react';
 import _range from 'lodash/range';
 import MovieResult from 'app/pages/movies-search/MovieResult';
-import type { Movie } from 'app/movies/flow';
+import type { Movie } from 'app/api/sparql/flow';
 
 type Props = {
   children: React.Node,

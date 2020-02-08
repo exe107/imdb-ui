@@ -1,9 +1,7 @@
 // @flow
 import _get from 'lodash/get';
 import moment from 'moment';
-
-export const ASCENDING = 'Ascending';
-export const DESCENDING = 'Descending';
+import { DESCENDING } from 'app/constants';
 
 export const createNaturalOrderComparator = (
   sortKey: string,

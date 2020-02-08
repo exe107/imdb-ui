@@ -1,5 +1,6 @@
 // @flow
 import MoviesSearch from 'app/pages/movies-search/MoviesSearch';
+import MovieSearchResults from 'app/pages/movie-search/MovieSearchResults';
 import Movie from 'app/pages/movie/Movie';
 import Person from 'app/pages/person/Person';
 import Register from 'app/pages/register/Register';
@@ -11,6 +12,11 @@ import PasswordChange from 'app/pages/user-edit/PasswordChange';
 export const MOVIES_SEARCH_ROUTE = {
   path: '/movies-search',
   component: MoviesSearch,
+};
+
+export const MOVIE_SEARCH_RESULTS_ROUTE = {
+  path: '/movie-search-results',
+  component: MovieSearchResults,
 };
 
 export const MOVIE_ROUTE = {
@@ -50,6 +56,7 @@ export const WATCHLIST_ROUTE = {
 
 export const ROUTES = [
   MOVIES_SEARCH_ROUTE,
+  MOVIE_SEARCH_RESULTS_ROUTE,
   MOVIE_ROUTE,
   PERSON_ROUTE,
   REGISTER_ROUTE,
