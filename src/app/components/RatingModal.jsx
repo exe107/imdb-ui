@@ -4,13 +4,13 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import _range from 'lodash/range';
 import $ from 'jquery';
-import { deleteRatingAction, rateMovieAction } from 'app/redux/user/actions';
+import { removeRatingAction, rateMovieAction } from 'app/redux/user/actions';
 import { ClickableElement } from 'app/styles';
 import type {
   UserMovie,
   UserMovieRating,
   RateMovieAction,
-  DeleteRatingAction,
+  RemoveRatingAction,
 } from 'app/redux/user/flow';
 
 const ModalBody = styled.div`
@@ -24,7 +24,7 @@ type Props = {
   movie: UserMovie,
   previousRating: number,
   rateMovie: (UserMovieRating, boolean) => RateMovieAction,
-  deleteRating: string => DeleteRatingAction,
+  removeRating: string => RemoveRatingAction,
 };
 
 const RatingModal = ({
@@ -33,7 +33,7 @@ const RatingModal = ({
   movie,
   previousRating,
   rateMovie,
-  deleteRating,
+  removeRating,
 }: Props): React.Node => {
   const [selectedRating, setSelectedRating] = React.useState(previousRating);
   const [currentRating, setCurrentRating] = React.useState(0); // on hover
@@ -48,9 +48,9 @@ const RatingModal = ({
   }, [modalId, rateMovie, movie, rating, isNewRating]);
 
   const onDeleteRateClick = React.useCallback(() => {
-    deleteRating(movie.id);
+    removeRating(movie.id);
     $(modalId).modal('hide');
-  }, [modalId, deleteRating, movie.id]);
+  }, [modalId, removeRating, movie.id]);
 
   return (
     <div className="modal fade" id={modalName}>
@@ -121,7 +121,7 @@ const RatingModal = ({
 
 const mapDispatchToProps = {
   rateMovie: rateMovieAction,
-  deleteRating: deleteRatingAction,
+  removeRating: removeRatingAction,
 };
 
 export default connect(

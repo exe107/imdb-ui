@@ -1,16 +1,15 @@
 // @flow
+import _get from 'lodash/get';
+import _isEqualWith from 'lodash/isEqualWith';
 import { createReducer } from 'app/redux/util';
 import {
-  CLEAR_USER,
-  REMOVE_RATING,
+  DELETE_RATING,
   SAVE_RATING,
   SAVE_USER,
   UPDATE_RATING,
   WATCHLIST_DELETE_MOVIE,
   WATCHLIST_SAVE_MOVIE,
 } from 'app/redux/user/actions';
-import _get from 'lodash/get';
-import _isEqualWith from 'lodash/isEqualWith';
 import type {
   DeleteWatchlistMovieAction,
   RemoveRatingAction,
@@ -23,8 +22,6 @@ import type {
 } from 'app/redux/user/flow';
 
 const saveUser = (state: User, action: SaveUserAction) => action.user;
-
-const clearUser = () => null;
 
 const saveRating = (state: User, action: SaveRatingAction) => ({
   ...state,
@@ -75,10 +72,9 @@ const removeWatchlistMovie = (
 export default createReducer(
   {
     [SAVE_USER]: saveUser,
-    [CLEAR_USER]: clearUser,
     [SAVE_RATING]: saveRating,
     [UPDATE_RATING]: updateRating,
-    [REMOVE_RATING]: removeRating,
+    [DELETE_RATING]: removeRating,
     [WATCHLIST_SAVE_MOVIE]: saveMovieToWatchlist,
     [WATCHLIST_DELETE_MOVIE]: removeWatchlistMovie,
   },

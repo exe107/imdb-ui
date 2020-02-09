@@ -1,6 +1,5 @@
 // @flow
 import type {
-  ClearUserAction,
   SaveUserAction,
   User,
   UserMovieRating,
@@ -28,7 +27,6 @@ export const LOGIN_USER = 'LOGIN_USER';
 export const SAVE_USER = 'SAVE_USER';
 
 export const LOGOUT_USER = 'LOGOUT_USER';
-export const CLEAR_USER = 'CLEAR_USER';
 
 export const CHANGE_PASSWORD = 'CHANGE_PASSWORD';
 
@@ -72,8 +70,6 @@ export const changePasswordAction = (
   type: CHANGE_PASSWORD,
   passwordChangeDetails,
 });
-
-export const clearUserAction = (): ClearUserAction => ({ type: CLEAR_USER });
 
 export const rateMovieAction = (
   movieRating: UserMovieRating,

@@ -51,8 +51,6 @@ export type SaveUserAction = Action & {
   user: User,
 };
 
-export type ClearUserAction = Action;
-
 export type ChangePasswordAction = Action & {
   passwordChangeDetails: PasswordChangeDetails,
 };

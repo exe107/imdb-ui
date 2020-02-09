@@ -4,10 +4,7 @@ import { goBack } from 'app/navigation/util';
 import {
   LOGIN_USER,
   LOGOUT_USER,
-  DELETE_RATING,
   RATE_MOVIE,
-  clearUserAction,
-  removeRatingAction,
   saveRatingAction,
   updateRatingAction,
   saveUserAction,
@@ -17,12 +14,15 @@ import {
   WATCHLIST_ADD_MOVIE,
   saveMovieToWatchlistAction,
   CHANGE_PASSWORD,
+  REMOVE_RATING,
+  deleteRatingAction,
 } from 'app/redux/user/actions';
 import {
   addMovieToWatchlist,
   changePassword,
   deleteRating,
   deleteWatchlistMovie,
+  getInitializationData,
   logInUser,
   logOutUser,
   rateMovie,
@@ -33,10 +33,10 @@ import { addError } from 'app/redux/errors/actions';
 import type {
   AddWatchlistMovieAction,
   ChangePasswordAction,
-  DeleteRatingAction,
   LogInUserAction,
   RateMovieAction,
   RegisterUserAction,
+  RemoveRatingAction,
   RemoveWatchlistMovieAction,
 } from 'app/redux/user/flow';
 
@@ -68,7 +68,8 @@ function* logInWorker({ userCredentials }: LogInUserAction): SagaFunction {
 
 function* logOutWorker(): SagaFunction {
   yield call(logOutUser);
-  yield put(clearUserAction());
+  const { user } = yield call(getInitializationData);
+  yield put(saveUserAction(user));
 }
 
 function* changePasswordWorker({
@@ -91,9 +92,9 @@ function* rateMovieWorker({
   yield put(action);
 }
 
-function* deleteRatingWorker({ movieId }: DeleteRatingAction): SagaFunction {
+function* deleteRatingWorker({ movieId }: RemoveRatingAction): SagaFunction {
   yield call(deleteRating, movieId);
-  yield put(removeRatingAction(movieId));
+  yield put(deleteRatingAction(movieId));
 }
 
 function* addMovieToWatchlistWorker({
@@ -131,7 +132,7 @@ function* rateMovieWatcher(): SagaFunction {
 }
 
 function* deleteRatingWatcher(): SagaFunction {
-  yield takeEvery(DELETE_RATING, withSpinner(deleteRatingWorker));
+  yield takeEvery(REMOVE_RATING, withSpinner(deleteRatingWorker));
 }
 
 function* addMovieToWatchlistWatcher(): SagaFunction {
