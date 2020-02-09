@@ -16,7 +16,7 @@ import User from 'app/components/navbar/User';
 import type { User as UserType } from 'app/redux/user/flow';
 
 const Navbar = styled.nav`
-  height: 62px;
+  min-height: 62px;
 `;
 
 type Props = {
@@ -24,7 +24,7 @@ type Props = {
 };
 
 const NavigationBar = ({ user }: Props) => (
-  <Navbar className="fixed-top navbar navbar-expand-sm navbar-dark bg-dark">
+  <Navbar className="fixed-top navbar navbar-expand-lg navbar-dark bg-dark">
     <div className="container">
       <button
         className="navbar-toggler"

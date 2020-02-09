@@ -1,7 +1,7 @@
 // @flow
 export const findMovieActors = (id: string) =>
   `SELECT DISTINCT ?name ?id WHERE {
-     ?movie wdt:P31 wd:Q11424;
+     ?movie wdt:P31/wdt:P279* wd:Q11424;
             wdt:P345 "${id}";
             wdt:P161 ?actor.
      ?actor wdt:P345 ?id;
@@ -12,7 +12,7 @@ export const findMovieActors = (id: string) =>
 export const findMoviesByActor = (id: string) =>
   `SELECT ?name ?id (MIN(year(?date)) as ?year) WHERE {
     ?actor wdt:P345 "${id}".
-    ?movie wdt:P31 wd:Q11424;
+    ?movie wdt:P31/wdt:P279* wd:Q11424;
            wdt:P161 ?actor;
            wdt:P345 ?id;
            wdt:P577 ?date;
@@ -23,7 +23,7 @@ export const findMoviesByActor = (id: string) =>
 export const findMoviesByDirector = (id: string) =>
   `SELECT ?name ?id (MIN(year(?date)) as ?year) WHERE {
     ?director wdt:P345 "${id}".
-    ?movie wdt:P31 wd:Q11424;
+    ?movie wdt:P31/wdt:P279* wd:Q11424;
            wdt:P57 ?director;
            wdt:P345 ?id;
            wdt:P577 ?date;
@@ -34,7 +34,7 @@ export const findMoviesByDirector = (id: string) =>
 export const findMoviesByWriter = (id: string) =>
   `SELECT ?name ?id (MIN(year(?date)) as ?year) WHERE {
     ?writer wdt:P345 "${id}".
-    ?movie wdt:P31 wd:Q11424;
+    ?movie wdt:P31/wdt:P279* wd:Q11424;
            wdt:P58 ?writer;
            wdt:P345 ?id;
            wdt:P577 ?date;
@@ -58,7 +58,7 @@ export const findMoviesByYearAndGenre = (
           
           WITH {
             SELECT ?genre {
-              ?genre wdt:P31 wd:Q201658;
+              ?genre wdt:P31/wdt:P279* wd:Q201658;
                      rdfs:label ?genre_name.
               FILTER(lang(?genre_name) = 'en' && regex(?genre_name, "${genre}", "i"))  
             }
@@ -90,7 +90,7 @@ const findMoviesByYear = (yearFrom: number, yearTo: number) =>
 
 const findMoviesWithYear = () =>
   `SELECT ?movie (MIN(year(?date)) as ?year) WHERE {
-    ?movie wdt:P31 wd:Q11424;
+    ?movie wdt:P31/wdt:P279* wd:Q11424;
            wdt:P577 ?date.
   } GROUP BY ?movie`;
 

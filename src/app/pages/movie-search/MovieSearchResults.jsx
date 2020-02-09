@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import { withRouter } from 'react-router-dom';
+import _uniqBy from 'lodash/uniqBy';
 import { asyncOperation } from 'app/redux/util';
 import { searchMovie } from 'app/api/omdb';
 import MovieResult from 'app/pages/movie-search/MovieResult';
@@ -27,6 +28,7 @@ const MovieSearchResults = ({ location }: Props) => {
     );
 
     return () => {
+      setFetchingFinished(false);
       setSearchResult(null);
     };
   }, [location.search]);
@@ -48,12 +50,14 @@ const MovieSearchResults = ({ location }: Props) => {
   const searchResults = Search.filter(
     (result: BaseMovieDetails) => result.Type === 'movie',
   );
+  // OMDb sometimes returns duplicates for some reason
+  const uniqueSearchResults = _uniqBy(searchResults, 'imdbID');
 
-  return searchResults.length > 0 ? (
+  return uniqueSearchResults.length > 0 ? (
     <React.Fragment>
       <h1>Search results:</h1>
       <hr />
-      {searchResults.map((result: BaseMovieDetails, index: number) => (
+      {uniqueSearchResults.map((result: BaseMovieDetails, index: number) => (
         <MovieResult key={result.imdbID} movie={result} ordinal={index + 1} />
       ))}
     </React.Fragment>
