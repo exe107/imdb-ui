@@ -8,6 +8,7 @@ import Login from 'app/pages/login/Login';
 import Ratings from 'app/pages/ratings/Ratings';
 import Watchlist from 'app/pages/watchlist/Watchlist';
 import PasswordChange from 'app/pages/user-edit/PasswordChange';
+import PendingReviews from 'app/pages/pending-reviews/PendingReviews';
 
 export const MOVIES_SEARCH_ROUTE = {
   path: '/movies-search',
@@ -54,6 +55,11 @@ export const WATCHLIST_ROUTE = {
   component: Watchlist,
 };
 
+export const PENDING_REVIEWS_ROUTE = {
+  path: '/pending-reviews',
+  component: PendingReviews,
+};
+
 export const ROUTES = [
   MOVIES_SEARCH_ROUTE,
   MOVIE_SEARCH_RESULTS_ROUTE,
@@ -64,4 +70,5 @@ export const ROUTES = [
   CHANGE_PASSWORD_ROUTE,
   RATINGS_ROUTE,
   WATCHLIST_ROUTE,
+  PENDING_REVIEWS_ROUTE,
 ];

@@ -16,14 +16,14 @@ import {
 } from 'app/api/util';
 import { NOT_AVAILABLE } from 'app/constants';
 import { asyncOperation } from 'app/redux/util';
-import { getComments } from 'app/http';
+import { getReviews } from 'app/http';
 import { getUser } from 'app/redux/user/selectors';
 import { addError } from 'app/redux/errors/actions';
 import imageNotFound from 'app/images/image_not_found.png';
 import PeopleSection from 'app/components/section/PeopleSection';
 import MovieRatingStar from 'app/pages/movie/MovieRatingStar';
 import WatchlistButton from 'app/pages/movie/WatchlistButton';
-import Comments from 'app/pages/movie/comments/Comments';
+import Reviews from 'app/pages/movie/reviews/Reviews';
 import type { User } from 'app/redux/user/flow';
 import type { AddErrorAction, ApiError } from 'app/redux/errors/flow';
 import type { MovieDetailsResponse } from 'app/api/omdb/flow';
@@ -43,7 +43,7 @@ const Movie = ({ user, location }: Props): React.Node => {
   const [movie, setMovie] = React.useState<?MovieDetailsResponse>();
   const [directors, setDirectors] = React.useState([]);
   const [cast, setCast] = React.useState([]);
-  const [comments, setComments] = React.useState([]);
+  const [reviews, setReviews] = React.useState([]);
   const [fetchingFinished, setFetchingFinished] = React.useState(false);
 
   React.useEffect(() => {
@@ -78,11 +78,11 @@ const Movie = ({ user, location }: Props): React.Node => {
             .then(response => setCast(extractPeopleQueryResults(response)))
             .catch(console.log);
 
-          const commentsPromise = getComments(imdbID)
-            .then(setComments)
+          const reviewsPromise = getReviews(imdbID)
+            .then(setReviews)
             .catch(addError);
 
-          return Promise.all([actorsPromise, commentsPromise]);
+          return Promise.all([actorsPromise, reviewsPromise]);
         })
         .catch(console.log)
         .then(() => setFetchingFinished(true)),
@@ -197,7 +197,7 @@ const Movie = ({ user, location }: Props): React.Node => {
           <h5 className="my-5 text-justify">{Plot}</h5>
         )}
         <div className="d-flex justify-content-between">
-          <Comments user={user} movie={userMovie} comments={comments} />
+          <Reviews user={user} movie={userMovie} reviews={reviews} />
           <div className="list-group">
             <PeopleSection header="Directors" people={directors} />
             <PeopleSection header="Stars" people={stars} />

@@ -17,3 +17,7 @@ export const PanelButton = styled.button`
     outline: none !important;
   }
 `;
+
+export const ReviewHeading = styled.div`
+  background: sandybrown;
+`;

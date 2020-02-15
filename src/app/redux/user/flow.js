@@ -1,5 +1,6 @@
 // @flow
 import type { Action } from 'redux';
+import type { PendingReview } from 'app/pages/movie/reviews/flow';
 
 export type UserPersonalDetails = {
   name: string,
@@ -32,6 +33,7 @@ export type User = {
   personalDetails: UserPersonalDetails,
   movieRatings: UserMovieRating[],
   watchlist: UserMovie[],
+  pendingReviews: PendingReview[],
 };
 
 export type PasswordChangeDetails = {
@@ -90,6 +92,10 @@ export type RemoveWatchlistMovieAction = Action & {
 
 export type DeleteWatchlistMovieAction = Action & {
   movieId: string,
+};
+
+export type SavePendingReviewAction = Action & {
+  review: PendingReview,
 };
 
 export type UserState = {

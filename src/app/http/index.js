@@ -7,7 +7,7 @@ import type {
   UserMovieRating,
   UserPersonalDetails,
 } from 'app/redux/user/flow';
-import type { NewComment } from 'app/pages/movie/comments/flow';
+import type { NewReview } from 'app/pages/movie/reviews/flow';
 
 const CSRF_COOKIE = 'XSRF-TOKEN';
 const CSRF_HEADER = 'X-XSRF-TOKEN';
@@ -96,9 +96,9 @@ export const addMovieToWatchlist = (body: UserMovie) =>
 export const deleteWatchlistMovie = (movieId: string) =>
   DELETE(`/movies/watchlist/${movieId}`);
 
-export const getComments = (movieId: string) => GET(`/comments/${movieId}`);
+export const getReviews = (movieId: string) => GET(`/reviews/${movieId}`);
 
-export const addComment = (body: NewComment) => POST('/comments', body);
+export const addReview = (body: NewReview) => POST('/reviews/add', body);
 
-export const deleteComment = (commentId: number) =>
-  DELETE(`/comments/${commentId}`);
+export const deleteReview = (reviewId: number) =>
+  DELETE(`/reviews/${reviewId}`);

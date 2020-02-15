@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import {
   LOGIN_ROUTE,
   MOVIES_SEARCH_ROUTE,
+  PENDING_REVIEWS_ROUTE,
   RATINGS_ROUTE,
   REGISTER_ROUTE,
   WATCHLIST_ROUTE,
@@ -19,13 +20,17 @@ const Navbar = styled.nav`
   min-height: 62px;
 `;
 
+const SearchBarListItem = styled.li`
+  width: 40%;
+`;
+
 type Props = {
   user: UserType,
 };
 
 const NavigationBar = ({ user }: Props) => (
   <Navbar className="fixed-top navbar navbar-expand-lg navbar-dark bg-dark">
-    <div className="container">
+    <div className="container-fluid px-5">
       <button
         className="navbar-toggler"
         type="button"
@@ -53,9 +58,14 @@ const NavigationBar = ({ user }: Props) => (
                   My ratings
                 </Link>
               </li>
-              <li className="nav-item mr-5">
+              <li className="nav-item">
                 <Link className="nav-link" to={WATCHLIST_ROUTE.path}>
                   Watchlist
+                </Link>
+              </li>
+              <li className="nav-item mr-3">
+                <Link className="nav-link" to={PENDING_REVIEWS_ROUTE.path}>
+                  Pending reviews
                 </Link>
               </li>
             </React.Fragment>
@@ -66,16 +76,16 @@ const NavigationBar = ({ user }: Props) => (
                   Log in
                 </Link>
               </li>
-              <li className="nav-item mr-5">
+              <li className="nav-item mr-3">
                 <Link className="nav-link" to={REGISTER_ROUTE.path}>
                   Register
                 </Link>
               </li>
             </React.Fragment>
           )}
-          <li className="nav-item w-50">
+          <SearchBarListItem className="nav-item">
             <SearchBar />
-          </li>
+          </SearchBarListItem>
         </ul>
       </div>
       {user && <User personalDetails={user.personalDetails} />}
