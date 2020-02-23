@@ -18,7 +18,7 @@ import { NOT_AVAILABLE } from 'app/constants';
 import { asyncOperation } from 'app/redux/util';
 import { getReviews } from 'app/http';
 import { getUser } from 'app/redux/user/selectors';
-import { addError } from 'app/redux/errors/actions';
+import { addErrorAction } from 'app/redux/errors/actions';
 import imageNotFound from 'app/images/image_not_found.png';
 import PeopleSection from 'app/components/section/PeopleSection';
 import MovieRatingStar from 'app/pages/movie/MovieRatingStar';
@@ -39,7 +39,7 @@ type Props = {
   addError: ApiError => AddErrorAction,
 };
 
-const Movie = ({ user, location }: Props): React.Node => {
+const Movie = ({ user, location, addError }: Props): React.Node => {
   const [movie, setMovie] = React.useState<?MovieDetailsResponse>();
   const [directors, setDirectors] = React.useState([]);
   const [cast, setCast] = React.useState([]);
@@ -92,7 +92,7 @@ const Movie = ({ user, location }: Props): React.Node => {
       setDirectors([]);
       setFetchingFinished(false);
     };
-  }, [location.search]);
+  }, [location.search, addError]);
 
   // removes non alphabetic characters from name for easier matching between cast and stars
   const formatActorName = React.useCallback(
@@ -216,7 +216,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  addError,
+  addError: addErrorAction,
 };
 
 export default compose(

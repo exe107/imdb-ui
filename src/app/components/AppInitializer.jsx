@@ -7,6 +7,7 @@ import { asyncOperation } from 'app/redux/util';
 import { getSpinner } from 'app/redux/spinner/selectors';
 import { saveUserAction } from 'app/redux/user/actions';
 import type { SaveUserAction, User } from 'app/redux/user/flow';
+import type { InitializationData } from 'app/redux/flow';
 
 const SpinnerContainer = styled.div`
   position: fixed;
@@ -22,10 +23,6 @@ const Spinner = styled.div`
   top: 50%;
   left: 50%;
 `;
-
-type InitializationData = {
-  user: User,
-};
 
 type Props = {
   children: React.Node,

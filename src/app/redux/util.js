@@ -2,6 +2,7 @@
 import { Action } from 'redux';
 import { store } from 'app/redux/index';
 import { hideSpinner, showSpinner } from 'app/redux/spinner/actions';
+import { addErrorAction } from 'app/redux/errors/actions';
 
 export function createReducer<T>(actionHandlers: Object, initialState: T) {
   return (state: T = initialState, action: Action) => {
@@ -18,8 +19,15 @@ export const asyncOperation = async (asyncFn: AsyncFunction<any>): any => {
   const { dispatch } = store;
 
   dispatch(showSpinner());
-  const result = await asyncFn();
-  dispatch(hideSpinner());
+  let result;
+
+  try {
+    result = await asyncFn();
+  } catch (error) {
+    dispatch(addErrorAction(error));
+  } finally {
+    dispatch(hideSpinner());
+  }
 
   return result;
 };

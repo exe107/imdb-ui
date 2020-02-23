@@ -3,8 +3,10 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Form } from 'react-final-form';
 import { goBack } from 'app/navigation/util';
+import { asyncOperation } from 'app/redux/util';
+import { registerUser } from 'app/http';
+import { saveUserAction } from 'app/redux/user/actions';
 import { getUser } from 'app/redux/user/selectors';
-import { registerUserAction } from 'app/redux/user/actions';
 import {
   alphabeticValidator,
   composeValidators,
@@ -25,10 +27,10 @@ type FormValues = UserPersonalDetails & UserCredentials;
 
 type Props = {
   user: User,
-  registerUser: FormValues => SaveUserAction,
+  saveUser: User => SaveUserAction,
 };
 
-const Register = ({ user, registerUser }: Props) => {
+const Register = ({ user, saveUser }: Props) => {
   const nameValidator = React.useCallback(
     composeValidators([requiredValidator, alphabeticValidator]),
     [],
@@ -40,10 +42,9 @@ const Register = ({ user, registerUser }: Props) => {
   );
 
   const onSubmit = React.useCallback(
-    (values: FormValues) => {
-      registerUser(values);
-    },
-    [registerUser],
+    (values: FormValues) =>
+      asyncOperation(() => registerUser(values).then(saveUser)),
+    [saveUser],
   );
 
   if (user) {
@@ -92,7 +93,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  registerUser: registerUserAction,
+  saveUser: saveUserAction,
 };
 
 export default connect(

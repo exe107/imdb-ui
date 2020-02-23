@@ -14,8 +14,8 @@ import {
 } from 'app/redux/user/actions';
 import type {
   DeletePendingReviewAction,
+  DeleteRatingAction,
   DeleteWatchlistMovieAction,
-  RemoveRatingAction,
   SavePendingReviewAction,
   SaveRatingAction,
   SaveUserAction,
@@ -50,7 +50,7 @@ const updateRating = (state: User, action: UpdateRatingAction) => {
   return { ...state, movieRatings };
 };
 
-const removeRating = (state: User, action: RemoveRatingAction) => ({
+const removeRating = (state: User, action: DeleteRatingAction) => ({
   ...state,
   movieRatings: state.movieRatings.filter(
     movieRating => movieRating.movie.id !== action.movieId,

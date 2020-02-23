@@ -28,7 +28,7 @@ const PendingReview = ({ isAdmin, review, onApprove, onReject }: Props) => {
     <React.Fragment>
       <div className="mt-5 border border-info rounded w-75">
         <ReviewHeading className="d-flex justify-content-between align-items-center border-bottom border-info p-3">
-          {reviewHeading}
+          {ReactHtmlParser(reviewHeading)}
         </ReviewHeading>
         <div className="p-3">{ReactHtmlParser(reviewText)}</div>
       </div>

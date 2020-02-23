@@ -1,41 +1,45 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { asyncOperation } from 'app/redux/util';
+import { addWatchlistMovie, deleteWatchlistMovie } from 'app/http';
 import {
-  addMovieToWatchlistAction,
-  removeWatchlistMovieAction,
+  deleteWatchlistMovieAction,
+  saveWatchlistMovieAction,
 } from 'app/redux/user/actions';
 import type {
-  AddWatchlistMovieAction,
-  RemoveWatchlistMovieAction,
+  DeleteWatchlistMovieAction,
+  SaveWatchlistMovieAction,
   UserMovie,
 } from 'app/redux/user/flow';
 
 type Props = {
   movie: UserMovie,
   watchlist: UserMovie[],
-  addMovieToWatchlist: UserMovie => AddWatchlistMovieAction,
-  removeWatchlistMovie: string => RemoveWatchlistMovieAction,
+  saveWatchlistMovie: UserMovie => SaveWatchlistMovieAction,
+  removeWatchlistMovie: string => DeleteWatchlistMovieAction,
 };
 
 const WatchlistButton = ({
   movie,
   watchlist,
-  addMovieToWatchlist,
+  saveWatchlistMovie,
   removeWatchlistMovie,
 }: Props) => {
   const isMovieInWatchlist = React.useMemo(
-    () => !!watchlist.find(watchlistMovie => movie.id === watchlistMovie.id),
+    () => watchlist.find(watchlistMovie => movie.id === watchlistMovie.id),
     [watchlist, movie],
   );
 
   const onButtonClick = React.useCallback(() => {
-    if (isMovieInWatchlist) {
-      removeWatchlistMovie(movie.id);
-    } else {
-      addMovieToWatchlist(movie);
-    }
-  }, [isMovieInWatchlist, movie, removeWatchlistMovie, addMovieToWatchlist]);
+    asyncOperation(() =>
+      isMovieInWatchlist
+        ? deleteWatchlistMovie(movie.id).then(() =>
+            removeWatchlistMovie(movie.id),
+          )
+        : addWatchlistMovie(movie).then(() => saveWatchlistMovie(movie)),
+    );
+  }, [isMovieInWatchlist, movie, saveWatchlistMovie, removeWatchlistMovie]);
 
   const buttonLabel = isMovieInWatchlist
     ? 'Remove movie from watchlist'
@@ -56,8 +60,8 @@ const WatchlistButton = ({
 };
 
 const mapDispatchToProps = {
-  addMovieToWatchlist: addMovieToWatchlistAction,
-  removeWatchlistMovie: removeWatchlistMovieAction,
+  saveWatchlistMovie: saveWatchlistMovieAction,
+  removeWatchlistMovie: deleteWatchlistMovieAction,
 };
 
 export default connect(

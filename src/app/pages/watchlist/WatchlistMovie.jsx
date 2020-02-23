@@ -6,10 +6,12 @@ import { NOT_AVAILABLE } from 'app/constants';
 import { constructUrl } from 'app/navigation/util';
 import { MOVIE_ROUTE } from 'app/navigation/routes';
 import { formatRuntime } from 'app/util';
-import { removeWatchlistMovieAction } from 'app/redux/user/actions';
+import { asyncOperation } from 'app/redux/util';
+import { deleteWatchlistMovie } from 'app/http';
+import { deleteWatchlistMovieAction } from 'app/redux/user/actions';
 import imageNotFound from 'app/images/image_not_found.png';
 import type {
-  RemoveWatchlistMovieAction,
+  DeleteWatchlistMovieAction,
   UserMovie,
 } from 'app/redux/user/flow';
 
@@ -32,7 +34,7 @@ const RemoveIcon = styled.i`
 type Props = {
   ordinal: number,
   movie: UserMovie,
-  removeWatchlistMovie: string => RemoveWatchlistMovieAction,
+  removeWatchlistMovie: string => DeleteWatchlistMovieAction,
 };
 
 const WatchlistMovie = ({ ordinal, movie, removeWatchlistMovie }: Props) => {
@@ -40,10 +42,15 @@ const WatchlistMovie = ({ ordinal, movie, removeWatchlistMovie }: Props) => {
   const onImageMouseEnter = React.useCallback(() => setHovered(true), []);
   const onImageMouseLeave = React.useCallback(() => setHovered(false), []);
 
-  const onImageClick = React.useCallback(() => removeWatchlistMovie(movie.id), [
-    removeWatchlistMovie,
-    movie.id,
-  ]);
+  const onImageClick = React.useCallback(
+    () =>
+      asyncOperation(() =>
+        deleteWatchlistMovie(movie.id).then(() =>
+          removeWatchlistMovie(movie.id),
+        ),
+      ),
+    [removeWatchlistMovie, movie.id],
+  );
 
   const { id, name, year, genres, imageUrl, runtime, rating } = movie;
   const image = imageUrl !== NOT_AVAILABLE ? imageUrl : imageNotFound;
@@ -85,7 +92,7 @@ const WatchlistMovie = ({ ordinal, movie, removeWatchlistMovie }: Props) => {
 };
 
 const mapDispatchToProps = {
-  removeWatchlistMovie: removeWatchlistMovieAction,
+  removeWatchlistMovie: deleteWatchlistMovieAction,
 };
 
 export default connect(

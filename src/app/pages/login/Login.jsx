@@ -2,8 +2,10 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Form } from 'react-final-form';
-import { logInUserAction } from 'app/redux/user/actions';
 import { goBack } from 'app/navigation/util';
+import { asyncOperation } from 'app/redux/util';
+import { logInUser } from 'app/http';
+import { saveUserAction } from 'app/redux/user/actions';
 import { getUser } from 'app/redux/user/selectors';
 import {
   composeValidators,
@@ -23,20 +25,19 @@ type FormValues = UserCredentials;
 
 type Props = {
   user: User,
-  logInUser: UserCredentials => SaveUserAction,
+  saveUser: User => SaveUserAction,
 };
 
-const Login = ({ user, logInUser }: Props): React.Node => {
+const Login = ({ user, saveUser }: Props): React.Node => {
   const passwordValidator = React.useCallback(
     composeValidators([requiredValidator, minLengthValidator(7)]),
     [],
   );
 
   const onSubmit = React.useCallback(
-    (values: FormValues) => {
-      logInUser(values);
-    },
-    [logInUser],
+    (values: FormValues) =>
+      asyncOperation(() => logInUser(values).then(saveUser)),
+    [saveUser],
   );
 
   if (user) {
@@ -82,7 +83,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  logInUser: logInUserAction,
+  saveUser: saveUserAction,
 };
 
 export default connect(

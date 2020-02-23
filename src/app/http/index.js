@@ -91,7 +91,7 @@ export const rateMovie = (body: UserMovieRating) =>
 export const deleteRating = (movieId: string) =>
   DELETE(`/movies/ratings/${movieId}`);
 
-export const addMovieToWatchlist = (body: UserMovie) =>
+export const addWatchlistMovie = (body: UserMovie) =>
   POST('/movies/watchlist', body);
 
 export const deleteWatchlistMovie = (movieId: string) =>

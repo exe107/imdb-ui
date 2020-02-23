@@ -6,7 +6,7 @@ import _get from 'lodash/get';
 import { asyncOperation } from 'app/redux/util';
 import { deleteReview } from 'app/http';
 import { savePendingReviewAction } from 'app/redux/user/actions';
-import { addError } from 'app/redux/errors/actions';
+import { addErrorAction } from 'app/redux/errors/actions';
 import { PanelButton } from 'app/styles';
 import ExistingReview from 'app/pages/movie/reviews/ExistingReview';
 import NewReview from 'app/pages/movie/reviews/NewReview';
@@ -119,7 +119,7 @@ const Reviews = ({ user, movie, reviews: initialReviews, addError }: Props) => {
 };
 
 const mapDispatchToProps = {
-  addError,
+  addError: addErrorAction,
   savePendingReview: savePendingReviewAction,
 };
 

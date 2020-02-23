@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import ReactQuill from 'react-quill';
 import { asyncOperation } from 'app/redux/util';
 import { addReview } from 'app/http';
-import { addError } from 'app/redux/errors/actions';
+import { addErrorAction } from 'app/redux/errors/actions';
 import { savePendingReviewAction } from 'app/redux/user/actions';
 import type {
   SavePendingReviewAction,
@@ -102,7 +102,7 @@ const NewReview = ({
 };
 
 const mapDispatchToProps = {
-  addError,
+  addError: addErrorAction,
   savePendingReview: savePendingReviewAction,
 };
 

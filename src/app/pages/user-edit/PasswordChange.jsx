@@ -3,8 +3,9 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Form } from 'react-final-form';
 import { goBack } from 'app/navigation/util';
+import { asyncOperation } from 'app/redux/util';
+import { changePassword } from 'app/http';
 import { getUser } from 'app/redux/user/selectors';
-import { changePasswordAction } from 'app/redux/user/actions';
 import {
   composeValidators,
   matchingFieldValidator,
@@ -14,18 +15,13 @@ import {
 import { FormContainer } from 'app/forms/styles';
 import InputField from 'app/forms/InputField';
 import type { FormRenderProps } from 'react-final-form';
-import type {
-  ChangePasswordAction,
-  PasswordChangeDetails,
-  User,
-} from 'app/redux/user/flow';
+import type { User } from 'app/redux/user/flow';
 
 type Props = {
   user: User,
-  changePassword: PasswordChangeDetails => ChangePasswordAction,
 };
 
-const PasswordChange = ({ user, changePassword }: Props) => {
+const PasswordChange = ({ user }: Props) => {
   const commonValidators = React.useMemo(
     () => [requiredValidator, minLengthValidator(7)],
     [],
@@ -59,13 +55,11 @@ const PasswordChange = ({ user, changePassword }: Props) => {
     [],
   );
 
-  const onSubmit = React.useCallback(
-    (values: Object) => {
-      const { oldPassword, newPassword } = values;
-      changePassword({ oldPassword, newPassword });
-    },
-    [changePassword],
-  );
+  const onSubmit = React.useCallback((values: Object) => {
+    const { oldPassword, newPassword } = values;
+    const requestBody = { oldPassword, newPassword };
+    asyncOperation(() => changePassword(requestBody).then(goBack));
+  }, []);
 
   if (!user) {
     goBack();
@@ -116,11 +110,4 @@ const mapStateToProps = state => ({
   user: getUser(state),
 });
 
-const mapDispatchToProps = {
-  changePassword: changePasswordAction,
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(PasswordChange);
+export default connect(mapStateToProps)(PasswordChange);

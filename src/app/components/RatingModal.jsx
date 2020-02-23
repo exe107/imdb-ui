@@ -4,13 +4,20 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import _range from 'lodash/range';
 import $ from 'jquery';
-import { removeRatingAction, rateMovieAction } from 'app/redux/user/actions';
+import { asyncOperation } from 'app/redux/util';
+import { deleteRating, rateMovie } from 'app/http';
+import {
+  deleteRatingAction,
+  saveRatingAction,
+  updateRatingAction,
+} from 'app/redux/user/actions';
 import { ClickableElement } from 'app/styles';
 import type {
   UserMovie,
   UserMovieRating,
-  RateMovieAction,
-  RemoveRatingAction,
+  SaveRatingAction,
+  UpdateRatingAction,
+  DeleteRatingAction,
 } from 'app/redux/user/flow';
 
 const ModalBody = styled.div`
@@ -23,8 +30,9 @@ type Props = {
   modalName: string,
   movie: UserMovie,
   previousRating: number,
-  rateMovie: (UserMovieRating, boolean) => RateMovieAction,
-  removeRating: string => RemoveRatingAction,
+  saveRating: UserMovieRating => SaveRatingAction,
+  updateRating: UserMovieRating => UpdateRatingAction,
+  removeRating: string => DeleteRatingAction,
 };
 
 const RatingModal = ({
@@ -32,7 +40,8 @@ const RatingModal = ({
   modalName,
   movie,
   previousRating,
-  rateMovie,
+  saveRating,
+  updateRating,
   removeRating,
 }: Props): React.Node => {
   const [selectedRating, setSelectedRating] = React.useState(previousRating);
@@ -43,12 +52,24 @@ const RatingModal = ({
   const onRateClick = React.useCallback(() => {
     const movieRating = { movie, rating };
 
-    rateMovie(movieRating, isNewRating);
-    $(modalId).modal('hide');
-  }, [modalId, rateMovie, movie, rating, isNewRating]);
+    asyncOperation(() =>
+      rateMovie(movieRating).then(() => {
+        if (isNewRating) {
+          saveRating(movieRating);
+        } else {
+          updateRating(movieRating);
+        }
+      }),
+    );
 
-  const onDeleteRateClick = React.useCallback(() => {
-    removeRating(movie.id);
+    $(modalId).modal('hide');
+  }, [modalId, movie, rating, saveRating, updateRating, isNewRating]);
+
+  const onDeleteRatingClick = React.useCallback(() => {
+    asyncOperation(() =>
+      deleteRating(movie.id).then(() => removeRating(movie.id)),
+    );
+
     $(modalId).modal('hide');
   }, [modalId, removeRating, movie.id]);
 
@@ -100,7 +121,7 @@ const RatingModal = ({
               <button
                 type="button"
                 className="btn btn-danger"
-                onClick={onDeleteRateClick}
+                onClick={onDeleteRatingClick}
               >
                 Delete rating
               </button>
@@ -120,8 +141,9 @@ const RatingModal = ({
 };
 
 const mapDispatchToProps = {
-  rateMovie: rateMovieAction,
-  removeRating: removeRatingAction,
+  saveRating: saveRatingAction,
+  updateRating: updateRatingAction,
+  removeRating: deleteRatingAction,
 };
 
 export default connect(
