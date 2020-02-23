@@ -4,6 +4,7 @@ import type {
   PasswordChangeDetails,
   UserCredentials,
   UserMovie,
+  UserMovieIdentifier,
   UserMovieRating,
   UserPersonalDetails,
 } from 'app/redux/user/flow';
@@ -100,5 +101,10 @@ export const getReviews = (movieId: string) => GET(`/reviews/${movieId}`);
 
 export const addReview = (body: NewReview) => POST('/reviews/add', body);
 
-export const deleteReview = (reviewId: number) =>
-  DELETE(`/reviews/${reviewId}`);
+export const deleteReview = (movieId: string) => DELETE(`/reviews/${movieId}`);
+
+export const approveReview = (body: UserMovieIdentifier) =>
+  POST('/reviews/approve', body);
+
+export const rejectReview = (body: UserMovieIdentifier) =>
+  POST('/reviews/reject', body);

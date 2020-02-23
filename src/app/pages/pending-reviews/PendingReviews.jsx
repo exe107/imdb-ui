@@ -2,27 +2,65 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { goBack } from 'app/navigation/util';
-import { getPendingReviews } from 'app/redux/user/selectors';
+import { asyncOperation } from 'app/redux/util';
+import { approveReview, rejectReview } from 'app/http';
+import { getUser } from 'app/redux/user/selectors';
+import { deletePendingReviewAction } from 'app/redux/user/actions';
 import PendingReview from 'app/pages/pending-reviews/PendingReview';
-import type { PendingReview as PendingReviewType } from 'app/pages/movie/reviews/flow';
+import type {
+  DeletePendingReviewAction,
+  User,
+  UserMovieIdentifier,
+} from 'app/redux/user/flow';
+import type { ExistingReview } from 'app/pages/movie/reviews/flow';
 
 type Props = {
-  reviews: ?(PendingReviewType[]),
+  user: User,
+  deletePendingReview: UserMovieIdentifier => DeletePendingReviewAction,
 };
 
-const PendingReviews = ({ reviews }: Props) => {
-  if (!reviews) {
+const PendingReviews = ({ user, deletePendingReview }: Props) => {
+  const createApproveHandler = React.useCallback(
+    (identifier: UserMovieIdentifier) => () =>
+      asyncOperation(() =>
+        approveReview(identifier).then(() => deletePendingReview(identifier)),
+      ),
+    [deletePendingReview],
+  );
+
+  const createRejectHandler = React.useCallback(
+    (identifier: UserMovieIdentifier) => () =>
+      asyncOperation(() =>
+        rejectReview(identifier).then(() => deletePendingReview(identifier)),
+      ),
+    [deletePendingReview],
+  );
+
+  if (!user) {
     goBack();
     return null;
   }
 
-  return reviews.length > 0 ? (
+  const { admin, pendingReviews } = user;
+
+  return pendingReviews.length > 0 ? (
     <React.Fragment>
       <h1>Your pending reviews</h1>
       <hr />
-      {reviews.map(review => (
-        <PendingReview key={review.id} review={review} />
-      ))}
+      {pendingReviews.map((review: ExistingReview) => {
+        const { username, movieId } = review;
+        const identifier = { username, movieId };
+
+        return (
+          <PendingReview
+            key={`${username}-${movieId}`}
+            review={review}
+            isAdmin={admin}
+            onApprove={createApproveHandler(identifier)}
+            onReject={createRejectHandler(identifier)}
+          />
+        );
+      })}
     </React.Fragment>
   ) : (
     <h1 className="text-center">You have no pending reviews</h1>
@@ -30,7 +68,14 @@ const PendingReviews = ({ reviews }: Props) => {
 };
 
 const mapStateToProps = state => ({
-  reviews: getPendingReviews(state),
+  user: getUser(state),
 });
 
-export default connect(mapStateToProps)(PendingReviews);
+const mapDispatchToProps = {
+  deletePendingReview: deletePendingReviewAction,
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(PendingReviews);

@@ -10757,6 +10757,11 @@ wide-align@^1.1.0:
   dependencies:
     string-width "^1.0.2 || 2"
 
+word-link@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/word-link/-/word-link-1.0.1.tgz#db11137dd37d75c3431e2cf0b4cebb360743eae9"
+  integrity sha512-Xg626a97jNlfsckQBHIMG3MsIcGI8eAKBSBuB+aFzZXQTTkJ4AV9zObxE52jth9qqu17dVZk4NR6e1mJnqw4dA==
+
 wordwrap@~0.0.2:
   version "0.0.3"
   resolved "https://registry.yarnpkg.com/wordwrap/-/wordwrap-0.0.3.tgz#a3d5da6cd5c0bc0008d37234bbaf1bed63059107"

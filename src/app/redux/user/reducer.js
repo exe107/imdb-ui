@@ -3,6 +3,7 @@ import _get from 'lodash/get';
 import _isEqualWith from 'lodash/isEqualWith';
 import { createReducer } from 'app/redux/util';
 import {
+  DELETE_PENDING_REVIEW,
   DELETE_RATING,
   SAVE_PENDING_REVIEW,
   SAVE_RATING,
@@ -12,6 +13,7 @@ import {
   WATCHLIST_SAVE_MOVIE,
 } from 'app/redux/user/actions';
 import type {
+  DeletePendingReviewAction,
   DeleteWatchlistMovieAction,
   RemoveRatingAction,
   SavePendingReviewAction,
@@ -63,7 +65,7 @@ const saveMovieToWatchlist = (
   watchlist: [...state.watchlist, action.movie],
 });
 
-const removeWatchlistMovie = (
+const deleteWatchlistMovie = (
   state: User,
   action: DeleteWatchlistMovieAction,
 ) => ({
@@ -76,6 +78,20 @@ const savePendingReview = (state: User, action: SavePendingReviewAction) => ({
   pendingReviews: [...state.pendingReviews, action.review],
 });
 
+const deletePendingReview = (
+  state: User,
+  action: DeletePendingReviewAction,
+) => {
+  const { movieId, username } = action.identifier;
+
+  return {
+    ...state,
+    pendingReviews: state.pendingReviews.filter(
+      review => review.movieId !== movieId || review.username !== username,
+    ),
+  };
+};
+
 export default createReducer(
   {
     [SAVE_USER]: saveUser,
@@ -83,8 +99,9 @@ export default createReducer(
     [UPDATE_RATING]: updateRating,
     [DELETE_RATING]: removeRating,
     [WATCHLIST_SAVE_MOVIE]: saveMovieToWatchlist,
-    [WATCHLIST_DELETE_MOVIE]: removeWatchlistMovie,
+    [WATCHLIST_DELETE_MOVIE]: deleteWatchlistMovie,
     [SAVE_PENDING_REVIEW]: savePendingReview,
+    [DELETE_PENDING_REVIEW]: deletePendingReview,
   },
   null,
 );

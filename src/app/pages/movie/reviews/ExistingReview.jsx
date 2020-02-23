@@ -3,15 +3,15 @@ import * as React from 'react';
 import ReactHtmlParser from 'react-html-parser';
 import moment from 'moment';
 import { ClickableElement, ReviewHeading } from 'app/styles';
-import type { ApprovedReview } from 'app/pages/movie/reviews/flow';
+import type { ExistingReview as ExistingReviewType } from 'app/pages/movie/reviews/flow';
 
 type Props = {
-  review: ApprovedReview,
+  review: ExistingReviewType,
   username: ?string,
   onDeleteReview: Function,
 };
 
-const Review = ({ review, username, onDeleteReview }: Props) => {
+const ExistingReview = ({ review, username, onDeleteReview }: Props) => {
   const { username: reviewUsername, review: reviewText, date } = review;
   const isUserReview = username === reviewUsername;
   const usernameLabel = isUserReview ? 'You' : reviewUsername;
@@ -37,4 +37,4 @@ const Review = ({ review, username, onDeleteReview }: Props) => {
   );
 };
 
-export default Review;
+export default ExistingReview;

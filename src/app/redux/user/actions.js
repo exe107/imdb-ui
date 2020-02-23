@@ -21,8 +21,10 @@ import type {
   ChangePasswordAction,
   PasswordChangeDetails,
   SavePendingReviewAction,
+  UserMovieIdentifier,
+  DeletePendingReviewAction,
 } from 'app/redux/user/flow';
-import type { PendingReview } from 'app/pages/movie/reviews/flow';
+import type { ExistingReview } from 'app/pages/movie/reviews/flow';
 
 export const REGISTER_USER = 'REGISTER_USER';
 export const LOGIN_USER = 'LOGIN_USER';
@@ -46,6 +48,7 @@ export const WATCHLIST_REMOVE_MOVIE = 'WATCHLIST_REMOVE_MOVIE';
 export const WATCHLIST_DELETE_MOVIE = 'WATCHLIST_DELETE_MOVIE';
 
 export const SAVE_PENDING_REVIEW = 'SAVE_PENDING_REVIEW';
+export const DELETE_PENDING_REVIEW = 'DELETE_PENDING_REVIEW';
 
 export const registerUserAction = (
   userDetails: UserPersonalDetails & UserCredentials,
@@ -136,9 +139,16 @@ export const deleteWatchlistMovieAction = (
   movieId,
 });
 
-export const savePendingReview = (
-  review: PendingReview,
+export const savePendingReviewAction = (
+  review: ExistingReview,
 ): SavePendingReviewAction => ({
   type: SAVE_PENDING_REVIEW,
   review,
+});
+
+export const deletePendingReviewAction = (
+  identifier: UserMovieIdentifier,
+): DeletePendingReviewAction => ({
+  type: DELETE_PENDING_REVIEW,
+  identifier,
 });

@@ -1,33 +1,19 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import ReactQuill from 'react-quill';
 import styled from 'styled-components';
 import _get from 'lodash/get';
 import { asyncOperation } from 'app/redux/util';
-import { addReview, deleteReview } from 'app/http';
-import { savePendingReview } from 'app/redux/user/actions';
+import { deleteReview } from 'app/http';
+import { savePendingReviewAction } from 'app/redux/user/actions';
 import { addError } from 'app/redux/errors/actions';
 import { PanelButton } from 'app/styles';
-import Review from 'app/pages/movie/reviews/Review';
-import type {
-  ApprovedReview,
-  PendingReview,
-} from 'app/pages/movie/reviews/flow';
-import type {
-  SavePendingReviewAction,
-  User,
-  UserMovie,
-} from 'app/redux/user/flow';
+import ExistingReview from 'app/pages/movie/reviews/ExistingReview';
+import NewReview from 'app/pages/movie/reviews/NewReview';
+import type { ExistingReview as ExistingReviewType } from 'app/pages/movie/reviews/flow';
+import type { User, UserMovie } from 'app/redux/user/flow';
 import type { AddErrorAction, ApiError } from 'app/redux/errors/flow';
-
-const ReviewEditor = styled(ReactQuill)`
-  width: 100%;
-
-  .ql-container {
-    height: 200px;
-  }
-`;
+import { canWriteReview } from 'app/pages/movie/reviews/util';
 
 const ReviewsPanelButton = styled(PanelButton)`
   max-width: 200px;
@@ -36,22 +22,14 @@ const ReviewsPanelButton = styled(PanelButton)`
 type Props = {
   user: User,
   movie: UserMovie,
-  reviews: ApprovedReview[],
-  savePendingReview: PendingReview => SavePendingReviewAction,
+  reviews: ExistingReviewType[],
   addError: ApiError => AddErrorAction,
 };
 
 const REVIEWS_NAME = 'reviews';
 const REVIEWS_ID = `#${REVIEWS_NAME}`;
 
-const Reviews = ({
-  user,
-  movie,
-  reviews: initialReviews,
-  savePendingReview,
-  addError,
-}: Props) => {
-  const [reviewText, setReviewText] = React.useState('');
+const Reviews = ({ user, movie, reviews: initialReviews, addError }: Props) => {
   const [reviews, setReviews] = React.useState(initialReviews);
   const [expanded, setExpanded] = React.useState(false);
   const [showEditor, setShowEditor] = React.useState(false);
@@ -64,38 +42,17 @@ const Reviews = ({
     showEditor,
   ]);
 
-  const onEditorChange = React.useCallback(
-    content => setReviewText(content),
-    [],
-  );
+  const writeReview = canWriteReview(user, movie.id, reviews);
+  const username = _get(user, 'username');
 
-  const onPostReview = React.useCallback(() => {
-    if (!reviewText) {
-      return;
-    }
-
-    const review = {
-      movie,
-      review: reviewText,
-    };
-
-    asyncOperation(() =>
-      addReview(review)
-        .then((pendingReview: PendingReview) => {
-          setReviewText('');
-          toggleEditor();
-          savePendingReview(pendingReview);
-        })
-        .catch(addError),
-    );
-  }, [movie, reviewText, toggleEditor, savePendingReview, addError]);
-
-  const deleteReviewHandlerCreator = React.useCallback(
-    (reviewId: number) => () => {
+  const onDeleteReview = React.useCallback(
+    () =>
       asyncOperation(() =>
-        deleteReview(reviewId)
+        deleteReview(movie.id)
           .then(() => {
-            const newReviews = reviews.filter(review => review.id !== reviewId);
+            const newReviews = reviews.filter(
+              review => review.username !== username,
+            );
 
             setReviews(newReviews);
 
@@ -104,9 +61,8 @@ const Reviews = ({
             }
           })
           .catch(addError),
-      );
-    },
-    [reviews, addError],
+      ),
+    [movie.id, username, reviews, addError],
   );
 
   const iconClassName = expanded ? 'fa-minus' : 'fa-plus';
@@ -132,35 +88,25 @@ const Reviews = ({
           </h5>
           <div className="collapse" id={REVIEWS_NAME}>
             {reviews.map(review => (
-              <Review
-                key={review.id}
+              <ExistingReview
+                key={`${review.username}-${review.movieId}`}
                 review={review}
-                username={_get(user, 'username')}
-                onDeleteReview={deleteReviewHandlerCreator(review.id)}
+                username={username}
+                onDeleteReview={onDeleteReview}
               />
             ))}
           </div>
         </React.Fragment>
       )}
-      {user && (
+      {writeReview && (
         <div className={hasReviews ? 'mt-5' : 'mt-0'}>
           {showEditor ? (
-            <React.Fragment>
-              <ReviewEditor value={reviewText} onChange={onEditorChange} />
-              <div className="my-3">
-                <button className="btn btn-primary mr-3" onClick={onPostReview}>
-                  Post
-                </button>
-                <button className="btn btn-danger" onClick={toggleEditor}>
-                  Cancel
-                </button>
-              </div>
-              <span className="text-muted">
-                * Your review will need to be assessed by one of our
-                administrators. <br /> After posting it, you can view it in the
-                <i> Pending reviews</i> section
-              </span>
-            </React.Fragment>
+            <NewReview
+              movie={movie}
+              user={user}
+              toggleEditor={toggleEditor}
+              setReviews={setReviews}
+            />
           ) : (
             <button className="btn btn-primary" onClick={toggleEditor}>
               Write a review
@@ -174,7 +120,7 @@ const Reviews = ({
 
 const mapDispatchToProps = {
   addError,
-  savePendingReview,
+  savePendingReview: savePendingReviewAction,
 };
 
 export default connect(

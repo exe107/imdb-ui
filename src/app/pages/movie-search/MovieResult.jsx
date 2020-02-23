@@ -17,7 +17,7 @@ const MovieResult = ({ movie, ordinal }: Props) => {
 
   return (
     <div className="d-flex mt-5">
-      <img src={image} height={100} width={100} alt="" />
+      <img src={image} width={100} alt="" />
       <div className="ml-3">
         <div className="mb-2">
           <h5 className="d-inline">{ordinal}.</h5>
