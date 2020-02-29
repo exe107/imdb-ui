@@ -6,13 +6,12 @@ import styled from 'styled-components';
 import { CHANGE_PASSWORD_ROUTE } from 'app/navigation/routes';
 import { getInitializationData, logOutUser } from 'app/http';
 import { asyncOperation } from 'app/redux/util';
-import { saveUserAction } from 'app/redux/user/actions';
+import { saveInitializationDataAction } from 'app/redux/actions';
+import type { UserPersonalDetails as PersonalDetails } from 'app/redux/user/flow';
 import type {
-  SaveUserAction,
-  User as UserType,
-  UserPersonalDetails as PersonalDetails,
-} from 'app/redux/user/flow';
-import type { InitializationData } from 'app/redux/flow';
+  InitializationData,
+  InitializationDataAction,
+} from 'app/redux/flow';
 
 const UserButton = styled.button`
   :focus {
@@ -22,10 +21,13 @@ const UserButton = styled.button`
 
 type Props = {
   personalDetails: PersonalDetails,
-  saveUser: UserType => SaveUserAction,
+  saveInitializationData: InitializationData => InitializationDataAction,
 };
 
-export const User = ({ personalDetails, saveUser }: Props): React.Node => {
+export const User = ({
+  personalDetails,
+  saveInitializationData,
+}: Props): React.Node => {
   const { name, surname } = personalDetails;
 
   const onLogoutClick = React.useCallback(
@@ -33,9 +35,9 @@ export const User = ({ personalDetails, saveUser }: Props): React.Node => {
       asyncOperation(() =>
         logOutUser()
           .then(getInitializationData) // needed for the new csrf token.
-          .then(({ user }: InitializationData) => saveUser(user)),
+          .then(saveInitializationData),
       ),
-    [saveUser],
+    [saveInitializationData],
   );
 
   return (
@@ -63,7 +65,7 @@ export const User = ({ personalDetails, saveUser }: Props): React.Node => {
 };
 
 const mapDispatchToProps = {
-  saveUser: saveUserAction,
+  saveInitializationData: saveInitializationDataAction,
 };
 
 export default connect(

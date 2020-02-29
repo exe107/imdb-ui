@@ -5,9 +5,11 @@ import styled from 'styled-components';
 import { getInitializationData } from 'app/http';
 import { asyncOperation } from 'app/redux/util';
 import { getSpinner } from 'app/redux/spinner/selectors';
-import { saveUserAction } from 'app/redux/user/actions';
-import type { SaveUserAction, User } from 'app/redux/user/flow';
-import type { InitializationData } from 'app/redux/flow';
+import { saveInitializationDataAction } from 'app/redux/actions';
+import type {
+  InitializationData,
+  InitializationDataAction,
+} from 'app/redux/flow';
 
 const SpinnerContainer = styled.div`
   position: fixed;
@@ -27,20 +29,23 @@ const Spinner = styled.div`
 type Props = {
   children: React.Node,
   spinner: boolean,
-  saveUser: User => SaveUserAction,
+  saveInitializationData: InitializationData => InitializationDataAction,
 };
 
-const AppInitializer = ({ children, spinner, saveUser }: Props): React.Node => {
+const AppInitializer = ({
+  children,
+  spinner,
+  saveInitializationData,
+}: Props): React.Node => {
   const [fetchingFinished, setFetchingFinished] = React.useState(false);
 
   React.useEffect(() => {
     asyncOperation(() =>
-      getInitializationData().then(({ user }: InitializationData) => {
-        saveUser(user);
-        setFetchingFinished(true);
-      }),
+      getInitializationData()
+        .then(saveInitializationData)
+        .then(() => setFetchingFinished(true)),
     );
-  }, [saveUser]);
+  }, [saveInitializationData]);
 
   return (
     <React.Fragment>
@@ -59,7 +64,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  saveUser: saveUserAction,
+  saveInitializationData: saveInitializationDataAction,
 };
 
 export default connect(

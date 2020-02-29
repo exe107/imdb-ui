@@ -1,4 +1,6 @@
 // @flow
+import moment from 'moment';
+
 export const findMovieActors = (id: string) =>
   `SELECT DISTINCT ?name ?id WHERE {
      ?movie wdt:P31/wdt:P279* wd:Q11424;
@@ -45,7 +47,7 @@ export const findMoviesByWriter = (id: string) =>
 export const findMoviesByYearAndGenre = (
   genre: ?string,
   yearFrom: number = 2000,
-  yearTo: number = 2049,
+  yearTo: number = moment().year(),
 ) => {
   if (!genre) {
     return findMoviesByYear(yearFrom, yearTo);

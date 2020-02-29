@@ -24,6 +24,13 @@ import type {
   User,
   UserMovieRating,
 } from 'app/redux/user/flow';
+import { SAVE_INITIALIZATION_DATA } from 'app/redux/actions';
+import type { InitializationDataAction } from 'app/redux/flow';
+
+const saveInitializationDataUser = (
+  state: User,
+  { initializationData }: InitializationDataAction,
+) => initializationData.user;
 
 const saveUser = (state: User, action: SaveUserAction) => action.user;
 
@@ -94,6 +101,7 @@ const deletePendingReview = (
 
 export default createReducer(
   {
+    [SAVE_INITIALIZATION_DATA]: saveInitializationDataUser,
     [SAVE_USER]: saveUser,
     [SAVE_RATING]: saveRating,
     [UPDATE_RATING]: updateRating,
