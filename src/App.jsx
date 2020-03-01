@@ -14,7 +14,7 @@ import { ROUTES } from 'app/navigation/routes';
 import AppInitializer from 'app/components/AppInitializer';
 import NavigationBar from 'app/components/navbar/NavigationBar';
 import Errors from 'app/components/Errors';
-import MoviesSearch from 'app/pages/movies-search/MoviesSearch';
+import Home from 'app/pages/home/Home';
 import type { Route as RouteType } from 'app/navigation/flow';
 
 const PageContentContainer = styled.div`
@@ -34,7 +34,7 @@ const App = (): React.Node => (
             {ROUTES.map(({ path, component }: RouteType) => (
               <Route key={path} path={path} component={component} />
             ))}
-            <Route component={MoviesSearch} />
+            <Route component={Home} />
           </Switch>
         </div>
         <div className="col-sm-1 bg-secondary" />

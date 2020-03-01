@@ -22,6 +22,7 @@ const ImageContainer = styled.div`
 
 const Image = styled.img`
   opacity: ${props => (props.hovered ? '0.6' : '1')};
+  transition: opacity 0.25s;
 `;
 
 const RemoveIcon = styled.i`

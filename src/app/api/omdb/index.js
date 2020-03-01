@@ -11,6 +11,12 @@ const apiKey = String(process.env.REACT_APP_OMDB_APIKEY);
 
 const ENDPOINT_PROXY = `${herokuProxy}${omdbEndpoint}?apikey=${apiKey}&type=movie&plot=full`;
 
+const getMovieByTitle = (title: string) =>
+  fetch(`${ENDPOINT_PROXY}&t=${title}`).then(response => response.json());
+
+export const getMovieById = (imdbId: string) =>
+  fetch(`${ENDPOINT_PROXY}&i=${imdbId}`).then(response => response.json());
+
 export const getMovie = (
   queryString: string,
 ): Promise<MovieDetailsResponse> => {
@@ -19,9 +25,7 @@ export const getMovie = (
   });
 
   const { id, title } = queryStringObj;
-  const url = id ? `${ENDPOINT_PROXY}&i=${id}` : `${ENDPOINT_PROXY}&t=${title}`;
-
-  return fetch(url).then(response => response.json());
+  return id ? getMovieById(id) : getMovieByTitle(title);
 };
 
 export const searchMovie = (

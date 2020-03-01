@@ -1,4 +1,5 @@
 // @flow
+import Home from 'app/pages/home/Home';
 import MoviesSearch from 'app/pages/movies-search/MoviesSearch';
 import MovieSearchResults from 'app/pages/movie-search/MovieSearchResults';
 import Movie from 'app/pages/movie/Movie';
@@ -9,6 +10,11 @@ import Ratings from 'app/pages/ratings/Ratings';
 import Watchlist from 'app/pages/watchlist/Watchlist';
 import PasswordChange from 'app/pages/user-edit/PasswordChange';
 import PendingReviews from 'app/pages/pending-reviews/PendingReviews';
+
+export const HOME_ROUTE = {
+  path: '/home',
+  component: Home,
+};
 
 export const MOVIES_SEARCH_ROUTE = {
   path: '/movies-search',
@@ -61,6 +67,7 @@ export const PENDING_REVIEWS_ROUTE = {
 };
 
 export const ROUTES = [
+  HOME_ROUTE,
   MOVIES_SEARCH_ROUTE,
   MOVIE_SEARCH_RESULTS_ROUTE,
   MOVIE_ROUTE,
