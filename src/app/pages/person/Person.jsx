@@ -1,7 +1,11 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components';
-import { findPersonAbstract, runDbpediaQuery } from 'app/api/sparql/dbpedia';
+import {
+  findPersonAbstract,
+  findPersonAbstractBySameAs,
+  runDbpediaQuery,
+} from 'app/api/sparql/dbpedia';
 import {
   findPersonImage,
   findMoviesByDirector,
@@ -9,29 +13,37 @@ import {
   runWikidataQuery,
   findPersonNominations,
   findPersonAwards,
-  findPersonName,
+  findPersonResource,
   findMoviesByActor,
+  findPersonName,
 } from 'app/api/sparql/wikidata';
+import { runSpotlightQuery } from 'app/api/spotlight';
 import {
   extractMoviesQueryResults,
   extractQuerySingleResult,
   extractQueryMultipleResults,
+  isResponseEmpty,
 } from 'app/api/util';
 import { asyncOperation } from 'app/redux/util';
 import imageNotFound from 'app/images/image_not_found.png';
 import MoviesSection from 'app/components/section/MoviesSection';
 import AchievementsSection from 'app/components/section/AchievementsSection';
 import type { SparqlResponse } from 'app/api/sparql/flow';
+import type { SpotlightResponse } from 'app/api/spotlight/flow';
 
 const PersonImage = styled.img`
-  width: 100%;
+  max-width: 500px;
+  height: 500px;
   margin-bottom: 20px;
+  margin-left: 20px;
+  float: right;
 `;
 
 const Person = (props: Object): React.Node => {
   const { match } = props;
   const { id } = match.params;
 
+  const [personResource, setPersonResource] = React.useState();
   const [abstract, setAbstract] = React.useState();
   const [imageUrl, setImageUrl] = React.useState();
   const [nominations, setNominations] = React.useState([]);
@@ -42,12 +54,31 @@ const Person = (props: Object): React.Node => {
   const [fetchingFinished, setFetchingFinished] = React.useState(false);
 
   React.useEffect(() => {
-    const abstractPromise = runWikidataQuery(findPersonName(id)).then(
-      (response: SparqlResponse): Promise<SparqlResponse> => {
-        const name = extractQuerySingleResult(response);
-        return runDbpediaQuery(findPersonAbstract(name));
-      },
-    );
+    const abstractPromise = runWikidataQuery(findPersonResource(id))
+      .then((response: SparqlResponse): Promise<SparqlResponse> => {
+        const resource = extractQuerySingleResult(response);
+        setPersonResource(resource); // TODO: fix incorrect person resource
+
+        return runDbpediaQuery(findPersonAbstractBySameAs(`<${resource}>`));
+      })
+      .then((response: SparqlResponse) => {
+        if (!isResponseEmpty(response)) {
+          return response;
+        }
+
+        return runWikidataQuery(findPersonName(id))
+          .then((response: SparqlResponse) => {
+            const name = extractQuerySingleResult(response);
+
+            return runSpotlightQuery(name);
+          })
+          .then(({ Resources }: SpotlightResponse) => {
+            const resource = Resources[0]['@URI'];
+            setPersonResource(resource);
+
+            return runDbpediaQuery(findPersonAbstract(`<${resource}>`));
+          });
+      });
 
     const promises = Promise.all([
       abstractPromise,
@@ -87,26 +118,27 @@ const Person = (props: Object): React.Node => {
     );
   }, [id]);
 
+  if (!fetchingFinished) {
+    return null;
+  }
+
+  if (!personResource) {
+    return <h1 className="alert alert-danger">No information available</h1>;
+  }
+
   return (
-    fetchingFinished && (
-      <div className="row">
-        <div className="col">
-          <PersonImage src={imageUrl || imageNotFound} />
-          <MoviesSection header="Movies directed" movies={moviesDirected} />
-          <MoviesSection header="Movies written" movies={moviesWritten} />
-          <MoviesSection header="Movies acted in" movies={moviesActedIn} />
-        </div>
-        <div className="col">
-          <h4>About:</h4>
-          <p>{abstract}</p>
-          <AchievementsSection header="Awards" achievements={awards} />
-          <AchievementsSection
-            header="Nominations"
-            achievements={nominations}
-          />
-        </div>
+    <div about={personResource}>
+      <PersonImage src={imageUrl || imageNotFound} />
+      <div>
+        <h4>About:</h4>
+        <p property="dbo:abstract">{abstract}</p>
+        <AchievementsSection header="Awards" achievements={awards} />
+        <AchievementsSection header="Nominations" achievements={nominations} />
+        <MoviesSection header="Movies directed" movies={moviesDirected} />
+        <MoviesSection header="Movies written" movies={moviesWritten} />
+        <MoviesSection header="Movies acted in" movies={moviesActedIn} />
       </div>
-    )
+    </div>
   );
 };
 

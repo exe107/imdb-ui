@@ -7,6 +7,14 @@ import type {
   SparqlResponse,
 } from 'app/api/sparql/flow';
 
+const herokuProxy = String(process.env.REACT_APP_HEROKU_PROXY);
+
+export const runQuery = (query: string) =>
+  fetch(`${herokuProxy}${query}`).then(response => response.json());
+
+export const isResponseEmpty = ({ results }: SparqlResponse) =>
+  results.bindings.length === 0;
+
 export const extractQuerySingleResult = ({ results }: SparqlResponse): string =>
   _get(results, 'bindings[0].result.value');
 

@@ -7,13 +7,10 @@ import styled from 'styled-components';
 import { getMovie } from 'app/api/omdb';
 import {
   findMovieActors,
-  findPersonId,
+  findMovieDirectors,
   runWikidataQuery,
 } from 'app/api/sparql/wikidata';
-import {
-  extractPeopleQueryResults,
-  extractQuerySingleResult,
-} from 'app/api/util';
+import { extractPeopleQueryResults } from 'app/api/util';
 import { NOT_AVAILABLE } from 'app/constants';
 import { asyncOperation } from 'app/redux/util';
 import { getReviews } from 'app/http';
@@ -27,7 +24,7 @@ import Reviews from 'app/pages/movie/reviews/Reviews';
 import type { User } from 'app/redux/user/flow';
 import type { AddErrorAction, ApiError } from 'app/redux/errors/flow';
 import type { MovieDetailsResponse } from 'app/api/omdb/flow';
-import type { Person, SparqlResponse } from 'app/api/sparql/flow';
+import type { Person } from 'app/api/sparql/flow';
 
 const MoviePoster = styled.img`
   height: 400px;
@@ -50,25 +47,12 @@ const Movie = ({ user, location, addError }: Props): React.Node => {
     asyncOperation(() =>
       getMovie(location.search)
         .then((response: MovieDetailsResponse) => {
-          const { Director, imdbID, Response, Error } = response;
+          const { imdbID, Response, Error } = response;
 
           if (Response === 'True') {
             setMovie(response);
 
-            const promise = Director.split(', ').reduce(
-              (promise, name) =>
-                promise.then(() =>
-                  runWikidataQuery(findPersonId(name)).then(
-                    (response: SparqlResponse) => {
-                      const id = extractQuerySingleResult(response);
-                      setDirectors(prevState => [...prevState, { id, name }]);
-                    },
-                  ),
-                ),
-              Promise.resolve(),
-            );
-
-            return promise.then(() => imdbID);
+            return imdbID;
           }
 
           return Promise.reject(Error);
@@ -78,11 +62,15 @@ const Movie = ({ user, location, addError }: Props): React.Node => {
             .then(response => setCast(extractPeopleQueryResults(response)))
             .catch(console.log);
 
+          const directorsPromise = runWikidataQuery(findMovieDirectors(imdbID))
+            .then(response => setDirectors(extractPeopleQueryResults(response)))
+            .catch(console.log);
+
           const reviewsPromise = getReviews(imdbID)
             .then(setReviews)
             .catch(addError);
 
-          return Promise.all([actorsPromise, reviewsPromise]);
+          return Promise.all([actorsPromise, directorsPromise, reviewsPromise]);
         })
         .catch(console.log)
         .then(() => setFetchingFinished(true)),

@@ -1,4 +1,6 @@
 // @flow
+import { runQuery } from 'app/api/util';
+
 export const findMoviesByWriter = (writer: string) =>
   `SELECT DISTINCT ?result WHERE {
     ?writer rdfs:label "${writer}"@en.
@@ -26,18 +28,22 @@ export const findMoviesByActor = (actor: string) =>
     filter(lang(?result) = 'en')
 }`;
 
-export const findPersonAbstract = (person: string) =>
+export const findPersonAbstractBySameAs = (resource: string) =>
   `SELECT ?result WHERE {
-  ?person rdfs:label "${person}"@en;
-          dbo:abstract ?result.
-  filter(lang(?result) = 'en')
+    ?person owl:sameAs ${resource};
+            dbo:abstract ?result.
+    filter(lang(?result) = 'en')
 }`;
 
-const herokuProxy = String(process.env.REACT_APP_HEROKU_PROXY);
+export const findPersonAbstract = (resource: string) =>
+  `SELECT ?result WHERE {
+    ${resource} dbo:abstract ?result.
+    filter(lang(?result) = 'en')
+  }`;
 
 export const runDbpediaQuery = (query: string) =>
-  fetch(
-    encodeURI(
-      `${herokuProxy}https://dbpedia.org/sparql?default-graph-uri=http://dbpedia.org&format=json&query=${query}`,
-    ),
-  ).then(response => response.json());
+  runQuery(
+    `https://dbpedia.org/sparql?default-graph-uri=http://dbpedia.org&format=json&query=${encodeURIComponent(
+      query,
+    )}`,
+  );

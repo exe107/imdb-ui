@@ -1,5 +1,6 @@
 // @flow
 import moment from 'moment';
+import { runQuery } from 'app/api/util';
 
 export const findMovieActors = (id: string) =>
   `SELECT DISTINCT ?name ?id WHERE {
@@ -9,7 +10,17 @@ export const findMovieActors = (id: string) =>
      ?actor wdt:P345 ?id;
             rdfs:label ?name.
      FILTER(lang(?name) = 'en')
-}`;
+  }`;
+
+export const findMovieDirectors = (id: string) =>
+  `SELECT DISTINCT ?name ?id WHERE {
+    ?movie wdt:P31/wdt:P279* wd:Q11424;
+           wdt:P345 "${id}";
+           wdt:P57 ?director.
+    ?director wdt:P345 ?id;
+              rdfs:label ?name.
+    FILTER(lang(?name) = 'en')
+  }`;
 
 export const findMoviesByActor = (id: string) =>
   `SELECT ?name ?id (MIN(year(?date)) as ?year) WHERE {
@@ -31,7 +42,7 @@ export const findMoviesByDirector = (id: string) =>
            wdt:P577 ?date;
            rdfs:label ?name.
     FILTER(lang(?name) = 'en')
-} GROUP BY ?name ?id ORDER BY DESC(?year)`;
+  } GROUP BY ?name ?id ORDER BY DESC(?year)`;
 
 export const findMoviesByWriter = (id: string) =>
   `SELECT ?name ?id (MIN(year(?date)) as ?year) WHERE {
@@ -42,7 +53,7 @@ export const findMoviesByWriter = (id: string) =>
            wdt:P577 ?date;
            rdfs:label ?name.
     FILTER(lang(?name) = 'en')
-} GROUP BY ?name ?id ORDER BY DESC(?year)`;
+  } GROUP BY ?name ?id ORDER BY DESC(?year)`;
 
 export const findMoviesByYearAndGenre = (
   genre: ?string,
@@ -79,28 +90,23 @@ export const findMoviesByYearAndGenre = (
 
 const findMoviesByYear = (yearFrom: number, yearTo: number) =>
   `SELECT DISTINCT ?name ?id ?year 
-    WITH {
-      ${findMoviesWithYear()}
-    } AS %movies
-    WHERE {
-      INCLUDE %movies.
-      FILTER(?year >= ${yearFrom} && ?year <= ${yearTo})
-      ?movie wdt:P345 ?id;
-             rdfs:label ?name.
-      FILTER(lang(?name) = 'en')
-    } ORDER BY DESC(?year)`;
+   WITH {
+     ${findMoviesWithYear()}
+   } AS %movies
+   
+   WHERE {
+     INCLUDE %movies.
+     FILTER(?year >= ${yearFrom} && ?year <= ${yearTo})
+     ?movie wdt:P345 ?id;
+            rdfs:label ?name.
+     FILTER(lang(?name) = 'en')
+   } ORDER BY DESC(?year)`;
 
 const findMoviesWithYear = () =>
   `SELECT ?movie (MIN(year(?date)) as ?year) WHERE {
     ?movie wdt:P31/wdt:P279* wd:Q11424;
            wdt:P577 ?date.
   } GROUP BY ?movie`;
-
-export const findPersonId = (name: string) =>
-  `SELECT ?result WHERE {
-    ?person rdfs:label "${name}"@en;
-            wdt:P345 ?result.
-  }`;
 
 export const findPersonName = (id: string) =>
   `SELECT ?result WHERE {
@@ -109,13 +115,21 @@ export const findPersonName = (id: string) =>
     FILTER(lang(?result) = 'en')
   }`;
 
+export const findPersonResource = (id: string) =>
+  `SELECT ?result WHERE {
+    ?result wdt:P345 "${id}";
+            rdfs:label ?name.
+    FILTER(lang(?name) = 'en')
+    FILTER(lang(?name) = 'en')
+  }`;
+
 export const findPersonAwards = (id: string) =>
   `SELECT ?result WHERE {
     ?person wdt:P345 "${id}";
             wdt:P166 ?award.
     ?award rdfs:label ?result.
     FILTER(lang(?result) = 'en')
-}`;
+  }`;
 
 export const findPersonNominations = (id: string) =>
   `SELECT ?result WHERE {
@@ -123,19 +137,17 @@ export const findPersonNominations = (id: string) =>
             wdt:P1411 ?nomination.
     ?nomination rdfs:label ?result.
     FILTER(lang(?result) = 'en')
-}`;
+  }`;
 
 export const findPersonImage = (id: string) =>
   `SELECT ?result WHERE {
     ?person wdt:P345 "${id}";
             wdt:P18 ?result.
-}`;
-
-const herokuProxy = String(process.env.REACT_APP_HEROKU_PROXY);
+  }`;
 
 export const runWikidataQuery = (query: string) =>
-  fetch(
-    `${herokuProxy}https://query.wikidata.org/sparql?format=json&query=${encodeURIComponent(
+  runQuery(
+    `https://query.wikidata.org/sparql?format=json&query=${encodeURIComponent(
       query,
     )}`,
-  ).then(response => response.json());
+  );
