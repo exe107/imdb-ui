@@ -9,7 +9,7 @@ import { saveUserAction } from 'app/redux/user/actions';
 import { getUser } from 'app/redux/user/selectors';
 import {
   alphabeticValidator,
-  composeValidators,
+  emailValidator,
   minLengthValidator,
   requiredValidator,
 } from 'app/forms/validators';
@@ -31,15 +31,7 @@ type Props = {
 };
 
 const Register = ({ user, saveUser }: Props) => {
-  const nameValidator = React.useCallback(
-    composeValidators([requiredValidator, alphabeticValidator]),
-    [],
-  );
-
-  const passwordValidator = React.useCallback(
-    composeValidators([requiredValidator, minLengthValidator(7)]),
-    [],
-  );
+  const passwordValidator = React.useMemo(() => minLengthValidator(7), []);
 
   const onSubmit = React.useCallback(
     (values: FormValues) =>
@@ -59,8 +51,13 @@ const Register = ({ user, saveUser }: Props) => {
           <h1 className="text-center mb-4">Sign up</h1>
           <h5>Please fill in the form below</h5>
           <hr />
-          <InputField label="Name" name="name" validate={nameValidator} />
-          <InputField label="Surname" name="surname" validate={nameValidator} />
+          <InputField label="Name" name="name" validate={alphabeticValidator} />
+          <InputField
+            label="Surname"
+            name="surname"
+            validate={alphabeticValidator}
+          />
+          <InputField label="E-mail" name="email" validate={emailValidator} />
           <InputField
             label="Username"
             name="username"

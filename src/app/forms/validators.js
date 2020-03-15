@@ -11,6 +11,11 @@ export const alphabeticValidator = (value: ?any) =>
     ? undefined
     : 'Please provide a valid name';
 
+export const emailValidator = (value: ?any) =>
+  value && /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value)
+    ? undefined
+    : 'Please provide a valid e-mail';
+
 export const minLengthValidator = (length: number) => (value: ?any) =>
   value && value.length >= length
     ? undefined

@@ -99,7 +99,7 @@ const Reviews = ({ user, movie, reviews: initialReviews, addError }: Props) => {
         </React.Fragment>
       )}
       {writeReview && (
-        <div className={hasReviews ? 'mt-5' : 'mt-0'}>
+        <div className="mt-5">
           {showEditor ? (
             <NewReview
               movie={movie}

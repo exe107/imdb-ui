@@ -5,6 +5,7 @@ import type { ExistingReview } from 'app/pages/movie/reviews/flow';
 export type UserPersonalDetails = {
   name: string,
   surname: string,
+  email: string,
 };
 
 export type UserCredentials = {

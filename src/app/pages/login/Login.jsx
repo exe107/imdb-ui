@@ -7,11 +7,7 @@ import { asyncOperation } from 'app/redux/util';
 import { logInUser } from 'app/http';
 import { saveUserAction } from 'app/redux/user/actions';
 import { getUser } from 'app/redux/user/selectors';
-import {
-  composeValidators,
-  minLengthValidator,
-  requiredValidator,
-} from 'app/forms/validators';
+import { minLengthValidator, requiredValidator } from 'app/forms/validators';
 import { FormContainer } from 'app/forms/styles';
 import InputField from 'app/forms/InputField';
 import type { FormRenderProps } from 'react-final-form';
@@ -29,10 +25,7 @@ type Props = {
 };
 
 const Login = ({ user, saveUser }: Props): React.Node => {
-  const passwordValidator = React.useCallback(
-    composeValidators([requiredValidator, minLengthValidator(7)]),
-    [],
-  );
+  const passwordValidator = React.useMemo(() => minLengthValidator(7), []);
 
   const onSubmit = React.useCallback(
     (values: FormValues) =>
