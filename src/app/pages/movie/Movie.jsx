@@ -4,6 +4,7 @@ import { compose } from 'redux';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
+import movieTrailer from 'movie-trailer';
 import { getMovie } from 'app/api/omdb';
 import {
   findMovieActors,
@@ -30,6 +31,11 @@ const MoviePoster = styled.img`
   height: 400px;
 `;
 
+const Trailer = styled.iframe`
+  width: 100%;
+  height: calc(100vh - 220px);
+`;
+
 type Props = {
   user: User,
   location: Object,
@@ -41,36 +47,51 @@ const Movie = ({ user, location, addError }: Props): React.Node => {
   const [directors, setDirectors] = React.useState([]);
   const [cast, setCast] = React.useState([]);
   const [reviews, setReviews] = React.useState([]);
+  const [trailer, setTrailer] = React.useState();
   const [fetchingFinished, setFetchingFinished] = React.useState(false);
 
   React.useEffect(() => {
     asyncOperation(() =>
       getMovie(location.search)
         .then((response: MovieDetailsResponse) => {
-          const { imdbID, Response, Error } = response;
+          const { imdbID, Response, Error, Title, Year } = response;
 
           if (Response === 'True') {
             setMovie(response);
 
-            return imdbID;
+            const actorsPromise = runWikidataQuery(findMovieActors(imdbID))
+              .then(response => setCast(extractPeopleQueryResults(response)))
+              .catch(console.log);
+
+            const directorsPromise = runWikidataQuery(
+              findMovieDirectors(imdbID),
+            )
+              .then(response =>
+                setDirectors(extractPeopleQueryResults(response)),
+              )
+              .catch(console.log);
+
+            const reviewsPromise = getReviews(imdbID)
+              .then(setReviews)
+              .catch(addError);
+
+            const trailerPromise = movieTrailer(Title, {
+              year: Year,
+            })
+              .then((trailerResponse: string) =>
+                setTrailer(trailerResponse.replace('watch?v=', 'embed/')),
+              )
+              .catch(console.log);
+
+            return Promise.all([
+              actorsPromise,
+              directorsPromise,
+              reviewsPromise,
+              trailerPromise,
+            ]);
           }
 
           return Promise.reject(Error);
-        })
-        .then(imdbID => {
-          const actorsPromise = runWikidataQuery(findMovieActors(imdbID))
-            .then(response => setCast(extractPeopleQueryResults(response)))
-            .catch(console.log);
-
-          const directorsPromise = runWikidataQuery(findMovieDirectors(imdbID))
-            .then(response => setDirectors(extractPeopleQueryResults(response)))
-            .catch(console.log);
-
-          const reviewsPromise = getReviews(imdbID)
-            .then(setReviews)
-            .catch(addError);
-
-          return Promise.all([actorsPromise, directorsPromise, reviewsPromise]);
         })
         .catch(console.log)
         .then(() => setFetchingFinished(true)),
@@ -157,7 +178,15 @@ const Movie = ({ user, location, addError }: Props): React.Node => {
             </React.Fragment>
           )}
         </div>
-        <div className="d-flex">
+        {trailer && (
+          <Trailer
+            src={trailer}
+            frameBorder="0"
+            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        )}
+        <div className="d-flex mt-5">
           <MoviePoster className="mr-5" src={image} />
           <div>
             {imdbRating !== NOT_AVAILABLE && (

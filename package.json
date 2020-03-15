@@ -15,6 +15,7 @@
     "jquery": "^3.4.1",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
+    "movie-trailer": "^2.0.6",
     "popper.js": "^1.15.0",
     "prettier": "^1.17.0",
     "qs": "^6.8.0",
