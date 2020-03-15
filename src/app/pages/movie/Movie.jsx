@@ -9,9 +9,14 @@ import { getMovie } from 'app/api/omdb';
 import {
   findMovieActors,
   findMovieDirectors,
+  findResource,
   runWikidataQuery,
 } from 'app/api/sparql/wikidata';
-import { extractPeopleQueryResults } from 'app/api/util';
+import {
+  extractPeopleQueryResults,
+  extractResourceQuerySingleResult,
+} from 'app/api/util';
+import { createActorsMap, formatActorName } from 'app/pages/movie/util';
 import { NOT_AVAILABLE } from 'app/constants';
 import { asyncOperation } from 'app/redux/util';
 import { getReviews } from 'app/http';
@@ -25,7 +30,7 @@ import Reviews from 'app/pages/movie/reviews/Reviews';
 import type { User } from 'app/redux/user/flow';
 import type { AddErrorAction, ApiError } from 'app/redux/errors/flow';
 import type { MovieDetailsResponse } from 'app/api/omdb/flow';
-import type { Person } from 'app/api/sparql/flow';
+import type { SparqlResponse } from 'app/api/sparql/flow';
 
 const MoviePoster = styled.img`
   height: 400px;
@@ -43,6 +48,7 @@ type Props = {
 };
 
 const Movie = ({ user, location, addError }: Props): React.Node => {
+  const [movieResource, setMovieResource] = React.useState();
   const [movie, setMovie] = React.useState<?MovieDetailsResponse>();
   const [directors, setDirectors] = React.useState([]);
   const [cast, setCast] = React.useState([]);
@@ -58,6 +64,13 @@ const Movie = ({ user, location, addError }: Props): React.Node => {
 
           if (Response === 'True') {
             setMovie(response);
+
+            const movieResourcePromise = runWikidataQuery(findResource(imdbID))
+              .then((response: SparqlResponse) => {
+                const { resource } = extractResourceQuerySingleResult(response);
+                setMovieResource(resource);
+              })
+              .catch(console.log);
 
             const actorsPromise = runWikidataQuery(findMovieActors(imdbID))
               .then(response => setCast(extractPeopleQueryResults(response)))
@@ -84,6 +97,7 @@ const Movie = ({ user, location, addError }: Props): React.Node => {
               .catch(console.log);
 
             return Promise.all([
+              movieResourcePromise,
               actorsPromise,
               directorsPromise,
               reviewsPromise,
@@ -103,16 +117,7 @@ const Movie = ({ user, location, addError }: Props): React.Node => {
     };
   }, [location.search, addError]);
 
-  // removes non alphabetic characters from name for easier matching between cast and stars
-  const formatActorName = React.useCallback(
-    name =>
-      [...name.toLowerCase()]
-        .map(character =>
-          character >= 'a' && character <= 'z' ? character : '',
-        )
-        .join(''),
-    [],
-  );
+  const actorsMap = React.useMemo(() => createActorsMap(cast), [cast]);
 
   if (fetchingFinished) {
     if (!movie) {
@@ -139,18 +144,10 @@ const Movie = ({ user, location, addError }: Props): React.Node => {
       Production,
     } = movie;
 
-    const actorToIdMap = {};
-
-    cast.forEach(({ name, id }: Person) => {
-      actorToIdMap[formatActorName(name)] = id;
-    });
-
-    const stars = Actors.split(', ')
-      .map(name => ({
-        name,
-        id: actorToIdMap[formatActorName(name)],
-      }))
-      .filter(actor => actor.id);
+    const stars = Actors.split(', ').map(name => ({
+      name,
+      ...actorsMap[formatActorName(name)],
+    }));
 
     const image = Poster !== NOT_AVAILABLE ? Poster : imageNotFound;
     const runtimeMinutes = Runtime.split(' ')[0];
@@ -166,11 +163,12 @@ const Movie = ({ user, location, addError }: Props): React.Node => {
     };
 
     return (
-      <div className="px-5">
+      <div className="px-5" about={movieResource}>
         <div className="text-center mb-5">
           <h1 className="d-inline">
             {Title} ({Year})
           </h1>
+          <meta property="rdfs:label" content={Title} />
           {user && (
             <React.Fragment>
               <MovieRatingStar user={user} movie={userMovie} />
@@ -179,34 +177,74 @@ const Movie = ({ user, location, addError }: Props): React.Node => {
           )}
         </div>
         {trailer && (
-          <Trailer
-            src={trailer}
-            frameBorder="0"
-            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
+          <React.Fragment>
+            <Trailer
+              src={trailer}
+              frameBorder="0"
+              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+            <meta
+              property="wdt:P1651"
+              content={trailer.split('/').slice(-1)[0]}
+            />
+          </React.Fragment>
         )}
         <div className="d-flex mt-5">
           <MoviePoster className="mr-5" src={image} />
           <div>
             {imdbRating !== NOT_AVAILABLE && (
-              <h5>
-                Rating: {imdbRating} <i className="text-warning fa fa-star" /> (
-                {imdbVotes} votes)
+              <h5 property="rev:rating" content={imdbRating}>
+                Rating: {imdbRating}
+                <i className="ml-2 mr-1 text-warning fa fa-star" />
+                {`(${imdbVotes} votes)`}
               </h5>
             )}
             <h5>Genre: {Genre}</h5>
-            {Runtime !== NOT_AVAILABLE && <h5>Runtime: {Runtime}</h5>}
-            {Released !== NOT_AVAILABLE && <h5>Released: {Released}</h5>}
-            <h5>Language: {Language}</h5>
-            {Website !== NOT_AVAILABLE && (
-              <h5 className="text-break">
-                Website: <a href={Website}>{Website}</a>
+            {Runtime !== NOT_AVAILABLE && (
+              <h5 property="wdt:P2047" content={Runtime}>
+                Runtime: {Runtime}
               </h5>
             )}
-            {Country !== NOT_AVAILABLE && <h5>Country: {Country}</h5>}
-            {BoxOffice !== NOT_AVAILABLE && <h5>Box Office: {BoxOffice}</h5>}
-            {Production !== NOT_AVAILABLE && <h5>Production: {Production}</h5>}
+            {Released !== NOT_AVAILABLE && (
+              <h5 property="wdt:P577" content={Released}>
+                Released: {Released}
+              </h5>
+            )}
+            {Language !== NOT_AVAILABLE && (
+              <React.Fragment>
+                <h5>Language: {Language}</h5>
+                {Language.split(', ').map(language => (
+                  <meta key={language} property="wdt:P364" content={language} />
+                ))}
+              </React.Fragment>
+            )}
+            {Website !== NOT_AVAILABLE && (
+              <h5 className="text-break">
+                Website:{' '}
+                <a href={Website} property="wdt:P856">
+                  {Website}
+                </a>
+              </h5>
+            )}
+            {Country !== NOT_AVAILABLE && (
+              <React.Fragment>
+                <h5>Country: {Country}</h5>
+                {Country.split(', ').map(country => (
+                  <meta key={country} property="wdt:P495" content={country} />
+                ))}
+              </React.Fragment>
+            )}
+            {BoxOffice !== NOT_AVAILABLE && (
+              <h5 property="wdt:P2142" content={BoxOffice}>
+                Box Office: {BoxOffice}
+              </h5>
+            )}
+            {Production !== NOT_AVAILABLE && (
+              <h5 property="wdt:P272" content={Production}>
+                Production: {Production}
+              </h5>
+            )}
             {Awards !== NOT_AVAILABLE && <h5>{Awards}</h5>}
           </div>
         </div>
@@ -216,9 +254,14 @@ const Movie = ({ user, location, addError }: Props): React.Node => {
         <div className="d-flex justify-content-between">
           <Reviews user={user} movie={userMovie} reviews={reviews} />
           <div className="list-group">
-            <PeopleSection header="Directors" people={directors} />
+            <PeopleSection
+              rdfProperty="wdt:P57"
+              header="Directors"
+              people={directors}
+            />
+            {/* TODO: probably fetch all dbpedia resources and use dbo:starring */}
             <PeopleSection header="Stars" people={stars} />
-            <PeopleSection header="Cast" people={cast} />
+            <PeopleSection rdfProperty="wdt:P161" header="Cast" people={cast} />
           </div>
         </div>
       </div>

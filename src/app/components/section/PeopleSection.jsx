@@ -7,11 +7,12 @@ import { PanelButton } from 'app/styles';
 import type { Person } from 'app/api/sparql/flow';
 
 type Props = {
+  rdfProperty?: string,
   header: string,
   people: Person[],
 };
 
-const PeopleSection = ({ header, people }: Props): React.Node => {
+const PeopleSection = ({ rdfProperty, header, people }: Props): React.Node => {
   const [expanded, setExpanded] = React.useState(false);
 
   const onPanelClick = React.useCallback(() => setExpanded(!expanded), [
@@ -36,7 +37,7 @@ const PeopleSection = ({ header, people }: Props): React.Node => {
           </PanelButton>
         </h5>
         <ul className="collapse" id={header}>
-          {people.map(({ name, id }: Person) => (
+          {people.map(({ resource, name, id }: Person) => (
             <li key={name}>
               <h5>
                 {id ? (
@@ -45,6 +46,10 @@ const PeopleSection = ({ header, people }: Props): React.Node => {
                   <span>{name}</span>
                 )}
               </h5>
+              {rdfProperty && resource && (
+                <meta property={rdfProperty} resource={resource} />
+              )}
+              <meta about={resource} property="rdfs:label" content={name} />
             </li>
           ))}
         </ul>

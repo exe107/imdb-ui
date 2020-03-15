@@ -16,12 +16,19 @@ export type SparqlResponse = {
 };
 
 export type Movie = {
+  resource: string,
   id: string,
   name: string,
   year: ?string,
 };
 
 export type Person = {
+  resource?: string,
   id: ?string,
+  name: string,
+};
+
+export type Resource = {
+  resource: string,
   name: string,
 };

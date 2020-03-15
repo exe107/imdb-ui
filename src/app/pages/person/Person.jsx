@@ -13,16 +13,16 @@ import {
   runWikidataQuery,
   findPersonNominations,
   findPersonAwards,
-  findPersonResource,
+  findResource,
   findMoviesByActor,
-  findPersonName,
 } from 'app/api/sparql/wikidata';
 import { runSpotlightQuery } from 'app/api/spotlight';
 import {
   extractMoviesQueryResults,
   extractQuerySingleResult,
-  extractQueryMultipleResults,
   isResponseEmpty,
+  extractResourceQueryResults,
+  extractResourceQuerySingleResult,
 } from 'app/api/util';
 import { asyncOperation } from 'app/redux/util';
 import imageNotFound from 'app/images/image_not_found.png';
@@ -43,7 +43,8 @@ const Person = (props: Object): React.Node => {
   const { match } = props;
   const { id } = match.params;
 
-  const [personResource, setPersonResource] = React.useState();
+  const [personWikidataResource, setPersonWikidataResource] = React.useState();
+  const [personDbpediaResource, setPersonDbpediaResource] = React.useState();
   const [abstract, setAbstract] = React.useState();
   const [imageUrl, setImageUrl] = React.useState();
   const [nominations, setNominations] = React.useState([]);
@@ -54,47 +55,49 @@ const Person = (props: Object): React.Node => {
   const [fetchingFinished, setFetchingFinished] = React.useState(false);
 
   React.useEffect(() => {
-    const abstractPromise = runWikidataQuery(findPersonResource(id))
-      .then((response: SparqlResponse): Promise<SparqlResponse> => {
-        const resource = extractQuerySingleResult(response);
-        setPersonResource(resource); // TODO: fix incorrect person resource
+    const abstractPromise = runWikidataQuery(findResource(id)).then(
+      (response: SparqlResponse): Promise<*> => {
+        const { name, resource } = extractResourceQuerySingleResult(response);
+        setPersonWikidataResource(resource);
 
-        return runDbpediaQuery(findPersonAbstractBySameAs(`<${resource}>`));
-      })
-      .then((response: SparqlResponse) => {
-        if (!isResponseEmpty(response)) {
-          return response;
-        }
+        return runDbpediaQuery(
+          findPersonAbstractBySameAs(`<${resource}>`),
+        ).then((response: SparqlResponse) => {
+          if (!isResponseEmpty(response)) {
+            const { resource, abstract } = response.results.bindings[0];
+            setPersonDbpediaResource(resource.value);
+            setAbstract(abstract.value);
+          } else {
+            return runSpotlightQuery(name)
+              .then(({ Resources }: SpotlightResponse) => {
+                const resource = Resources[0]['@URI'];
+                setPersonDbpediaResource(resource);
 
-        return runWikidataQuery(findPersonName(id))
-          .then((response: SparqlResponse) => {
-            const name = extractQuerySingleResult(response);
-
-            return runSpotlightQuery(name);
-          })
-          .then(({ Resources }: SpotlightResponse) => {
-            const resource = Resources[0]['@URI'];
-            setPersonResource(resource);
-
-            return runDbpediaQuery(findPersonAbstract(`<${resource}>`));
-          });
-      });
-
-    const promises = Promise.all([
-      abstractPromise,
-      runWikidataQuery(findPersonImage(id)),
-      runWikidataQuery(findPersonNominations(id)),
-      runWikidataQuery(findPersonAwards(id)),
-      runWikidataQuery(findMoviesByDirector(id)),
-      runWikidataQuery(findMoviesByWriter(id)),
-      runWikidataQuery(findMoviesByActor(id)),
-    ]);
+                return runDbpediaQuery(findPersonAbstract(`<${resource}>`));
+              })
+              .then((response: SparqlResponse) => {
+                const abstract = extractQuerySingleResult(response);
+                setAbstract(abstract);
+              });
+          }
+        });
+      },
+    );
 
     asyncOperation(() =>
-      promises
+      abstractPromise
+        .then(() =>
+          Promise.all([
+            runWikidataQuery(findPersonImage(id)),
+            runWikidataQuery(findPersonNominations(id)),
+            runWikidataQuery(findPersonAwards(id)),
+            runWikidataQuery(findMoviesByDirector(id)),
+            runWikidataQuery(findMoviesByWriter(id)),
+            runWikidataQuery(findMoviesByActor(id)),
+          ]),
+        )
         .then(
           ([
-            abstractResponse,
             imageResponse,
             nominationsResponse,
             awardsResponse,
@@ -102,10 +105,9 @@ const Person = (props: Object): React.Node => {
             moviesWrittenResponse,
             moviesActedInResponse,
           ]: Array<SparqlResponse>) => {
-            setAbstract(extractQuerySingleResult(abstractResponse));
             setImageUrl(extractQuerySingleResult(imageResponse));
-            setNominations(extractQueryMultipleResults(nominationsResponse));
-            setAwards(extractQueryMultipleResults(awardsResponse));
+            setNominations(extractResourceQueryResults(nominationsResponse));
+            setAwards(extractResourceQueryResults(awardsResponse));
             setMoviesDirected(
               extractMoviesQueryResults(moviesDirectedResponse),
             );
@@ -122,23 +124,62 @@ const Person = (props: Object): React.Node => {
     return null;
   }
 
-  if (!personResource) {
+  if (!personWikidataResource) {
     return <h1 className="alert alert-danger">No information available</h1>;
   }
 
   return (
-    <div about={personResource}>
+    <React.Fragment>
       <PersonImage src={imageUrl || imageNotFound} />
-      <div>
-        <h4>About:</h4>
-        <p property="dbo:abstract">{abstract}</p>
-        <AchievementsSection header="Awards" achievements={awards} />
-        <AchievementsSection header="Nominations" achievements={nominations} />
-        <MoviesSection header="Movies directed" movies={moviesDirected} />
-        <MoviesSection header="Movies written" movies={moviesWritten} />
-        <MoviesSection header="Movies acted in" movies={moviesActedIn} />
+      {imageUrl && (
+        <meta
+          about={personWikidataResource}
+          property="wdt:P18"
+          content={imageUrl}
+        />
+      )}
+      <h4>About:</h4>
+      <p about={personDbpediaResource} property="dbo:abstract">
+        {abstract}
+      </p>
+      <meta
+        about={personDbpediaResource}
+        property="owl:sameAs"
+        resource={personWikidataResource}
+      />
+      <div about={personWikidataResource}>
+        <AchievementsSection
+          rdfProperty="wdt:P166"
+          header="Awards"
+          achievements={awards}
+        />
+        <AchievementsSection
+          rdfProperty="wdt:P1411"
+          header="Nominations"
+          achievements={nominations}
+        />
+        <div className="d-flex">
+          <MoviesSection
+            rdfProperty="wdt:P161"
+            rdfSubject={personWikidataResource}
+            header="Movies acted in"
+            movies={moviesActedIn}
+          />
+          <MoviesSection
+            rdfProperty="wdt:P57"
+            rdfSubject={personWikidataResource}
+            header="Movies directed"
+            movies={moviesDirected}
+          />
+          <MoviesSection
+            rdfProperty="wdt:P58"
+            rdfSubject={personWikidataResource}
+            header="Movies written"
+            movies={moviesWritten}
+          />
+        </div>
       </div>
-    </div>
+    </React.Fragment>
   );
 };
 

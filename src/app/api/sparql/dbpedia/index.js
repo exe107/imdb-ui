@@ -1,39 +1,12 @@
 // @flow
 import { runQuery } from 'app/api/util';
 
-export const findMoviesByWriter = (writer: string) =>
-  `SELECT DISTINCT ?result WHERE {
-    ?writer rdfs:label "${writer}"@en.
-    ?movie dbo:writer ?writer;
-           rdf:type dbo:Film;
-           foaf:name ?result.
-    filter(lang(?result) = 'en')
-}`;
-
-export const findMoviesByDirector = (director: string) =>
-  `SELECT DISTINCT ?result WHERE {
-    ?director rdfs:label "${director}"@en.
-    ?movie dbo:director ?director;
-           rdf:type dbo:Film;
-           foaf:name ?result.
-    filter(lang(?result) = 'en')
-}`;
-
-export const findMoviesByActor = (actor: string) =>
-  `SELECT DISTINCT ?result WHERE {
-    ?actor rdfs:label "${actor}"@en.
-    ?movie dbo:starring ?actor;
-           rdf:type dbo:Film;
-           foaf:name ?result.
-    filter(lang(?result) = 'en')
-}`;
-
 export const findPersonAbstractBySameAs = (resource: string) =>
-  `SELECT ?result WHERE {
-    ?person owl:sameAs ${resource};
-            dbo:abstract ?result.
-    filter(lang(?result) = 'en')
-}`;
+  `SELECT ?resource ?abstract WHERE {
+    ?resource owl:sameAs ${resource};
+              dbo:abstract ?abstract.
+    filter(lang(?abstract) = 'en')
+  }`;
 
 export const findPersonAbstract = (resource: string) =>
   `SELECT ?result WHERE {

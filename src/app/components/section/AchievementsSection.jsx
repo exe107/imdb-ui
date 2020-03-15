@@ -1,19 +1,27 @@
 // @flow
 import * as React from 'react';
 import _isEmpty from 'lodash/isEmpty';
+import type { Resource } from 'app/api/sparql/flow';
 
 type Props = {
+  rdfProperty: string,
   header: string,
-  achievements: string[],
+  achievements: Resource[],
 };
 
-const AchievementsSection = ({ header, achievements }: Props): React.Node =>
+const AchievementsSection = ({
+  rdfProperty,
+  header,
+  achievements,
+}: Props): React.Node =>
   !_isEmpty(achievements) && (
     <React.Fragment>
       <h4>{header}:</h4>
       <ul>
-        {achievements.map(achievement => (
-          <li key={achievement}>{achievement}</li>
+        {achievements.map(({ resource, name }: Resource) => (
+          <li key={name} property={rdfProperty} resource={resource}>
+            {name}
+          </li>
         ))}
       </ul>
     </React.Fragment>

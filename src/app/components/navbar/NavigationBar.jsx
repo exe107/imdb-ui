@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import {
+  HOME_ROUTE,
   LOGIN_ROUTE,
   MOVIES_SEARCH_ROUTE,
   PENDING_REVIEWS_ROUTE,
@@ -42,7 +43,7 @@ const NavigationBar = ({ user }: Props) => (
       <div className="collapse navbar-collapse" id="navbarContent">
         <ul className="navbar-nav w-100">
           <li className="nav-item">
-            <Link className="nav-link" to="/">
+            <Link className="nav-link" to={HOME_ROUTE.path}>
               Home
             </Link>
           </li>
