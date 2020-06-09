@@ -6,7 +6,7 @@ import type {
 } from 'app/api/omdb/flow';
 
 const herokuProxy = String(process.env.REACT_APP_HEROKU_PROXY);
-const omdbEndpoint = String(process.env.REACT_APP_OMDB_ENDPOINT);
+const omdbEndpoint = 'http://www.omdbapi.com/';
 const apiKey = String(process.env.REACT_APP_OMDB_APIKEY);
 
 const ENDPOINT_PROXY = `${herokuProxy}${omdbEndpoint}?apikey=${apiKey}&type=movie&plot=full`;

@@ -7,9 +7,12 @@ import { asyncOperation } from 'app/redux/util';
 import { logInUser } from 'app/http';
 import { saveUserAction } from 'app/redux/user/actions';
 import { getUser } from 'app/redux/user/selectors';
-import { minLengthValidator, requiredValidator } from 'app/forms/validators';
-import { FormContainer } from 'app/forms/styles';
-import InputField from 'app/forms/InputField';
+import {
+  minLengthValidator,
+  requiredValidator,
+} from 'app/components/form/validators';
+import { FormContainer } from 'app/components/form/styles';
+import InputField from 'app/components/form/InputField';
 import type { FormRenderProps } from 'react-final-form';
 import type {
   SaveUserAction,

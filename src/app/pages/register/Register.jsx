@@ -12,9 +12,9 @@ import {
   emailValidator,
   minLengthValidator,
   requiredValidator,
-} from 'app/forms/validators';
-import { FormContainer } from 'app/forms/styles';
-import InputField from 'app/forms/InputField';
+} from 'app/components/form/validators';
+import { FormContainer } from 'app/components/form/styles';
+import InputField from 'app/components/form/InputField';
 import type { FormRenderProps } from 'react-final-form';
 import type {
   SaveUserAction,

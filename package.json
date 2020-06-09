@@ -6,10 +6,7 @@
   "dependencies": {
     "bootstrap": "^4.3.1",
     "connected-react-router": "^6.5.2",
-    "eslint-config-prettier": "^6.9.0",
-    "eslint-plugin-prettier": "^3.1.2",
     "final-form": "^4.18.6",
-    "flow-bin": "^0.114.0",
     "font-awesome": "^4.7.0",
     "history": "^4.9.0",
     "jquery": "^3.4.1",
@@ -17,7 +14,6 @@
     "moment": "^2.24.0",
     "movie-trailer": "^2.0.6",
     "popper.js": "^1.15.0",
-    "prettier": "^1.17.0",
     "qs": "^6.8.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
@@ -28,34 +24,24 @@
     "react-router-dom": "^5.0.1",
     "react-scripts": "3.0.0",
     "redux": "^4.0.4",
-    "redux-devtools-extension": "^2.13.8",
     "styled-components": "^4.3.2",
     "word-link": "^1.0.1"
   },
+  "devDependencies": {
+    "eslint-config-prettier": "^6.9.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "flow-bin": "^0.114.0",
+    "prettier": "^1.17.0",
+    "customize-cra": "^1.0.0",
+    "react-app-rewired": "^2.1.6",
+    "redux-devtools-extension": "^2.13.8"
+  },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
     "eject": "react-scripts eject",
     "flow": "flow"
-  },
-  "eslintConfig": {
-    "extends": "react-app",
-    "plugins": [
-      "prettier"
-    ],
-    "rules": {
-      "quotes": [
-        2,
-        "single"
-      ],
-      "no-unused-vars": "error",
-      "prettier/prettier": "error"
-    }
-  },
-  "prettier": {
-    "singleQuote": true,
-    "trailingComma": "all"
   },
   "browserslist": {
     "production": [
