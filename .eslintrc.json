@@ -2,12 +2,10 @@
   "env": {
     "browser": true
   },
-  "extends": ["airbnb", "airbnb/hooks"],
-  "plugins": ["prettier", "flowtype"],
+  "extends": ["airbnb", "airbnb/hooks", "plugin:prettier/recommended"],
   "parser": "babel-eslint",
   "rules": {
     "quotes": ["error", "single"],
-    "prettier/prettier": "error",
     "no-confusing-arrow": "off",
     "no-plusplus": "off",
     "no-console": "off",

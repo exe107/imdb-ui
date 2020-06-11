@@ -10,8 +10,8 @@ import type {
 
 const herokuProxy = String(process.env.REACT_APP_HEROKU_PROXY);
 
-export const runQuery = (query: string) =>
-  fetch(`${herokuProxy}${query}`).then(response => response.json());
+export const runQuery = (endpoint: string) =>
+  fetch(`${herokuProxy}${endpoint}`).then(response => response.json());
 
 export const isResponseEmpty = ({ results }: SparqlResponse) =>
   results.bindings.length === 0;
