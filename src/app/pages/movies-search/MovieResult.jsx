@@ -11,13 +11,12 @@ type Props = {
 
 const MovieResult = ({ ordinal, movie }: Props): React.Node => {
   const { id, name, year } = movie;
+  const movieLabel = year ? `${name} (${year})` : name;
 
   return (
     <h4>
       {`${ordinal}. `}
-      <a href={constructUrl(MOVIE_ROUTE.path, [], { id })}>
-        {name} ({year})
-      </a>
+      <a href={constructUrl(MOVIE_ROUTE.path, [], { id })}>{movieLabel}</a>
     </h4>
   );
 };

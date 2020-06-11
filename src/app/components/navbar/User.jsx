@@ -48,9 +48,7 @@ export const User = ({
         data-toggle="dropdown"
       >
         <i className="fa fa-2x fa-user text-white mr-3" />
-        <span className="text-white">
-          {name} {surname}
-        </span>
+        <span className="text-white">{`${name} ${surname}`}</span>
       </UserButton>
       <div className="dropdown-menu">
         <button type="button" className="dropdown-item" onClick={onLogoutClick}>

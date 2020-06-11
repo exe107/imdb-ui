@@ -43,7 +43,7 @@ const Rating = ({ ordinal, movieRating }: Props) => {
       <img src={image} height={160} alt="" />
       <div className="ml-3">
         <div className="mb-2">
-          <h5 className="d-inline">{ordinal}.</h5>
+          <h5 className="d-inline">{`${ordinal}.`}</h5>
           <h4 className="d-inline">
             <a
               className="ml-1"
@@ -53,16 +53,16 @@ const Rating = ({ ordinal, movieRating }: Props) => {
             </a>
           </h4>
         </div>
-        <h5>Year: {year}</h5>
-        <h5>Genre: {genres.join(', ')}</h5>
+        <h5>{`Year: ${year}`}</h5>
+        <h5>{`Genre: ${genres.join(', ')}`}</h5>
         <h5>
-          <span>Your rating: {rating}</span>
+          <span>{`Your rating: ${rating}`}</span>
           <ClickableElement
             className="fa fa-star text-warning ml-1"
             onClick={toggleModal}
           />
         </h5>
-        <h5>Rated on {formattedDate}</h5>
+        <h5>{`Rated on ${formattedDate}`}</h5>
       </div>
       {showModal && (
         <RatingModal

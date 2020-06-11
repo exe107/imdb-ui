@@ -1,9 +1,30 @@
 {
-  "extends": "react-app",
-  "plugins": ["prettier"],
+  "env": {
+    "browser": true
+  },
+  "extends": ["airbnb", "airbnb/hooks"],
+  "plugins": ["prettier", "flowtype"],
+  "parser": "babel-eslint",
   "rules": {
-    "quotes": [2, "single"],
-    "no-unused-vars": "error",
-    "prettier/prettier": "error"
+    "quotes": ["error", "single"],
+    "prettier/prettier": "error",
+    "no-confusing-arrow": "off",
+    "no-plusplus": "off",
+    "no-console": "off",
+    "linebreak-style": "off",
+    "arrow-parens": "off",
+    "object-curly-newline": "off",
+    "operator-linebreak": "off",
+    "implicit-arrow-linebreak": "off",
+    "function-paren-newline": "off",
+    "import/prefer-default-export": "off",
+    "import/no-unresolved": "off",
+    "react/require-default-props": "off",
+    "react/jsx-fragments": "off",
+    "react/jsx-props-no-spreading": "off",
+    "jsx-a11y/label-has-associated-control": [
+      "error",
+      { "assert": "either", "depth": 25 }
+    ]
   }
 }

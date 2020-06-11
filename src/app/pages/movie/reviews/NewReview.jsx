@@ -52,13 +52,13 @@ const NewReview = ({
       return;
     }
 
-    const review = {
+    const newReview = {
       movie,
       review: reviewText,
     };
 
     asyncOperation(() =>
-      addReview(review)
+      addReview(newReview)
         .then((review: ExistingReview) => {
           if (user.admin) {
             setReviews(reviews => [...reviews, review]);
@@ -85,18 +85,24 @@ const NewReview = ({
     <React.Fragment>
       <ReviewEditor value={reviewText} onChange={onEditorChange} />
       <div className="my-3">
-        <button className="btn btn-primary mr-3" onClick={onPostReview}>
+        <button
+          type="button"
+          className="btn btn-primary mr-3"
+          onClick={onPostReview}
+        >
           Post
         </button>
-        <button className="btn btn-danger" onClick={toggleEditor}>
+        <button type="button" className="btn btn-danger" onClick={toggleEditor}>
           Cancel
         </button>
       </div>
-      <span className="text-muted">
-        * Your review will need to be assessed by one of our administrators.{' '}
-        <br /> After posting it, you can view it in the
-        <i> Pending reviews</i> section
-      </span>
+      <div className="text-muted">
+        * Your review will need to be assessed by one of our administrators.
+        <br />
+        After posting it, you can view it in the
+        <i> Pending reviews</i>
+        section
+      </div>
     </React.Fragment>
   );
 };

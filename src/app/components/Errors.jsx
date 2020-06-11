@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import _isEmpty from 'lodash/isEmpty';
 import { getErrors } from 'app/redux/errors/selectors';
-import { clearErrors } from 'app/redux/errors/actions';
+import { clearErrors as clearErrorsAction } from 'app/redux/errors/actions';
 import type { ApiError, ClearErrorsAction } from 'app/redux/errors/flow';
 
 const ErrorsContainer = styled.div`
@@ -38,7 +38,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  clearErrors,
+  clearErrors: clearErrorsAction,
 };
 
 export default connect(

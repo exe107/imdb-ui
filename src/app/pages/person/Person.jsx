@@ -56,30 +56,37 @@ const Person = (props: Object): React.Node => {
 
   React.useEffect(() => {
     const abstractPromise = runWikidataQuery(findResource(id)).then(
-      (response: SparqlResponse): Promise<*> => {
+      (response: SparqlResponse): Promise<any> => {
         const { name, resource } = extractResourceQuerySingleResult(response);
         setPersonWikidataResource(resource);
 
         return runDbpediaQuery(
           findPersonAbstractBySameAs(`<${resource}>`),
-        ).then((response: SparqlResponse) => {
-          if (!isResponseEmpty(response)) {
-            const { resource, abstract } = response.results.bindings[0];
-            setPersonDbpediaResource(resource.value);
-            setAbstract(abstract.value);
-          } else {
+        ).then((abstractResource: SparqlResponse) => {
+          if (isResponseEmpty(abstractResource)) {
             return runSpotlightQuery(name)
               .then(({ Resources }: SpotlightResponse) => {
-                const resource = Resources[0]['@URI'];
-                setPersonDbpediaResource(resource);
+                const dbpediaResource = Resources[0]['@URI'];
+                setPersonDbpediaResource(dbpediaResource);
 
-                return runDbpediaQuery(findPersonAbstract(`<${resource}>`));
+                return runDbpediaQuery(
+                  findPersonAbstract(`<${dbpediaResource}>`),
+                );
               })
-              .then((response: SparqlResponse) => {
-                const abstract = extractQuerySingleResult(response);
-                setAbstract(abstract);
-              });
+              .then((abstractResponse: SparqlResponse) =>
+                setAbstract(extractQuerySingleResult(abstractResponse)),
+              );
           }
+
+          const {
+            resource: resourceBinding,
+            abstract: abstractBinding,
+          } = abstractResource.results.bindings[0];
+
+          setPersonDbpediaResource(resourceBinding.value);
+          setAbstract(abstractBinding.value);
+
+          return undefined;
         });
       },
     );

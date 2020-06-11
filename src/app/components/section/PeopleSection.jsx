@@ -33,7 +33,7 @@ const PeopleSection = ({ rdfProperty, header, people }: Props): React.Node => {
           >
             <i className={`fa ${iconClassName} mr-2`} />
             <span className="mr-2">{header}</span>
-            <span>({people.length})</span>
+            <span>{`(${people.length})`}</span>
           </PanelButton>
         </h5>
         <ul className="collapse" id={header}>

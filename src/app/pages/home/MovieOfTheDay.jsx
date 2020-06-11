@@ -56,10 +56,11 @@ const MovieOfTheDay = ({ movie }: Props) => {
       {hovered && (
         <MovieDetails className="h-100 d-flex flex-column justify-content-center">
           <h5>{Title}</h5>
-          <h5>Genre: {Genre}</h5>
+          <h5>{`Genre: ${Genre}`}</h5>
           {imdbRating !== NOT_AVAILABLE && (
             <h5>
-              Rating: {imdbRating} <i className="text-warning fa fa-star" />
+              <span>{`Rating: ${imdbRating}`}</span>
+              <i className="text-warning fa fa-star ml-1" />
             </h5>
           )}
         </MovieDetails>

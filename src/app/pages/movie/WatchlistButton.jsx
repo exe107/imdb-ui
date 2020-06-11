@@ -32,13 +32,15 @@ const WatchlistButton = ({
   );
 
   const onButtonClick = React.useCallback(() => {
-    asyncOperation(() =>
-      isMovieInWatchlist
-        ? deleteWatchlistMovie(movie.id).then(() =>
-            removeWatchlistMovie(movie.id),
-          )
-        : addWatchlistMovie(movie).then(() => saveWatchlistMovie(movie)),
-    );
+    asyncOperation(() => {
+      if (isMovieInWatchlist) {
+        return deleteWatchlistMovie(movie.id).then(() =>
+          removeWatchlistMovie(movie.id),
+        );
+      }
+
+      return addWatchlistMovie(movie).then(() => saveWatchlistMovie(movie));
+    });
   }, [isMovieInWatchlist, movie, saveWatchlistMovie, removeWatchlistMovie]);
 
   const buttonLabel = isMovieInWatchlist
@@ -50,6 +52,7 @@ const WatchlistButton = ({
 
   return (
     <button
+      type="button"
       className={`btn ${buttonClassname} text-white d-block mx-auto mt-4`}
       onClick={onButtonClick}
     >

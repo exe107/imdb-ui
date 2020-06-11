@@ -20,7 +20,7 @@ const MovieResult = ({ movie, ordinal }: Props) => {
       <img src={image} width={100} alt="" />
       <div className="ml-3">
         <div className="mb-2">
-          <h5 className="d-inline">{ordinal}.</h5>
+          <h5 className="d-inline">{`${ordinal}.`}</h5>
           <h4 className="d-inline">
             <a
               className="ml-1"
@@ -30,7 +30,7 @@ const MovieResult = ({ movie, ordinal }: Props) => {
             </a>
           </h4>
         </div>
-        <h5>Year: {Year}</h5>
+        <h5>{`Year: ${Year}`}</h5>
       </div>
     </div>
   );

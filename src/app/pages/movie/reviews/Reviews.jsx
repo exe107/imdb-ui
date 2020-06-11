@@ -82,7 +82,7 @@ const Reviews = ({ user, movie, reviews: initialReviews, addError }: Props) => {
               <i className={`fa ${iconClassName} mr-2`} />
               <span>Reviews</span>
               {reviews.length > 0 && (
-                <span className="ml-2">({reviews.length})</span>
+                <span className="ml-2">{`(${reviews.length})`}</span>
               )}
             </ReviewsPanelButton>
           </h5>
@@ -108,7 +108,11 @@ const Reviews = ({ user, movie, reviews: initialReviews, addError }: Props) => {
               setReviews={setReviews}
             />
           ) : (
-            <button className="btn btn-primary" onClick={toggleEditor}>
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={toggleEditor}
+            >
               Write a review
             </button>
           )}

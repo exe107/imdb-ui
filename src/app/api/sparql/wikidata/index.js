@@ -58,6 +58,26 @@ export const findMoviesByWriter = (id: string) =>
   } GROUP BY ?resource ?name ?id
     ORDER BY DESC(?year)`;
 
+const findMoviesWithYear = () =>
+  `SELECT ?movie (MIN(year(?date)) as ?year) WHERE {
+    ?movie wdt:P31/wdt:P279* wd:Q11424;
+           wdt:P577 ?date.
+  } GROUP BY ?movie`;
+
+const findMoviesByYear = (yearFrom: number, yearTo: number) =>
+  `SELECT DISTINCT ?name ?id ?year 
+   WITH {
+     ${findMoviesWithYear()}
+   } AS %movies
+   
+   WHERE {
+     INCLUDE %movies.
+     FILTER(?year >= ${yearFrom} && ?year <= ${yearTo})
+     ?movie wdt:P345 ?id;
+            rdfs:label ?name.
+     FILTER(lang(?name) = 'en')
+   } ORDER BY DESC(?year)`;
+
 export const findMoviesByYearAndGenre = (
   genre: ?string,
   yearFrom: number = 2000,
@@ -90,26 +110,6 @@ export const findMoviesByYearAndGenre = (
             FILTER(lang(?name) = 'en')
           } ORDER BY DESC(?year)`;
 };
-
-const findMoviesByYear = (yearFrom: number, yearTo: number) =>
-  `SELECT DISTINCT ?name ?id ?year 
-   WITH {
-     ${findMoviesWithYear()}
-   } AS %movies
-   
-   WHERE {
-     INCLUDE %movies.
-     FILTER(?year >= ${yearFrom} && ?year <= ${yearTo})
-     ?movie wdt:P345 ?id;
-            rdfs:label ?name.
-     FILTER(lang(?name) = 'en')
-   } ORDER BY DESC(?year)`;
-
-const findMoviesWithYear = () =>
-  `SELECT ?movie (MIN(year(?date)) as ?year) WHERE {
-    ?movie wdt:P31/wdt:P279* wd:Q11424;
-           wdt:P577 ?date.
-  } GROUP BY ?movie`;
 
 export const findResource = (id: string) =>
   `SELECT ?resource ?name WHERE {

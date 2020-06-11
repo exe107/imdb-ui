@@ -66,21 +66,26 @@ const Movie = ({ user, location, addError }: Props): React.Node => {
             setMovie(response);
 
             const movieResourcePromise = runWikidataQuery(findResource(imdbID))
-              .then((response: SparqlResponse) => {
-                const { resource } = extractResourceQuerySingleResult(response);
+              .then((movieResourceResponse: SparqlResponse) => {
+                const { resource } = extractResourceQuerySingleResult(
+                  movieResourceResponse,
+                );
+
                 setMovieResource(resource);
               })
               .catch(console.log);
 
             const actorsPromise = runWikidataQuery(findMovieActors(imdbID))
-              .then(response => setCast(extractPeopleQueryResults(response)))
+              .then(actorsResponse =>
+                setCast(extractPeopleQueryResults(actorsResponse)),
+              )
               .catch(console.log);
 
             const directorsPromise = runWikidataQuery(
               findMovieDirectors(imdbID),
             )
-              .then(response =>
-                setDirectors(extractPeopleQueryResults(response)),
+              .then(directorsResponse =>
+                setDirectors(extractPeopleQueryResults(directorsResponse)),
               )
               .catch(console.log);
 
@@ -165,9 +170,7 @@ const Movie = ({ user, location, addError }: Props): React.Node => {
     return (
       <div className="px-5" about={movieResource}>
         <div className="text-center mb-5">
-          <h1 className="d-inline">
-            {Title} ({Year})
-          </h1>
+          <h1 className="d-inline">{`${Title} (${Year})`}</h1>
           <meta property="rdfs:label" content={Title} />
           {user && (
             <React.Fragment>
@@ -195,25 +198,25 @@ const Movie = ({ user, location, addError }: Props): React.Node => {
           <div>
             {imdbRating !== NOT_AVAILABLE && (
               <h5 property="rev:rating" content={imdbRating}>
-                Rating: {imdbRating}
+                {`Rating: ${imdbRating}`}
                 <i className="ml-2 mr-1 text-warning fa fa-star" />
                 {`(${imdbVotes} votes)`}
               </h5>
             )}
-            <h5>Genre: {Genre}</h5>
+            <h5>{`Genre: ${Genre}`}</h5>
             {Runtime !== NOT_AVAILABLE && (
               <h5 property="wdt:P2047" content={Runtime}>
-                Runtime: {Runtime}
+                {`Runtime: ${Runtime}`}
               </h5>
             )}
             {Released !== NOT_AVAILABLE && (
               <h5 property="wdt:P577" content={Released}>
-                Released: {Released}
+                {`Released: ${Released}`}
               </h5>
             )}
             {Language !== NOT_AVAILABLE && (
               <React.Fragment>
-                <h5>Language: {Language}</h5>
+                <h5>{`Language: ${Language}`}</h5>
                 {Language.split(', ').map(language => (
                   <meta key={language} property="wdt:P364" content={language} />
                 ))}
@@ -221,15 +224,15 @@ const Movie = ({ user, location, addError }: Props): React.Node => {
             )}
             {Website !== NOT_AVAILABLE && (
               <h5 className="text-break">
-                Website:{' '}
-                <a href={Website} property="wdt:P856">
+                Website:
+                <a href={Website} className="ml-1" property="wdt:P856">
                   {Website}
                 </a>
               </h5>
             )}
             {Country !== NOT_AVAILABLE && (
               <React.Fragment>
-                <h5>Country: {Country}</h5>
+                <h5>{`Country: ${Country}`}</h5>
                 {Country.split(', ').map(country => (
                   <meta key={country} property="wdt:P495" content={country} />
                 ))}
@@ -237,12 +240,12 @@ const Movie = ({ user, location, addError }: Props): React.Node => {
             )}
             {BoxOffice !== NOT_AVAILABLE && (
               <h5 property="wdt:P2142" content={BoxOffice}>
-                Box Office: {BoxOffice}
+                {`Box Office: ${BoxOffice}`}
               </h5>
             )}
             {Production !== NOT_AVAILABLE && (
               <h5 property="wdt:P272" content={Production}>
-                Production: {Production}
+                {`Production: ${Production}`}
               </h5>
             )}
             {Awards !== NOT_AVAILABLE && <h5>{Awards}</h5>}

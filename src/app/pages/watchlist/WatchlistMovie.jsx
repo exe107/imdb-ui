@@ -70,7 +70,7 @@ const WatchlistMovie = ({ ordinal, movie, removeWatchlistMovie }: Props) => {
       </ImageContainer>
       <div className="ml-3">
         <div className="mb-2">
-          <h5 className="d-inline">{ordinal}.</h5>
+          <h5 className="d-inline">{`${ordinal}.`}</h5>
           <h4 className="d-inline">
             <a
               className="ml-1"
@@ -80,11 +80,13 @@ const WatchlistMovie = ({ ordinal, movie, removeWatchlistMovie }: Props) => {
             </a>
           </h4>
         </div>
-        <h5>Year: {year}</h5>
-        <h5>Genre: {genres.join(', ')}</h5>
-        <h5>Runtime: {runtime ? formatRuntime(runtime) : NOT_AVAILABLE}</h5>
+        <h5>{`Year: ${year}`}</h5>
+        <h5>{`Genre: ${genres.join(', ')}`}</h5>
         <h5>
-          <span>Rating: {rating || NOT_AVAILABLE}</span>
+          {`Runtime: ${runtime ? formatRuntime(runtime) : NOT_AVAILABLE}`}
+        </h5>
+        <h5>
+          <span>{`Rating: ${rating || NOT_AVAILABLE}`}</span>
           {rating && <i className="fa fa-star text-warning ml-1" />}
         </h5>
       </div>

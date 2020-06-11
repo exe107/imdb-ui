@@ -4,7 +4,8 @@ export type SparqlResult = {
 };
 
 export type SparqlBinding = {
-  [key: string]: SparqlResult, // the key corresponds to the variables (preceded with ?) in the query
+  // the key corresponds to the variables (preceded with ?) in the query
+  [key: string]: SparqlResult,
 };
 
 type SparqlResults = {

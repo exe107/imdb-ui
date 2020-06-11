@@ -16,7 +16,7 @@ const AchievementsSection = ({
 }: Props): React.Node =>
   !_isEmpty(achievements) && (
     <React.Fragment>
-      <h4>{header}:</h4>
+      <h4>{`${header}:`}</h4>
       <ul>
         {achievements.map(({ resource, name }: Resource) => (
           <li key={name} property={rdfProperty} resource={resource}>

@@ -27,32 +27,35 @@ const PasswordChange = ({ user }: Props) => {
     [],
   );
 
-  const oldPasswordValidator = React.useCallback(
-    composeValidators(commonValidators),
-    [],
+  const oldPasswordValidator = React.useMemo(
+    () => composeValidators(commonValidators),
+    [commonValidators],
   );
 
-  const newPasswordValidator = React.useCallback(
-    composeValidators([
-      ...commonValidators,
-      matchingFieldValidator(
-        'oldPassword',
-        'New password cannot be the same as the old one',
-        false,
-      ),
-    ]),
+  const newPasswordValidator = React.useMemo(
+    () =>
+      composeValidators([
+        ...commonValidators,
+        matchingFieldValidator(
+          'oldPassword',
+          'New password cannot be the same as the old one',
+          false,
+        ),
+      ]),
+    [commonValidators],
   );
 
-  const confirmedPasswordValidator = React.useCallback(
-    composeValidators([
-      ...commonValidators,
-      matchingFieldValidator(
-        'newPassword',
-        'Value does not match new password',
-        true,
-      ),
-    ]),
-    [],
+  const confirmedPasswordValidator = React.useMemo(
+    () =>
+      composeValidators([
+        ...commonValidators,
+        matchingFieldValidator(
+          'newPassword',
+          'Value does not match new password',
+          true,
+        ),
+      ]),
+    [commonValidators],
   );
 
   const onSubmit = React.useCallback((values: Object) => {

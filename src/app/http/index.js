@@ -26,7 +26,7 @@ const createRequestOptions = (
   method: string,
   body?: Object,
   headers?: Object,
-): RequestOptions => {
+): Object => {
   const requestOptions = {
     headers: {
       Accept: 'application/json',
@@ -43,12 +43,15 @@ const createRequestOptions = (
   return requestOptions;
 };
 
-const handleResponse = (response: Response): Object =>
-  response.status === 204
-    ? null
-    : response
-        .json()
-        .then(body => (response.ok ? body : Promise.reject(body.message)));
+const handleResponse = (response: Response): Object => {
+  if (response.status === 204) {
+    return null;
+  }
+
+  return response
+    .json()
+    .then(body => (response.ok ? body : Promise.reject(body.message)));
+};
 
 const GET = (url: string) =>
   fetch(url, createRequestOptions('GET')).then(handleResponse);

@@ -33,7 +33,7 @@ const SearchBar = () => {
   return (
     <div className="input-group w-100">
       <div className="input-group-prepend">
-        <button className="btn btn-secondary" onClick={onSearch}>
+        <button type="button" className="btn btn-secondary" onClick={onSearch}>
           <i className="fa fa-search" />
         </button>
       </div>

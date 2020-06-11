@@ -8,6 +8,7 @@ import App from 'App';
 import * as serviceWorker from 'serviceWorker';
 
 ReactDOM.render(
+  // eslint-disable-next-line react/jsx-filename-extension
   <Provider store={store}>
     <ConnectedRouter history={history}>
       <App />

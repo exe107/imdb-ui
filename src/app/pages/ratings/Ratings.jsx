@@ -63,12 +63,14 @@ const Ratings = ({ movieRatings }: Props) => {
     return null;
   }
 
-  const filteredRatings =
-    ratingToFilterBy > 0
-      ? movieRatings.filter(
-          ({ rating }: UserMovieRating) => rating === ratingToFilterBy,
-        )
-      : [...movieRatings];
+  let filteredRatings;
+  if (ratingToFilterBy > 0) {
+    filteredRatings = movieRatings.filter(
+      ({ rating }: UserMovieRating) => rating === ratingToFilterBy,
+    );
+  } else {
+    filteredRatings = [...movieRatings];
+  }
 
   const ratings = filteredRatings.sort(comparator);
 
@@ -109,7 +111,7 @@ const Ratings = ({ movieRatings }: Props) => {
         ))
       ) : (
         <h3 className="text-center mt-5">
-          You have no {ratingToFilterBy} star rated movies
+          {`You have no ${ratingToFilterBy} star rated movies`}
         </h3>
       )}
     </React.Fragment>

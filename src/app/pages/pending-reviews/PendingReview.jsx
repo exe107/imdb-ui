@@ -34,10 +34,14 @@ const PendingReview = ({ isAdmin, review, onApprove, onReject }: Props) => {
       </div>
       {isAdmin && (
         <div className="mt-3">
-          <button className="btn btn-success mr-3" onClick={onApprove}>
+          <button
+            type="button"
+            className="btn btn-success mr-3"
+            onClick={onApprove}
+          >
             <i className="fa fa-check" />
           </button>
-          <button className="btn btn-danger" onClick={onReject}>
+          <button type="button" className="btn btn-danger" onClick={onReject}>
             <i className="fa fa-times" />
           </button>
         </div>

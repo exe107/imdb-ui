@@ -28,7 +28,7 @@ const MovieRatingStar = ({ user, movie }: Props): React.Node => {
   }, [showModal, toggleModal]);
 
   const movieRating = user.movieRatings.find(
-    (movieRating: UserMovieRating) => movieRating.movie.id === movie.id,
+    (item: UserMovieRating) => item.movie.id === movie.id,
   );
 
   const rating = movieRating ? movieRating.rating : 0;

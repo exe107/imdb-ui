@@ -54,7 +54,11 @@ const MoviesSearchResults = ({ children, movies }: Props): React.Node => {
           defaultValue={moviesPerPage}
           ref={moviesPerPageInputRef}
         />
-        <button className="btn btn-primary ml-3" onClick={onSetMoviesPerPage}>
+        <button
+          type="button"
+          className="btn btn-primary ml-3"
+          onClick={onSetMoviesPerPage}
+        >
           Set
         </button>
       </div>
@@ -71,12 +75,20 @@ const MoviesSearchResults = ({ children, movies }: Props): React.Node => {
       </h5>
       <div className="mb-5">
         {!isFirstPage && (
-          <button className="mr-5 btn btn-secondary" onClick={onPreviousClick}>
+          <button
+            type="button"
+            className="mr-5 btn btn-secondary"
+            onClick={onPreviousClick}
+          >
             Previous
           </button>
         )}
         {!isLastPage && (
-          <button className="btn btn-primary" onClick={onNextClick}>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={onNextClick}
+          >
             Next
           </button>
         )}
