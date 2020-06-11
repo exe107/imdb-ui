@@ -23,7 +23,7 @@ import { getReviews } from 'app/http';
 import { getUser } from 'app/redux/user/selectors';
 import { addErrorAction } from 'app/redux/errors/actions';
 import imageNotFound from 'app/images/image_not_found.png';
-import PeopleSection from 'app/components/section/PeopleSection';
+import PeopleSection from 'app/pages/movie/PeopleSection';
 import MovieRatingStar from 'app/pages/movie/MovieRatingStar';
 import WatchlistButton from 'app/pages/movie/WatchlistButton';
 import Reviews from 'app/pages/movie/reviews/Reviews';

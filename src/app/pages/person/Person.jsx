@@ -26,8 +26,8 @@ import {
 } from 'app/api/util';
 import { asyncOperation } from 'app/redux/util';
 import imageNotFound from 'app/images/image_not_found.png';
-import MoviesSection from 'app/components/section/MoviesSection';
-import AchievementsSection from 'app/components/section/AchievementsSection';
+import MoviesSection from 'app/pages/person/MoviesSection';
+import AchievementsSection from 'app/pages/person/AchievementsSection';
 import type { SparqlResponse } from 'app/api/sparql/flow';
 import type { SpotlightResponse } from 'app/api/spotlight/flow';
 
