@@ -60,14 +60,14 @@ const NewReview = ({
     asyncOperation(() =>
       addReview(newReview)
         .then((review: ExistingReview) => {
+          setReviewText('');
+          toggleEditor();
+
           if (user.admin) {
             setReviews(reviews => [...reviews, review]);
           } else {
             savePendingReview(review);
           }
-
-          setReviewText('');
-          toggleEditor();
         })
         .catch(addError),
     );

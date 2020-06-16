@@ -33,7 +33,7 @@ import type { MovieDetailsResponse } from 'app/api/omdb/flow';
 import type { SparqlResponse } from 'app/api/sparql/flow';
 
 const MoviePoster = styled.img`
-  height: 400px;
+  height: 300px;
 `;
 
 const Trailer = styled.iframe`

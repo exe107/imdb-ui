@@ -14,6 +14,7 @@ const ImageContainer = styled.div`
 `;
 
 const Image = styled.img`
+  object-fit: cover;
   opacity: ${props => (props.hovered ? '0.1' : '1')};
   transition: opacity 0.25s;
 `;

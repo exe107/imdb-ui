@@ -51,12 +51,12 @@ export const User = ({
         <span className="text-white">{`${name} ${surname}`}</span>
       </UserButton>
       <div className="dropdown-menu">
-        <button type="button" className="dropdown-item" onClick={onLogoutClick}>
-          Log out
-        </button>
         <Link className="dropdown-item" to={CHANGE_PASSWORD_ROUTE.path}>
           Change password
         </Link>
+        <button type="button" className="dropdown-item" onClick={onLogoutClick}>
+          Log out
+        </button>
       </div>
     </div>
   );
