@@ -16,24 +16,15 @@ type Props = {
 };
 
 const Rating = ({ ordinal, movieRating }: Props) => {
-  const [showModal, setShowModal] = React.useState(false);
-
-  const toggleModal = React.useCallback(() => setShowModal(!showModal), [
-    showModal,
-  ]);
-
   const { movie, rating, date } = movieRating;
   const { id, name, year, genres, imageUrl } = movie;
 
   const MODAL_NAME = `${id}-ratingModal`;
   const MODAL_ID = `#${MODAL_NAME}`;
 
-  React.useEffect(() => {
-    if (showModal) {
-      $(MODAL_ID).modal('show');
-      $(MODAL_ID).on('hidden.bs.modal', toggleModal);
-    }
-  }, [MODAL_ID, showModal, toggleModal]);
+  const showModal = React.useCallback(() => $(MODAL_ID).modal('show'), [
+    MODAL_ID,
+  ]);
 
   const formattedDate = moment(date).format('DD MMMM YYYY');
   const image = imageUrl !== NOT_AVAILABLE ? imageUrl : imageNotFound;
@@ -59,19 +50,17 @@ const Rating = ({ ordinal, movieRating }: Props) => {
           <span>{`Your rating: ${rating}`}</span>
           <ClickableElement
             className="fa fa-star text-warning ml-1"
-            onClick={toggleModal}
+            onClick={showModal}
           />
         </h5>
         <h5>{`Rated on ${formattedDate}`}</h5>
       </div>
-      {showModal && (
-        <RatingModal
-          modalId={MODAL_ID}
-          modalName={MODAL_NAME}
-          movie={movie}
-          previousRating={rating}
-        />
-      )}
+      <RatingModal
+        modalId={MODAL_ID}
+        modalName={MODAL_NAME}
+        movie={movie}
+        previousRating={rating}
+      />
     </div>
   );
 };

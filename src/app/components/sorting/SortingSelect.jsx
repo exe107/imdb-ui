@@ -41,9 +41,10 @@ const SortingSelect = ({
 
   return (
     <div className="input-group">
-      <div>
-        <span>Sort by:</span>
+      <div className="form-group">
+        <label htmlFor="sortCriteria">Sort by:</label>
         <SortingOptionsSelect
+          id="sortCriteria"
           className="form-control ml-1"
           value={sortKey}
           onChange={onSortKeyChange}

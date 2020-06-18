@@ -64,7 +64,7 @@ const NewReview = ({
           toggleEditor();
 
           if (user.admin) {
-            setReviews(reviews => [...reviews, review]);
+            setReviews(reviews => [review, ...reviews]);
           } else {
             savePendingReview(review);
           }
@@ -96,13 +96,15 @@ const NewReview = ({
           Cancel
         </button>
       </div>
-      <div className="text-muted">
-        * Your review will need to be assessed by one of our administrators.
-        <br />
-        After posting it, you can view it in the
-        <i> Pending reviews</i>
-        section
-      </div>
+      {!user.admin && (
+        <div className="text-muted">
+          * Your review will need to be assessed by one of our administrators.
+          <br />
+          After posting it, you can view it in the
+          <i> Pending reviews </i>
+          section
+        </div>
+      )}
     </React.Fragment>
   );
 };

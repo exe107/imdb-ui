@@ -8,10 +8,8 @@ import type {
   SparqlResponse,
 } from 'app/api/sparql/flow';
 
-const herokuProxy = String(process.env.REACT_APP_HEROKU_PROXY);
-
 export const runQuery = (endpoint: string) =>
-  fetch(`${herokuProxy}${endpoint}`).then(response => response.json());
+  fetch(endpoint).then(response => response.json());
 
 export const isResponseEmpty = ({ results }: SparqlResponse) =>
   results.bindings.length === 0;
@@ -35,7 +33,7 @@ export const extractMoviesQueryResults = ({
   results: { bindings },
 }: SparqlResponse): Movie[] =>
   bindings.map(({ resource, name, id, year }: SparqlBinding) => ({
-    resource: resource.value,
+    resource: _get(resource, 'value'),
     name: name.value,
     id: id.value,
     year: year && year.value,

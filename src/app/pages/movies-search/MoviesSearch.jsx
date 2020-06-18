@@ -1,34 +1,33 @@
 // @flow
 import * as React from 'react';
-import _isEmpty from 'lodash/isEmpty';
+import styled from 'styled-components';
 import {
   findMoviesByYearAndGenre,
   runWikidataQuery,
 } from 'app/api/sparql/wikidata';
-import { DESCENDING } from 'app/constants';
-import { createNaturalOrderComparator } from 'app/util';
 import { extractMoviesQueryResults } from 'app/api/util';
 import { asyncOperation } from 'app/redux/util';
 import MoviesSearchResults from 'app/pages/movies-search/MoviesSearchResults';
-import SortingSelect from 'app/components/sorting/SortingSelect';
+
+const Form = styled.form`
+  margin: 0 auto;
+
+  @media only screen and (max-width: 950px) {
+    margin: 0;
+    flex-direction: column;
+    align-items: start;
+  }
+`;
+
+const Input = styled.input`
+  width: 80px !important;
+`;
 
 const MoviesSearch = (): React.Node => {
   const [genre, setGenre] = React.useState();
   const [yearFrom, setYearFrom] = React.useState();
   const [yearTo, setYearTo] = React.useState();
-  const [movies, setMovies] = React.useState([]);
-  const [sortKey, setSortKey] = React.useState('year');
-  const [sortOrder, setSortOrder] = React.useState(DESCENDING);
-
-  const comparator = React.useMemo(
-    () => createNaturalOrderComparator(sortKey, sortOrder),
-    [sortKey, sortOrder],
-  );
-
-  const sortedMovies = React.useMemo(() => movies.sort(comparator), [
-    movies,
-    comparator,
-  ]);
+  const [movies, setMovies] = React.useState();
 
   const MOVIE_GENRES = React.useMemo(
     () => [
@@ -49,18 +48,8 @@ const MoviesSearch = (): React.Node => {
     [],
   );
 
-  const sortingOptions = React.useMemo(
-    () => [{ key: 'year', name: 'Year' }, { key: 'name', name: 'Name' }],
-    [],
-  );
-
-  const onSortKeyChange = React.useCallback(
-    event => setSortKey(event.target.value),
-    [],
-  );
-
   const onSearchClick = React.useCallback(() => {
-    setMovies([]);
+    setMovies(null);
 
     asyncOperation(() =>
       runWikidataQuery(findMoviesByYearAndGenre(genre, yearFrom, yearTo))
@@ -72,11 +61,11 @@ const MoviesSearch = (): React.Node => {
   return (
     <React.Fragment>
       <div className="d-flex">
-        <form className="form-inline mx-auto">
-          <div className="form-group mr-5">
+        <Form className="form-inline">
+          <div className="form-group mr-5 mb-3">
             <label htmlFor="genre">Genre:</label>
             <select
-              className="form-control ml-3"
+              className="form-control ml-1"
               id="genre"
               defaultValue=""
               onChange={event => setGenre(event.target.value || undefined)}
@@ -89,44 +78,34 @@ const MoviesSearch = (): React.Node => {
               ))}
             </select>
           </div>
-          <div className="form-group mr-5">
+          <div className="form-group mr-5 mb-3">
             <label htmlFor="yearFrom">From (year):</label>
-            <input
-              className="form-control ml-3"
+            <Input
+              className="form-control ml-1"
               id="yearFrom"
               type="number"
               onBlur={event => setYearFrom(event.target.value || undefined)}
             />
           </div>
-          <div className="form-group">
+          <div className="form-group mb-3">
             <label htmlFor="yearTo">To (year):</label>
-            <input
-              className="form-control ml-3"
+            <Input
+              className="form-control ml-1"
               id="yearTo"
               type="number"
               onBlur={event => setYearTo(event.target.value || undefined)}
             />
           </div>
           <button
-            className="btn btn-primary ml-3"
+            className="btn btn-primary ml-3 mb-3"
             type="button"
             onClick={onSearchClick}
           >
             Search
           </button>
-        </form>
+        </Form>
       </div>
-      {!_isEmpty(movies) && (
-        <MoviesSearchResults movies={sortedMovies}>
-          <SortingSelect
-            sortingOptions={sortingOptions}
-            sortKey={sortKey}
-            sortOrder={sortOrder}
-            onSortKeyChange={onSortKeyChange}
-            setSortOrder={setSortOrder}
-          />
-        </MoviesSearchResults>
-      )}
+      {movies && <MoviesSearchResults movies={movies} />}
     </React.Fragment>
   );
 };

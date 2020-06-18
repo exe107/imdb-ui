@@ -25,7 +25,6 @@ import {
   extractResourceQuerySingleResult,
 } from 'app/api/util';
 import { asyncOperation } from 'app/redux/util';
-import imageNotFound from 'app/images/image_not_found.png';
 import MoviesSection from 'app/pages/person/MoviesSection';
 import AchievementsSection from 'app/pages/person/AchievementsSection';
 import type { SparqlResponse } from 'app/api/sparql/flow';
@@ -43,6 +42,7 @@ const Person = (props: Object): React.Node => {
   const { match } = props;
   const { id } = match.params;
 
+  const [personName, setPersonName] = React.useState('');
   const [personWikidataResource, setPersonWikidataResource] = React.useState();
   const [personDbpediaResource, setPersonDbpediaResource] = React.useState();
   const [abstract, setAbstract] = React.useState();
@@ -55,54 +55,57 @@ const Person = (props: Object): React.Node => {
   const [fetchingFinished, setFetchingFinished] = React.useState(false);
 
   React.useEffect(() => {
-    const abstractPromise = runWikidataQuery(findResource(id)).then(
-      (response: SparqlResponse): Promise<any> => {
-        const { name, resource } = extractResourceQuerySingleResult(response);
-        setPersonWikidataResource(resource);
+    const resolveAbstract = async () => {
+      const wikidataResourceResponse = await runWikidataQuery(findResource(id));
 
-        return runDbpediaQuery(
-          findPersonAbstractBySameAs(`<${resource}>`),
-        ).then((abstractResource: SparqlResponse) => {
-          if (isResponseEmpty(abstractResource)) {
-            return runSpotlightQuery(name)
-              .then(({ Resources }: SpotlightResponse) => {
-                const dbpediaResource = Resources[0]['@URI'];
-                setPersonDbpediaResource(dbpediaResource);
+      const {
+        name,
+        resource: wikidataResource,
+      } = extractResourceQuerySingleResult(wikidataResourceResponse);
 
-                return runDbpediaQuery(
-                  findPersonAbstract(`<${dbpediaResource}>`),
-                );
-              })
-              .then((abstractResponse: SparqlResponse) =>
-                setAbstract(extractQuerySingleResult(abstractResponse)),
-              );
-          }
+      setPersonName(name);
+      setPersonWikidataResource(wikidataResource);
 
-          const {
-            resource: resourceBinding,
-            abstract: abstractBinding,
-          } = abstractResource.results.bindings[0];
+      const dbpediaAbstractResponse = await runDbpediaQuery(
+        findPersonAbstractBySameAs(`<${wikidataResource}>`),
+      );
 
-          setPersonDbpediaResource(resourceBinding.value);
-          setAbstract(abstractBinding.value);
+      if (isResponseEmpty(dbpediaAbstractResponse)) {
+        const spotlightResponse: SpotlightResponse = await runSpotlightQuery(
+          name,
+        );
 
-          return undefined;
-        });
-      },
-    );
+        const { Resources } = spotlightResponse;
+        const dbpediaResource = Resources[0]['@URI'];
+        setPersonDbpediaResource(dbpediaResource);
 
-    asyncOperation(() =>
-      abstractPromise
-        .then(() =>
-          Promise.all([
-            runWikidataQuery(findPersonImage(id)),
-            runWikidataQuery(findPersonNominations(id)),
-            runWikidataQuery(findPersonAwards(id)),
-            runWikidataQuery(findMoviesByDirector(id)),
-            runWikidataQuery(findMoviesByWriter(id)),
-            runWikidataQuery(findMoviesByActor(id)),
-          ]),
-        )
+        const abstractResponse = await runDbpediaQuery(
+          findPersonAbstract(`<${dbpediaResource}>`),
+        );
+
+        setAbstract(extractQuerySingleResult(abstractResponse));
+      } else {
+        const {
+          resource: resourceBinding,
+          abstract: abstractBinding,
+        } = dbpediaAbstractResponse.results.bindings[0];
+
+        setPersonDbpediaResource(resourceBinding.value);
+        setAbstract(abstractBinding.value);
+      }
+    };
+
+    asyncOperation(async () => {
+      await resolveAbstract().catch(console.log);
+
+      return Promise.all([
+        runWikidataQuery(findPersonImage(id)),
+        runWikidataQuery(findPersonNominations(id)),
+        runWikidataQuery(findPersonAwards(id)),
+        runWikidataQuery(findMoviesByDirector(id)),
+        runWikidataQuery(findMoviesByWriter(id)),
+        runWikidataQuery(findMoviesByActor(id)),
+      ])
         .then(
           ([
             imageResponse,
@@ -123,8 +126,8 @@ const Person = (props: Object): React.Node => {
           },
         )
         .catch(console.log)
-        .then(() => setFetchingFinished(true)),
-    );
+        .then(() => setFetchingFinished(true));
+    });
   }, [id]);
 
   if (!fetchingFinished) {
@@ -137,18 +140,26 @@ const Person = (props: Object): React.Node => {
 
   return (
     <React.Fragment>
-      <PersonImage src={imageUrl || imageNotFound} />
       {imageUrl && (
-        <meta
-          about={personWikidataResource}
-          property="wdt:P18"
-          content={imageUrl}
-        />
+        <React.Fragment>
+          <PersonImage src={imageUrl} />
+          <meta
+            about={personWikidataResource}
+            property="wdt:P18"
+            content={imageUrl}
+          />
+        </React.Fragment>
       )}
-      <h4>About:</h4>
-      <p about={personDbpediaResource} property="dbo:abstract">
-        {abstract}
-      </p>
+      {abstract ? (
+        <React.Fragment>
+          <h4>About</h4>
+          <p about={personDbpediaResource} property="dbo:abstract">
+            {abstract}
+          </p>
+        </React.Fragment>
+      ) : (
+        <h4 className="mb-5">{`No bio available for ${personName}`}</h4>
+      )}
       <meta
         about={personDbpediaResource}
         property="owl:sameAs"

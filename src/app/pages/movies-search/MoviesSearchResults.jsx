@@ -1,24 +1,68 @@
 // @flow
 import * as React from 'react';
+import styled from 'styled-components';
+import _isEmpty from 'lodash/isEmpty';
 import _range from 'lodash/range';
+import { DESCENDING } from 'app/constants';
+import { createNaturalOrderComparator } from 'app/util';
 import MovieResult from 'app/pages/movies-search/MovieResult';
+import SortingSelect from 'app/components/sorting/SortingSelect';
 import type { Movie } from 'app/api/sparql/flow';
 
+const Input = styled.input`
+  width: ${props => (props.width ? `${props.width}px` : 'auto')} !important;
+`;
+
 type Props = {
-  children: React.Node,
   movies: Movie[],
 };
 
-const MoviesSearchResults = ({ children, movies }: Props): React.Node => {
+const MoviesSearchResults = ({ movies }: Props): React.Node => {
+  const [filterText, setFilterText] = React.useState('');
+  const [sortKey, setSortKey] = React.useState('year');
+  const [sortOrder, setSortOrder] = React.useState(DESCENDING);
   const [moviesPerPage, setMoviesPerPage] = React.useState(50);
   const [pageIndex, setPageIndex] = React.useState(0);
   const moviesPerPageInputRef = React.useRef<Object>();
+
+  const onFilterTextChange = React.useCallback(
+    event => setFilterText(event.target.value),
+    [],
+  );
+
+  const sortingOptions = React.useMemo(
+    () => [{ key: 'year', name: 'Year' }, { key: 'name', name: 'Name' }],
+    [],
+  );
+
+  const onSortKeyChange = React.useCallback(
+    event => setSortKey(event.target.value),
+    [],
+  );
+
+  const comparator = React.useMemo(
+    () => createNaturalOrderComparator(sortKey, sortOrder),
+    [sortKey, sortOrder],
+  );
+
+  const filteredMovies = React.useMemo(
+    () =>
+      filterText
+        ? movies
+            .filter(movie => {
+              const lowerCaseMovieName = movie.name.toLowerCase();
+              return lowerCaseMovieName.includes(filterText.toLowerCase());
+            })
+            .sort(comparator)
+        : movies.sort(comparator),
+    [filterText, movies, comparator],
+  );
 
   let firstMovieOrdinal = pageIndex * moviesPerPage + 1;
 
   const lastMovieOrdinal = Math.min(
     firstMovieOrdinal + moviesPerPage - 1,
-    movies.length,
+    filteredMovies.length,
   );
 
   if (firstMovieOrdinal > lastMovieOrdinal) {
@@ -40,39 +84,66 @@ const MoviesSearchResults = ({ children, movies }: Props): React.Node => {
   ]);
 
   const isFirstPage = pageIndex === 0;
-  const isLastPage = lastMovieOrdinal === movies.length;
+  const isLastPage = lastMovieOrdinal === filteredMovies.length;
 
-  return movies.length > 0 ? (
+  return !_isEmpty(movies) ? (
     <div className="mt-5">
-      <div className="form-inline">
-        <h1>Search results:</h1>
-        <div className="ml-auto mr-3">{children}</div>
-        <span>Results per page:</span>
-        <input
-          className="ml-3 form-control"
-          type="number"
-          defaultValue={moviesPerPage}
-          ref={moviesPerPageInputRef}
+      <div className="form-inline justify-content-center mb-3">
+        <div className="form-group mr-5">
+          <label htmlFor="filter">Filter by name:</label>
+          <Input
+            id="filter"
+            className="form-control ml-1"
+            onChange={onFilterTextChange}
+          />
+        </div>
+        <SortingSelect
+          sortingOptions={sortingOptions}
+          sortKey={sortKey}
+          sortOrder={sortOrder}
+          onSortKeyChange={onSortKeyChange}
+          setSortOrder={setSortOrder}
         />
-        <button
-          type="button"
-          className="btn btn-primary ml-3"
-          onClick={onSetMoviesPerPage}
-        >
-          Set
-        </button>
+        <div className="form-group ml-5">
+          <label htmlFor="resultsPerPage">Results per page:</label>
+          <Input
+            id="resultsPerPage"
+            className="form-control ml-1"
+            type="number"
+            width={80}
+            defaultValue={moviesPerPage}
+            ref={moviesPerPageInputRef}
+          />
+          <button
+            type="button"
+            className="btn btn-primary ml-3"
+            onClick={onSetMoviesPerPage}
+          >
+            Set
+          </button>
+        </div>
       </div>
-      {_range(firstMovieOrdinal, lastMovieOrdinal + 1).map(ordinal => {
-        const movie = movies[ordinal - 1];
-        const { id, name } = movie;
+      {_isEmpty(filteredMovies) ? (
+        <h1 className="text-center">{`There are no movies containing '${filterText}'`}</h1>
+      ) : (
+        <React.Fragment>
+          {_range(firstMovieOrdinal, lastMovieOrdinal + 1).map(ordinal => {
+            const movie = filteredMovies[ordinal - 1];
+            const { id, name } = movie;
 
-        return (
-          <MovieResult key={`${id}-${name}`} ordinal={ordinal} movie={movie} />
-        );
-      })}
-      <h5>
-        {`Showing ${firstMovieOrdinal} to ${lastMovieOrdinal} out of total ${movies.length} results`}
-      </h5>
+            return (
+              <MovieResult
+                key={`${id}-${name}`}
+                ordinal={ordinal}
+                movie={movie}
+              />
+            );
+          })}
+          <h5>
+            {`Showing ${firstMovieOrdinal} to ${lastMovieOrdinal} out of total ${filteredMovies.length} results`}
+          </h5>
+        </React.Fragment>
+      )}
       <div className="mb-5">
         {!isFirstPage && (
           <button

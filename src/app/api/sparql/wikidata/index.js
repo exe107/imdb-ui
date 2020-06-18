@@ -80,7 +80,7 @@ const findMoviesByYear = (yearFrom: number, yearTo: number) =>
 
 export const findMoviesByYearAndGenre = (
   genre: ?string,
-  yearFrom: number = 2000,
+  yearFrom: number = moment().year(),
   yearTo: number = moment().year(),
 ) => {
   if (!genre) {

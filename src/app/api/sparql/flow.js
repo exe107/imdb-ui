@@ -17,7 +17,7 @@ export type SparqlResponse = {
 };
 
 export type Movie = {
-  resource: string,
+  resource: ?string,
   id: string,
   name: string,
   year: ?string,

@@ -8,6 +8,9 @@ import { clearErrors as clearErrorsAction } from 'app/redux/errors/actions';
 import type { ApiError, ClearErrorsAction } from 'app/redux/errors/flow';
 
 const ErrorsContainer = styled.div`
+  position: sticky;
+  top: 70px;
+  z-index: 1031;
   margin-bottom: 0 !important;
 `;
 

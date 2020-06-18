@@ -14,18 +14,7 @@ const MODAL_NAME = 'ratingModal';
 const MODAL_ID = `#${MODAL_NAME}`;
 
 const MovieRatingStar = ({ user, movie }: Props): React.Node => {
-  const [showModal, setShowModal] = React.useState(false);
-
-  const toggleModal = React.useCallback(() => setShowModal(!showModal), [
-    showModal,
-  ]);
-
-  React.useEffect(() => {
-    if (showModal) {
-      $(MODAL_ID).modal('show');
-      $(MODAL_ID).on('hidden.bs.modal', toggleModal);
-    }
-  }, [showModal, toggleModal]);
+  const showModal = React.useCallback(() => $(MODAL_ID).modal('show'), []);
 
   const movieRating = user.movieRatings.find(
     (item: UserMovieRating) => item.movie.id === movie.id,
@@ -44,18 +33,16 @@ const MovieRatingStar = ({ user, movie }: Props): React.Node => {
       >
         <ClickableElement
           className={`fa ${starClassName} text-warning`}
-          onClick={toggleModal}
+          onClick={showModal}
         />
         {rating > 0 && <span className="ml-2">{rating}</span>}
       </h1>
-      {showModal && (
-        <RatingModal
-          modalId={MODAL_ID}
-          modalName={MODAL_NAME}
-          movie={movie}
-          previousRating={rating}
-        />
-      )}
+      <RatingModal
+        modalId={MODAL_ID}
+        modalName={MODAL_NAME}
+        movie={movie}
+        previousRating={rating}
+      />
     </React.Fragment>
   );
 };

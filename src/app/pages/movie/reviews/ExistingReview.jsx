@@ -22,7 +22,7 @@ const ExistingReview = ({ review, username, onDeleteReview }: Props) => {
       <ReviewHeading className="d-flex justify-content-between align-items-center border-bottom border-info p-3">
         <span>
           <b>{usernameLabel}</b>
-          <span>{`wrote on ${formattedDate}`}</span>
+          <span>{` wrote on ${formattedDate}`}</span>
         </span>
         {isUserReview && (
           <ClickableElement

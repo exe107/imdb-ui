@@ -7,8 +7,14 @@ export const createNaturalOrderComparator = (
   sortKey: string,
   sortOrder: string,
 ) => (first: Object, second: Object) => {
-  const firstKey = _get(first, sortKey);
-  const secondKey = _get(second, sortKey);
+  let firstKey = _get(first, sortKey);
+  let secondKey = _get(second, sortKey);
+
+  if (typeof firstKey === 'string') {
+    firstKey = firstKey.toLowerCase();
+    secondKey = secondKey.toLowerCase();
+  }
+
   const orderSign = sortOrder === DESCENDING ? -1 : 1;
   let sign;
 
