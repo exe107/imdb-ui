@@ -76,14 +76,18 @@ const Person = (props: Object): React.Node => {
         );
 
         const { Resources } = spotlightResponse;
-        const dbpediaResource = Resources[0]['@URI'];
-        setPersonDbpediaResource(dbpediaResource);
+        const annotatedText = Resources[0]['@surfaceForm'];
 
-        const abstractResponse = await runDbpediaQuery(
-          findPersonAbstract(`<${dbpediaResource}>`),
-        );
+        if (annotatedText === name) {
+          const dbpediaResource = Resources[0]['@URI'];
+          setPersonDbpediaResource(dbpediaResource);
 
-        setAbstract(extractQuerySingleResult(abstractResponse));
+          const abstractResponse = await runDbpediaQuery(
+            findPersonAbstract(`<${dbpediaResource}>`),
+          );
+
+          setAbstract(extractQuerySingleResult(abstractResponse));
+        }
       } else {
         const {
           resource: resourceBinding,

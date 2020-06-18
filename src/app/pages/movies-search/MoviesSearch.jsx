@@ -60,6 +60,7 @@ const MoviesSearch = (): React.Node => {
 
   return (
     <React.Fragment>
+      <h1 className="text-center mb-5">Enter your search parameters below</h1>
       <div className="d-flex">
         <Form className="form-inline">
           <div className="form-group mr-5 mb-3">

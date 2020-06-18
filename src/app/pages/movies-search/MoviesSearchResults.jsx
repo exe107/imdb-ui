@@ -88,7 +88,7 @@ const MoviesSearchResults = ({ movies }: Props): React.Node => {
 
   return !_isEmpty(movies) ? (
     <div className="mt-5">
-      <div className="form-inline justify-content-center mb-3">
+      <div className="form-inline mb-3">
         <div className="form-group mr-5">
           <label htmlFor="filter">Filter by name:</label>
           <Input

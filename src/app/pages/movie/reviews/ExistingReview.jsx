@@ -20,7 +20,7 @@ const ExistingReview = ({ review, username, onDeleteReview }: Props) => {
   return (
     <div className="mt-5 border border-info rounded">
       <ReviewHeading className="d-flex justify-content-between align-items-center border-bottom border-info p-3">
-        <span>
+        <span className="mr-2">
           <b>{usernameLabel}</b>
           <span>{` wrote on ${formattedDate}`}</span>
         </span>
