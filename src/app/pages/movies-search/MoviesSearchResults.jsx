@@ -86,87 +86,94 @@ const MoviesSearchResults = ({ movies }: Props): React.Node => {
   const isFirstPage = pageIndex === 0;
   const isLastPage = lastMovieOrdinal === filteredMovies.length;
 
-  return !_isEmpty(movies) ? (
-    <div className="mt-5">
-      <div className="form-inline mb-3">
-        <div className="form-group mr-5">
-          <label htmlFor="filter">Filter by name:</label>
-          <Input
-            id="filter"
-            className="form-control ml-1"
-            onChange={onFilterTextChange}
-          />
-        </div>
-        <SortingSelect
-          sortingOptions={sortingOptions}
-          sortKey={sortKey}
-          sortOrder={sortOrder}
-          onSortKeyChange={onSortKeyChange}
-          setSortOrder={setSortOrder}
-        />
-        <div className="form-group ml-5">
-          <label htmlFor="resultsPerPage">Results per page:</label>
-          <Input
-            id="resultsPerPage"
-            className="form-control ml-1"
-            type="number"
-            width={80}
-            defaultValue={moviesPerPage}
-            ref={moviesPerPageInputRef}
-          />
-          <button
-            type="button"
-            className="btn btn-primary ml-3"
-            onClick={onSetMoviesPerPage}
-          >
-            Set
-          </button>
-        </div>
-      </div>
-      {_isEmpty(filteredMovies) ? (
-        <h1 className="text-center">{`There are no movies containing '${filterText}'`}</h1>
-      ) : (
+  return (
+    <React.Fragment>
+      <hr />
+      {!_isEmpty(movies) ? (
         <React.Fragment>
-          {_range(firstMovieOrdinal, lastMovieOrdinal + 1).map(ordinal => {
-            const movie = filteredMovies[ordinal - 1];
-            const { id, name } = movie;
-
-            return (
-              <MovieResult
-                key={`${id}-${name}`}
-                ordinal={ordinal}
-                movie={movie}
+          <div className="form-inline">
+            <div className="form-group mr-5">
+              <label htmlFor="filter">Filter by name:</label>
+              <Input
+                id="filter"
+                className="form-control ml-1"
+                onChange={onFilterTextChange}
               />
-            );
-          })}
-          <h5>
-            {`Showing ${firstMovieOrdinal} to ${lastMovieOrdinal} out of total ${filteredMovies.length} results`}
-          </h5>
+            </div>
+            <SortingSelect
+              sortingOptions={sortingOptions}
+              sortKey={sortKey}
+              sortOrder={sortOrder}
+              onSortKeyChange={onSortKeyChange}
+              setSortOrder={setSortOrder}
+            />
+            <div className="form-group ml-5">
+              <label htmlFor="resultsPerPage">Results per page:</label>
+              <Input
+                id="resultsPerPage"
+                className="form-control ml-1"
+                type="number"
+                width={80}
+                defaultValue={moviesPerPage}
+                ref={moviesPerPageInputRef}
+              />
+              <button
+                type="button"
+                className="btn btn-primary ml-3"
+                onClick={onSetMoviesPerPage}
+              >
+                Set
+              </button>
+            </div>
+          </div>
+          <hr />
+          {_isEmpty(filteredMovies) ? (
+            <h2 className="text-center">{`There are no movies containing '${filterText}'`}</h2>
+          ) : (
+            <React.Fragment>
+              <h4>Search results:</h4>
+              {_range(firstMovieOrdinal, lastMovieOrdinal + 1).map(ordinal => {
+                const movie = filteredMovies[ordinal - 1];
+                const { id, name } = movie;
+
+                return (
+                  <MovieResult
+                    key={`${id}-${name}`}
+                    ordinal={ordinal}
+                    movie={movie}
+                  />
+                );
+              })}
+              <h5>
+                {`Showing ${firstMovieOrdinal} to ${lastMovieOrdinal} out of total ${filteredMovies.length} results`}
+              </h5>
+              <div className="mb-5">
+                {!isFirstPage && (
+                  <button
+                    type="button"
+                    className="mr-5 btn btn-secondary"
+                    onClick={onPreviousClick}
+                  >
+                    Previous
+                  </button>
+                )}
+                {!isLastPage && (
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={onNextClick}
+                  >
+                    Next
+                  </button>
+                )}
+              </div>
+            </React.Fragment>
+          )}
         </React.Fragment>
+      ) : (
+        <h2 className="text-center">No movies match your search</h2>
       )}
-      <div className="mb-5">
-        {!isFirstPage && (
-          <button
-            type="button"
-            className="mr-5 btn btn-secondary"
-            onClick={onPreviousClick}
-          >
-            Previous
-          </button>
-        )}
-        {!isLastPage && (
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={onNextClick}
-          >
-            Next
-          </button>
-        )}
-      </div>
-    </div>
-  ) : (
-    <h1 className="text-center">No movies match your search</h1>
+    </React.Fragment>
   );
 };
 

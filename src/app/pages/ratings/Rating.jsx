@@ -13,9 +13,10 @@ import type { UserMovieRating } from 'app/redux/user/flow';
 type Props = {
   ordinal: number,
   movieRating: UserMovieRating,
+  isLastMovie: boolean,
 };
 
-const Rating = ({ ordinal, movieRating }: Props) => {
+const Rating = ({ ordinal, movieRating, isLastMovie }: Props) => {
   const { movie, rating, date } = movieRating;
   const { id, name, year, genres, imageUrl } = movie;
 
@@ -30,38 +31,41 @@ const Rating = ({ ordinal, movieRating }: Props) => {
   const image = imageUrl !== NOT_AVAILABLE ? imageUrl : imageNotFound;
 
   return (
-    <div className="d-flex mt-5">
-      <img src={image} height={160} alt="" />
-      <div className="ml-3">
-        <div className="mb-2">
-          <h5 className="d-inline">{`${ordinal}.`}</h5>
-          <h4 className="d-inline">
-            <a
-              className="ml-1"
-              href={constructUrl(MOVIE_ROUTE.path, [], { id })}
-            >
-              {name}
-            </a>
-          </h4>
+    <React.Fragment>
+      <div className="d-flex">
+        <img src={image} height={160} alt="" />
+        <div className="ml-3">
+          <div className="mb-2">
+            <h5 className="d-inline">{`${ordinal}.`}</h5>
+            <h5 className="d-inline">
+              <a
+                className="ml-1"
+                href={constructUrl(MOVIE_ROUTE.path, [], { id })}
+              >
+                {name}
+              </a>
+            </h5>
+          </div>
+          <div>{`Year: ${year}`}</div>
+          <div>{`Genre: ${genres.join(', ')}`}</div>
+          <div>
+            <span>{`Your rating: ${rating}`}</span>
+            <ClickableElement
+              className="fa fa-star text-warning ml-1"
+              onClick={showModal}
+            />
+          </div>
+          <div>{`Rated on ${formattedDate}`}</div>
         </div>
-        <h5>{`Year: ${year}`}</h5>
-        <h5>{`Genre: ${genres.join(', ')}`}</h5>
-        <h5>
-          <span>{`Your rating: ${rating}`}</span>
-          <ClickableElement
-            className="fa fa-star text-warning ml-1"
-            onClick={showModal}
-          />
-        </h5>
-        <h5>{`Rated on ${formattedDate}`}</h5>
+        <RatingModal
+          modalId={MODAL_ID}
+          modalName={MODAL_NAME}
+          movie={movie}
+          previousRating={rating}
+        />
       </div>
-      <RatingModal
-        modalId={MODAL_ID}
-        modalName={MODAL_NAME}
-        movie={movie}
-        previousRating={rating}
-      />
-    </div>
+      {!isLastMovie && <hr />}
+    </React.Fragment>
   );
 };
 

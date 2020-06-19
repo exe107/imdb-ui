@@ -35,10 +35,16 @@ const RemoveIcon = styled.i`
 type Props = {
   ordinal: number,
   movie: UserMovie,
+  isLastMovie: boolean,
   removeWatchlistMovie: string => DeleteWatchlistMovieAction,
 };
 
-const WatchlistMovie = ({ ordinal, movie, removeWatchlistMovie }: Props) => {
+const WatchlistMovie = ({
+  ordinal,
+  movie,
+  isLastMovie,
+  removeWatchlistMovie,
+}: Props) => {
   const [hovered, setHovered] = React.useState(false);
   const onImageMouseEnter = React.useCallback(() => setHovered(true), []);
   const onImageMouseLeave = React.useCallback(() => setHovered(false), []);
@@ -57,40 +63,43 @@ const WatchlistMovie = ({ ordinal, movie, removeWatchlistMovie }: Props) => {
   const image = imageUrl !== NOT_AVAILABLE ? imageUrl : imageNotFound;
 
   return (
-    <div className="d-flex mt-5">
-      <ImageContainer
-        data-toggle="tooltip"
-        title="Remove from watchlist"
-        onMouseEnter={onImageMouseEnter}
-        onMouseLeave={onImageMouseLeave}
-        onClick={onImageClick}
-      >
-        <Image src={image} height={160} hovered={hovered} />
-        {hovered && <RemoveIcon className="fa fa-4x fa-remove text-white" />}
-      </ImageContainer>
-      <div className="ml-3">
-        <div className="mb-2">
-          <h5 className="d-inline">{`${ordinal}.`}</h5>
-          <h4 className="d-inline">
-            <a
-              className="ml-1"
-              href={constructUrl(MOVIE_ROUTE.path, [], { id })}
-            >
-              {name}
-            </a>
-          </h4>
+    <React.Fragment>
+      <div className="d-flex">
+        <ImageContainer
+          data-toggle="tooltip"
+          title="Remove from watchlist"
+          onMouseEnter={onImageMouseEnter}
+          onMouseLeave={onImageMouseLeave}
+          onClick={onImageClick}
+        >
+          <Image src={image} height={160} hovered={hovered} />
+          {hovered && <RemoveIcon className="fa fa-4x fa-remove text-white" />}
+        </ImageContainer>
+        <div className="ml-3">
+          <div className="mb-2">
+            <h5 className="d-inline">{`${ordinal}.`}</h5>
+            <h5 className="d-inline">
+              <a
+                className="ml-1"
+                href={constructUrl(MOVIE_ROUTE.path, [], { id })}
+              >
+                {name}
+              </a>
+            </h5>
+          </div>
+          <div>{`Year: ${year}`}</div>
+          <div>{`Genre: ${genres.join(', ')}`}</div>
+          <div>
+            {`Runtime: ${runtime ? formatRuntime(runtime) : NOT_AVAILABLE}`}
+          </div>
+          <div>
+            <span>{`Rating: ${rating || NOT_AVAILABLE}`}</span>
+            {rating && <i className="fa fa-star text-warning ml-1" />}
+          </div>
         </div>
-        <h5>{`Year: ${year}`}</h5>
-        <h5>{`Genre: ${genres.join(', ')}`}</h5>
-        <h5>
-          {`Runtime: ${runtime ? formatRuntime(runtime) : NOT_AVAILABLE}`}
-        </h5>
-        <h5>
-          <span>{`Rating: ${rating || NOT_AVAILABLE}`}</span>
-          {rating && <i className="fa fa-star text-warning ml-1" />}
-        </h5>
       </div>
-    </div>
+      {!isLastMovie && <hr />}
+    </React.Fragment>
   );
 };
 

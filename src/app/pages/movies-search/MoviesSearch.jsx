@@ -10,10 +10,7 @@ import { asyncOperation } from 'app/redux/util';
 import MoviesSearchResults from 'app/pages/movies-search/MoviesSearchResults';
 
 const Form = styled.form`
-  margin: 0 auto;
-
   @media only screen and (max-width: 950px) {
-    margin: 0;
     flex-direction: column;
     align-items: start;
   }
@@ -60,7 +57,7 @@ const MoviesSearch = (): React.Node => {
 
   return (
     <React.Fragment>
-      <h1 className="text-center mb-5">Enter your search parameters below</h1>
+      <h2 className="mb-5">Enter your search parameters below</h2>
       <div className="d-flex">
         <Form className="form-inline">
           <div className="form-group mr-5 mb-3">

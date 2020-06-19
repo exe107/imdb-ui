@@ -1,37 +1,42 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components';
+import _isEmpty from 'lodash/isEmpty';
 import {
   findPersonAbstract,
   findPersonAbstractBySameAs,
   runDbpediaQuery,
 } from 'app/api/sparql/dbpedia';
 import {
-  findPersonImage,
+  findMoviesByActor,
   findMoviesByDirector,
   findMoviesByWriter,
-  runWikidataQuery,
-  findPersonNominations,
   findPersonAwards,
+  findPersonImage,
+  findPersonNominations,
   findResource,
-  findMoviesByActor,
+  runWikidataQuery,
 } from 'app/api/sparql/wikidata';
 import { runSpotlightQuery } from 'app/api/spotlight';
 import {
   extractMoviesQueryResults,
   extractQuerySingleResult,
-  isResponseEmpty,
   extractResourceQueryResults,
   extractResourceQuerySingleResult,
+  isResponseEmpty,
 } from 'app/api/util';
 import { asyncOperation } from 'app/redux/util';
+import { Container } from 'app/styles';
 import MoviesSection from 'app/pages/person/MoviesSection';
 import AchievementsSection from 'app/pages/person/AchievementsSection';
 import type { SparqlResponse } from 'app/api/sparql/flow';
 import type { SpotlightResponse } from 'app/api/spotlight/flow';
 
+const BioAndImageContainer = styled(Container)`
+  min-height: ${props => (props.hasImage ? 520 : 0)}px;
+`;
+
 const PersonImage = styled.img`
-  max-width: 500px;
   height: 500px;
   margin-bottom: 20px;
   margin-left: 20px;
@@ -142,28 +147,35 @@ const Person = (props: Object): React.Node => {
     return <h1 className="alert alert-danger">No information available</h1>;
   }
 
+  const isFilmographyEmpty =
+    _isEmpty(moviesActedIn) &&
+    _isEmpty(moviesDirected) &&
+    _isEmpty(moviesWritten);
+
   return (
     <React.Fragment>
-      {imageUrl && (
-        <React.Fragment>
-          <PersonImage src={imageUrl} />
-          <meta
-            about={personWikidataResource}
-            property="wdt:P18"
-            content={imageUrl}
-          />
-        </React.Fragment>
-      )}
-      {abstract ? (
-        <React.Fragment>
-          <h4>About</h4>
-          <p about={personDbpediaResource} property="dbo:abstract">
-            {abstract}
-          </p>
-        </React.Fragment>
-      ) : (
-        <h4 className="mb-5">{`No bio available for ${personName}`}</h4>
-      )}
+      <BioAndImageContainer hasImage={!!imageUrl}>
+        {imageUrl && (
+          <React.Fragment>
+            <PersonImage className="rounded" src={imageUrl} />
+            <meta
+              about={personWikidataResource}
+              property="wdt:P18"
+              content={imageUrl}
+            />
+          </React.Fragment>
+        )}
+        {abstract ? (
+          <React.Fragment>
+            <h4>About</h4>
+            <p about={personDbpediaResource} property="dbo:abstract">
+              {abstract}
+            </p>
+          </React.Fragment>
+        ) : (
+          <h4 className="mb-5">{`No bio available for ${personName}`}</h4>
+        )}
+      </BioAndImageContainer>
       <meta
         about={personDbpediaResource}
         property="owl:sameAs"
@@ -180,26 +192,29 @@ const Person = (props: Object): React.Node => {
           header="Nominations"
           achievements={nominations}
         />
-        <div className="d-flex">
-          <MoviesSection
-            rdfProperty="wdt:P161"
-            rdfSubject={personWikidataResource}
-            header="Movies acted in"
-            movies={moviesActedIn}
-          />
-          <MoviesSection
-            rdfProperty="wdt:P57"
-            rdfSubject={personWikidataResource}
-            header="Movies directed"
-            movies={moviesDirected}
-          />
-          <MoviesSection
-            rdfProperty="wdt:P58"
-            rdfSubject={personWikidataResource}
-            header="Movies written"
-            movies={moviesWritten}
-          />
-        </div>
+        {!isFilmographyEmpty && (
+          <Container className="list-group">
+            <h4>Filmography</h4>
+            <MoviesSection
+              rdfProperty="wdt:P161"
+              rdfSubject={personWikidataResource}
+              header="Actor"
+              movies={moviesActedIn}
+            />
+            <MoviesSection
+              rdfProperty="wdt:P57"
+              rdfSubject={personWikidataResource}
+              header="Director"
+              movies={moviesDirected}
+            />
+            <MoviesSection
+              rdfProperty="wdt:P58"
+              rdfSubject={personWikidataResource}
+              header="Writer"
+              movies={moviesWritten}
+            />
+          </Container>
+        )}
       </div>
     </React.Fragment>
   );

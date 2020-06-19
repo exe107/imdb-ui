@@ -9,13 +9,20 @@ import { ReviewHeading } from 'app/styles';
 import type { ExistingReview } from 'app/pages/movie/reviews/flow';
 
 type Props = {
-  isAdmin: boolean,
   review: ExistingReview,
+  isLastReview: boolean,
+  isAdmin: boolean,
   onApprove: Function,
   onReject: Function,
 };
 
-const PendingReview = ({ isAdmin, review, onApprove, onReject }: Props) => {
+const PendingReview = ({
+  review,
+  isLastReview,
+  isAdmin,
+  onApprove,
+  onReject,
+}: Props) => {
   const { username, date, review: reviewText, movieId, movie } = review;
   const formattedDate = moment(date).format('DD MMMM YYYY HH:mm');
 
@@ -26,7 +33,7 @@ const PendingReview = ({ isAdmin, review, onApprove, onReject }: Props) => {
 
   return (
     <React.Fragment>
-      <div className="mt-5 border border-info rounded w-75">
+      <div className="border border-info rounded w-75">
         <ReviewHeading className="d-flex justify-content-between align-items-center border-bottom border-info p-3">
           {ReactHtmlParser(reviewHeading)}
         </ReviewHeading>
@@ -46,6 +53,7 @@ const PendingReview = ({ isAdmin, review, onApprove, onReject }: Props) => {
           </button>
         </div>
       )}
+      {!isLastReview && <hr />}
     </React.Fragment>
   );
 };

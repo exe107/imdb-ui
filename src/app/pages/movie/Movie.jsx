@@ -4,6 +4,7 @@ import { compose } from 'redux';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
+import _isEmpty from 'lodash/isEmpty';
 import movieTrailer from 'movie-trailer';
 import { getMovie } from 'app/api/omdb';
 import {
@@ -23,6 +24,7 @@ import { getReviews } from 'app/http';
 import { getUser } from 'app/redux/user/selectors';
 import { addErrorAction } from 'app/redux/errors/actions';
 import imageNotFound from 'app/images/image_not_found.png';
+import { Container } from 'app/styles';
 import PeopleSection from 'app/pages/movie/PeopleSection';
 import MovieRatingStar from 'app/pages/movie/MovieRatingStar';
 import WatchlistButton from 'app/pages/movie/WatchlistButton';
@@ -115,7 +117,10 @@ const Movie = ({ user, location, addError }: Props): React.Node => {
     );
   }, [location.search, addError]);
 
-  const actorsMap = React.useMemo(() => createActorsMap(cast), [cast]);
+  const actorsMap = React.useMemo(
+    () => createActorsMap([...cast, ...directors]),
+    [cast, directors],
+  );
 
   if (!fetchingFinished) {
     return null;
@@ -137,7 +142,6 @@ const Movie = ({ user, location, addError }: Props): React.Node => {
     Runtime,
     Language,
     Released,
-    Website,
     Awards,
     Actors,
     Country,
@@ -163,10 +167,13 @@ const Movie = ({ user, location, addError }: Props): React.Node => {
     runtime: Number(runtimeMinutes) || null,
   };
 
+  const filmCrewExists =
+    !_isEmpty(cast) || !_isEmpty(directors) || !_isEmpty(stars);
+
   return (
     <div className="px-5" about={movieResource}>
       <div className="text-center mb-5">
-        <h1 className="d-inline">{`${Title} (${Year})`}</h1>
+        <h2 className="d-inline">{`${Title} (${Year})`}</h2>
         <meta property="rdfs:label" content={Title} />
         {user && (
           <React.Fragment>
@@ -189,77 +196,81 @@ const Movie = ({ user, location, addError }: Props): React.Node => {
           />
         </React.Fragment>
       )}
-      <div className="d-flex mt-5">
-        <MoviePoster className="mr-5" src={image} />
+      <Container className="d-flex mt-5">
         <div>
+          <h4>Movie details</h4>
           {imdbRating !== NOT_AVAILABLE && (
-            <h5 property="rev:rating" content={imdbRating}>
+            <div property="rev:rating" content={imdbRating}>
               {`Rating: ${imdbRating}`}
               <i className="ml-2 mr-1 text-warning fa fa-star" />
               {`(${imdbVotes} votes)`}
-            </h5>
+            </div>
           )}
-          <h5>{`Genre: ${Genre}`}</h5>
+          <div>{`Genre: ${Genre}`}</div>
           {Runtime !== NOT_AVAILABLE && (
-            <h5 property="wdt:P2047" content={Runtime}>
+            <div property="wdt:P2047" content={Runtime}>
               {`Runtime: ${Runtime}`}
-            </h5>
+            </div>
           )}
           {Released !== NOT_AVAILABLE && (
-            <h5 property="wdt:P577" content={Released}>
+            <div property="wdt:P577" content={Released}>
               {`Released: ${Released}`}
-            </h5>
+            </div>
           )}
           {Language !== NOT_AVAILABLE && (
             <React.Fragment>
-              <h5>{`Language: ${Language}`}</h5>
+              <div>{`Language: ${Language}`}</div>
               {Language.split(', ').map(language => (
                 <meta key={language} property="wdt:P364" content={language} />
               ))}
             </React.Fragment>
           )}
-          {Website !== NOT_AVAILABLE && (
-            <h5 className="text-break">
-              Website:
-              <a href={Website} className="ml-1" property="wdt:P856">
-                {Website}
-              </a>
-            </h5>
-          )}
           {Country !== NOT_AVAILABLE && (
             <React.Fragment>
-              <h5>{`Country: ${Country}`}</h5>
+              <div>{`Country: ${Country}`}</div>
               {Country.split(', ').map(country => (
                 <meta key={country} property="wdt:P495" content={country} />
               ))}
             </React.Fragment>
           )}
           {BoxOffice !== NOT_AVAILABLE && (
-            <h5 property="wdt:P2142" content={BoxOffice}>
+            <div property="wdt:P2142" content={BoxOffice}>
               {`Box Office: ${BoxOffice}`}
-            </h5>
+            </div>
           )}
           {Production !== NOT_AVAILABLE && (
-            <h5 property="wdt:P272" content={Production}>
+            <div property="wdt:P272" content={Production}>
               {`Production: ${Production}`}
-            </h5>
+            </div>
           )}
-          {Awards !== NOT_AVAILABLE && <h5>{Awards}</h5>}
+          {Awards !== NOT_AVAILABLE && <div>{Awards}</div>}
         </div>
-      </div>
-      {Plot !== NOT_AVAILABLE && <h5 className="my-5 text-justify">{Plot}</h5>}
-      <div className="d-flex justify-content-between">
+        {image && <MoviePoster className="ml-auto" src={image} />}
+      </Container>
+      {Plot !== NOT_AVAILABLE && (
+        <Container>
+          <h4>Plot</h4>
+          <div className="text-justify">{Plot}</div>
+        </Container>
+      )}
+      {filmCrewExists && (
+        <Container>
+          <h4>Film crew</h4>
+          <div className="list-group">
+            <PeopleSection
+              rdfProperty="wdt:P57"
+              header="Directors"
+              people={directors}
+            />
+            <PeopleSection header="Stars" people={stars} />
+            <PeopleSection rdfProperty="wdt:P161" header="Cast" people={cast} />
+          </div>
+        </Container>
+      )}
+      <Container>
+        <h4>Reviews</h4>
         <Reviews user={user} movie={userMovie} reviews={reviews} />
-        <div className="list-group ml-3">
-          <PeopleSection
-            rdfProperty="wdt:P57"
-            header="Directors"
-            people={directors}
-          />
-          <PeopleSection header="Stars" people={stars} />
-          <PeopleSection rdfProperty="wdt:P161" header="Cast" people={cast} />
-        </div>
-      </div>
+      </Container>
     </div>
   );
 };

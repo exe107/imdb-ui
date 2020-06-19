@@ -45,16 +45,18 @@ const PendingReviews = ({ user, deletePendingReview }: Props) => {
 
   return pendingReviews.length > 0 ? (
     <React.Fragment>
-      <h1>Your pending reviews</h1>
+      <h2>Your pending reviews</h2>
       <hr />
-      {pendingReviews.map((review: ExistingReview) => {
+      {pendingReviews.map((review: ExistingReview, index: number) => {
         const { username, movieId } = review;
         const identifier = { username, movieId };
+        const isLastReview = index === pendingReviews.length - 1;
 
         return (
           <PendingReview
             key={`${username}-${movieId}`}
             review={review}
+            isLastReview={isLastReview}
             isAdmin={admin}
             onApprove={createApproveHandler(identifier)}
             onReject={createRejectHandler(identifier)}

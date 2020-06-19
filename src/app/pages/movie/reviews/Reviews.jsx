@@ -1,8 +1,8 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import styled from 'styled-components';
 import _get from 'lodash/get';
+import { canWriteReview } from 'app/pages/movie/reviews/util';
 import { asyncOperation } from 'app/redux/util';
 import { deleteReview } from 'app/http';
 import { savePendingReviewAction } from 'app/redux/user/actions';
@@ -13,11 +13,6 @@ import NewReview from 'app/pages/movie/reviews/NewReview';
 import type { ExistingReview as ExistingReviewType } from 'app/pages/movie/reviews/flow';
 import type { User, UserMovie } from 'app/redux/user/flow';
 import type { AddErrorAction, ApiError } from 'app/redux/errors/flow';
-import { canWriteReview } from 'app/pages/movie/reviews/util';
-
-const ReviewsPanelButton = styled(PanelButton)`
-  max-width: 200px;
-`;
 
 type Props = {
   user: User,
@@ -70,21 +65,21 @@ const Reviews = ({ user, movie, reviews: initialReviews, addError }: Props) => {
 
   return (
     <div>
-      {hasReviews && (
+      {hasReviews ? (
         <React.Fragment>
           <h5>
-            <ReviewsPanelButton
+            <PanelButton
               className="list-group-item list-group-item-action bg-light"
               data-toggle="collapse"
               data-target={REVIEWS_ID}
               onClick={onPanelClick}
             >
               <i className={`fa ${iconClassName} mr-2`} />
-              <span>Reviews</span>
+              <span>Show</span>
               {reviews.length > 0 && (
                 <span className="ml-2">{`(${reviews.length})`}</span>
               )}
-            </ReviewsPanelButton>
+            </PanelButton>
           </h5>
           <div className="collapse" id={REVIEWS_NAME}>
             {reviews.map(review => (
@@ -97,6 +92,8 @@ const Reviews = ({ user, movie, reviews: initialReviews, addError }: Props) => {
             ))}
           </div>
         </React.Fragment>
+      ) : (
+        <div>This movie has not been reviewed yet</div>
       )}
       {writeReview && (
         <div className="mt-5">

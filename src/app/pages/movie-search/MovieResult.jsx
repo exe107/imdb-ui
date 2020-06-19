@@ -15,30 +15,34 @@ const Image = styled.img`
 
 type Props = {
   movie: BaseMovieDetails,
+  isLastResult: boolean,
   ordinal: number,
 };
 
-const MovieResult = ({ movie, ordinal }: Props) => {
+const MovieResult = ({ movie, isLastResult, ordinal }: Props) => {
   const { imdbID, Title, Year, Poster } = movie;
   const image = Poster !== NOT_AVAILABLE ? Poster : imageNotFound;
   const movieUrl = constructUrl(MOVIE_ROUTE.path, [], { id: imdbID });
   const onImageClick = React.useCallback(() => redirect(movieUrl), [movieUrl]);
 
   return (
-    <div className="d-flex mt-5">
-      <Image src={image} width={100} alt="" onClick={onImageClick} />
-      <div className="ml-3">
-        <div className="mb-2">
-          <h5 className="d-inline">{`${ordinal}.`}</h5>
-          <h4 className="d-inline">
-            <a className="ml-1" href={movieUrl}>
-              {Title}
-            </a>
-          </h4>
+    <React.Fragment>
+      <div className="d-flex">
+        <Image src={image} width={100} alt="" onClick={onImageClick} />
+        <div className="ml-3">
+          <div className="mb-2">
+            <h5 className="d-inline">{`${ordinal}.`}</h5>
+            <h5 className="d-inline">
+              <a className="ml-1" href={movieUrl}>
+                {Title}
+              </a>
+            </h5>
+          </div>
+          <h5>{`Year: ${Year}`}</h5>
         </div>
-        <h5>{`Year: ${Year}`}</h5>
       </div>
-    </div>
+      {!isLastResult && <hr />}
+    </React.Fragment>
   );
 };
 

@@ -55,11 +55,20 @@ const MovieSearchResults = ({ location }: Props) => {
 
   return uniqueSearchResults.length > 0 ? (
     <React.Fragment>
-      <h1>Search results:</h1>
+      <h2>Search results:</h2>
       <hr />
-      {uniqueSearchResults.map((result: BaseMovieDetails, index: number) => (
-        <MovieResult key={result.imdbID} movie={result} ordinal={index + 1} />
-      ))}
+      {uniqueSearchResults.map((result: BaseMovieDetails, index: number) => {
+        const isLastResult = index === uniqueSearchResults.length - 1;
+
+        return (
+          <MovieResult
+            key={result.imdbID}
+            movie={result}
+            isLastResult={isLastResult}
+            ordinal={index + 1}
+          />
+        );
+      })}
     </React.Fragment>
   ) : (
     <h1 className="text-center">No movies found. Please refine your search</h1>

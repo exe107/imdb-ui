@@ -21,3 +21,10 @@ export const PanelButton = styled.button`
 export const ReviewHeading = styled.div`
   background: sandybrown;
 `;
+
+export const Container = styled.div`
+  border: 1px solid lightgrey;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 10px;
+`;

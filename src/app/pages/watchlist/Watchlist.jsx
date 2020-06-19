@@ -45,7 +45,7 @@ const Watchlist = ({ watchlist }: Props) => {
 
   return watchlist.length > 0 ? (
     <React.Fragment>
-      <h1>Your watchlist</h1>
+      <h2>Your watchlist</h2>
       <hr />
       <div className="form-inline">
         <SortingSelect
@@ -56,9 +56,19 @@ const Watchlist = ({ watchlist }: Props) => {
           setSortOrder={setSortOrder}
         />
       </div>
-      {movies.map((movie: UserMovie, index: number) => (
-        <WatchlistMovie key={movie.id} ordinal={index + 1} movie={movie} />
-      ))}
+      <hr />
+      {movies.map((movie: UserMovie, index: number) => {
+        const isLastMovie = index === movies.length - 1;
+
+        return (
+          <WatchlistMovie
+            key={movie.id}
+            ordinal={index + 1}
+            movie={movie}
+            isLastMovie={isLastMovie}
+          />
+        );
+      })}
     </React.Fragment>
   ) : (
     <h1 className="text-center">Your watchlist is empty</h1>

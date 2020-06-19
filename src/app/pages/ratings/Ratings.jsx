@@ -76,10 +76,10 @@ const Ratings = ({ movieRatings }: Props) => {
 
   return movieRatings.length > 0 ? (
     <React.Fragment>
-      <h1>Your ratings</h1>
+      <h2>Your ratings</h2>
       <hr />
-      <div className="form-inline justify-content-around">
-        <div>
+      <div className="form-inline">
+        <div className="mr-5">
           <span>Filter by:</span>
           <select
             className="form-control ml-1"
@@ -101,14 +101,20 @@ const Ratings = ({ movieRatings }: Props) => {
           setSortOrder={setSortOrder}
         />
       </div>
+      <hr />
       {ratings.length > 0 ? (
-        ratings.map((movieRating: UserMovieRating, index: number) => (
-          <Rating
-            key={movieRating.movie.id}
-            ordinal={index + 1}
-            movieRating={movieRating}
-          />
-        ))
+        ratings.map((movieRating: UserMovieRating, index: number) => {
+          const isLastMovie = index === ratings.length - 1;
+
+          return (
+            <Rating
+              key={movieRating.movie.id}
+              ordinal={index + 1}
+              movieRating={movieRating}
+              isLastMovie={isLastMovie}
+            />
+          );
+        })
       ) : (
         <h3 className="text-center mt-5">
           {`You have no ${ratingToFilterBy} star rated movies`}
