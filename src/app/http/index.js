@@ -85,6 +85,9 @@ export const logInUser = (body: UserCredentials) => POST('/login', body);
 
 export const logOutUser = () => POST('/logout');
 
+export const editProfile = (body: UserPersonalDetails) =>
+  POST('/users/edit/profile', body);
+
 export const changePassword = (body: PasswordChangeDetails) =>
   POST('/users/edit/password', body);
 

@@ -7,7 +7,7 @@ type Props = {
   name: string,
   type?: string,
   readOnly?: boolean,
-  validate: Function,
+  validate?: Function,
 };
 
 const InputField = ({ label, ...fieldProps }: Props): React.Node => (

@@ -8,7 +8,8 @@ import Register from 'app/pages/register/Register';
 import Login from 'app/pages/login/Login';
 import Ratings from 'app/pages/ratings/Ratings';
 import Watchlist from 'app/pages/watchlist/Watchlist';
-import PasswordChange from 'app/pages/user-edit/PasswordChange';
+import EditProfile from 'app/pages/edit-profile/EditProfile';
+import PasswordChange from 'app/pages/password-change/PasswordChange';
 import PendingReviews from 'app/pages/pending-reviews/PendingReviews';
 
 export const HOME_ROUTE = {
@@ -46,6 +47,11 @@ export const LOGIN_ROUTE = {
   component: Login,
 };
 
+export const EDIT_PROFILE_ROUTE = {
+  path: '/edit-profile',
+  component: EditProfile,
+};
+
 export const CHANGE_PASSWORD_ROUTE = {
   path: '/change-password',
   component: PasswordChange,
@@ -74,6 +80,7 @@ export const ROUTES = [
   PERSON_ROUTE,
   REGISTER_ROUTE,
   LOGIN_ROUTE,
+  EDIT_PROFILE_ROUTE,
   CHANGE_PASSWORD_ROUTE,
   RATINGS_ROUTE,
   WATCHLIST_ROUTE,

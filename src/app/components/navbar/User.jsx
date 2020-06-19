@@ -3,7 +3,10 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { CHANGE_PASSWORD_ROUTE } from 'app/navigation/routes';
+import {
+  CHANGE_PASSWORD_ROUTE,
+  EDIT_PROFILE_ROUTE,
+} from 'app/navigation/routes';
 import { getInitializationData, logOutUser } from 'app/http';
 import { asyncOperation } from 'app/redux/util';
 import { saveInitializationDataAction } from 'app/redux/actions';
@@ -51,6 +54,9 @@ export const User = ({
         <span className="text-white">{`${name} ${surname}`}</span>
       </UserButton>
       <div className="dropdown-menu">
+        <Link className="dropdown-item" to={EDIT_PROFILE_ROUTE.path}>
+          Edit profile
+        </Link>
         <Link className="dropdown-item" to={CHANGE_PASSWORD_ROUTE.path}>
           Change password
         </Link>
