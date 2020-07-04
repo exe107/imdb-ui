@@ -24,7 +24,7 @@ const PeopleSection = ({ rdfProperty, header, people }: Props): React.Node => {
   return (
     !_isEmpty(people) && (
       <React.Fragment>
-        <h5>
+        <div>
           <PanelButton
             className="list-group-item list-group-item-action bg-light"
             data-toggle="collapse"
@@ -35,17 +35,15 @@ const PeopleSection = ({ rdfProperty, header, people }: Props): React.Node => {
             <span className="mr-2">{header}</span>
             <span>{`(${people.length})`}</span>
           </PanelButton>
-        </h5>
+        </div>
         <ul className="collapse" id={header}>
           {people.map(({ resource, name, id }: Person) => (
             <li key={name}>
-              <h5>
-                {id ? (
-                  <a href={constructUrl(PERSON_ROUTE.path, [id])}>{name}</a>
-                ) : (
-                  <span>{name}</span>
-                )}
-              </h5>
+              {id ? (
+                <a href={constructUrl(PERSON_ROUTE.path, [id])}>{name}</a>
+              ) : (
+                <span>{name}</span>
+              )}
               {rdfProperty && resource && (
                 <meta property={rdfProperty} resource={resource} />
               )}

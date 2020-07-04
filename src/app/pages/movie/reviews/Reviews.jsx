@@ -67,7 +67,7 @@ const Reviews = ({ user, movie, reviews: initialReviews, addError }: Props) => {
     <div>
       {hasReviews ? (
         <React.Fragment>
-          <h5>
+          <div>
             <PanelButton
               className="list-group-item list-group-item-action bg-light"
               data-toggle="collapse"
@@ -80,7 +80,7 @@ const Reviews = ({ user, movie, reviews: initialReviews, addError }: Props) => {
                 <span className="ml-2">{`(${reviews.length})`}</span>
               )}
             </PanelButton>
-          </h5>
+          </div>
           <div className="collapse" id={REVIEWS_NAME}>
             {reviews.map(review => (
               <ExistingReview
