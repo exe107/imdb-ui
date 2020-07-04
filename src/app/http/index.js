@@ -1,5 +1,4 @@
 // @flow
-import _find from 'lodash/find';
 import type {
   PasswordChangeDetails,
   UserCredentials,
@@ -10,28 +9,11 @@ import type {
 } from 'app/redux/user/flow';
 import type { NewReview } from 'app/pages/movie/reviews/flow';
 
-const CSRF_COOKIE = 'XSRF-TOKEN';
-const CSRF_HEADER = 'X-XSRF-TOKEN';
-
-const extractCsrfToken = () => {
-  const cookies = document.cookie.split('; ').map(cookie => {
-    const [key, value] = cookie.split('=');
-    return { key, value };
-  });
-
-  return _find(cookies, cookie => cookie.key === CSRF_COOKIE).value;
-};
-
-const createRequestOptions = (
-  method: string,
-  body?: Object,
-  headers?: Object,
-): Object => {
+const createRequestOptions = (method: string, body?: Object): Object => {
   const requestOptions = {
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
-      ...headers,
     },
     method,
   };
@@ -56,25 +38,11 @@ const handleResponse = (response: Response): Object => {
 const GET = (url: string) =>
   fetch(url, createRequestOptions('GET')).then(handleResponse);
 
-const POST = (url: string, body?: Object) => {
-  const headers = {
-    [CSRF_HEADER]: extractCsrfToken(),
-  };
+const POST = (url: string, body?: Object) =>
+  fetch(url, createRequestOptions('POST', body)).then(handleResponse);
 
-  return fetch(url, createRequestOptions('POST', body, headers)).then(
-    handleResponse,
-  );
-};
-
-const DELETE = (url: string) => {
-  const headers = {
-    [CSRF_HEADER]: extractCsrfToken(),
-  };
-
-  return fetch(url, createRequestOptions('DELETE', null, headers)).then(
-    handleResponse,
-  );
-};
+const DELETE = (url: string) =>
+  fetch(url, createRequestOptions('DELETE')).then(handleResponse);
 
 export const getInitializationData = () => GET('/initialization');
 

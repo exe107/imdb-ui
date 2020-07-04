@@ -37,7 +37,7 @@ export const User = ({
     () =>
       asyncOperation(() =>
         logOutUser()
-          .then(getInitializationData) // needed for the new csrf token.
+          .then(getInitializationData)
           .then(saveInitializationData),
       ),
     [saveInitializationData],
