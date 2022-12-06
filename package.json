@@ -14,7 +14,7 @@
     "moment": "^2.24.0",
     "movie-trailer": "^2.0.6",
     "popper.js": "^1.15.0",
-    "qs": "^6.8.0",
+    "qs": "^6.8.3",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-final-form": "^6.3.3",
